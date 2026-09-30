@@ -1,0 +1,6 @@
+.DS_Store
+__pycache__/
+work/finance/*-fragment.html
+work/finance/*-preview.html
+outputs/hkchat-finance/*.html
+outputs/hkchat-finance/.nojekyll

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "bank", "title": "服務枱前，先望真啲", "prompt": "去虛構銀行服務處查詢戶口", "subtitle": "一個服務枱，藏住三處需要查證的細節。",
+    "alt": "AI 虛構服務枱：左方短訊登入告示、右方索取驗證碼的手機，以及前方攤開的示例客戶登記。",
+    "keywords": ["銀行", "银行", "戶口", "户口", "短訊", "短信", "驗證", "验证", "資料", "资料"],
+    "decoys": [{"id":"plant","visualLabel":"左邊的綠色盆栽"},{"id":"pen","visualLabel":"登記板旁的筆"}],
+    "clues": [
+      {"id":"link","title":"短訊登入指示，要另行核實","visualLabel":"左邊「點短訊連結，登入處理」的告示","rect":{"x":13,"y":10,"w":43,"h":52},"explanation":"告示叫你經短訊連結登入戶口，值得停一停。銀行不會透過短訊或電郵超連結要求提供登入密碼等敏感資料。應自行開啟已知的官方渠道查詢。","habit":"先離開來歷未明的連結，再經官方渠道核實。","sourceTitle":"金管局：保護數碼鎖匙，提防釣魚短訊","sourceUrl":"https://www.hkma.gov.hk/chi/news-and-media/press-releases/2021/10/20211004-4/"},
+      {"id":"code","title":"一次性驗證碼，唔好傳畀人","visualLabel":"右邊要求截圖傳送驗證碼的手機","rect":{"x":67,"y":21,"w":30,"h":42},"explanation":"對方要求截圖傳送一次性驗證碼，即使自稱客服，也不應照做。驗證碼屬敏感登入資料，不能只憑稱呼或熟悉的畫面確認對方身分。","habit":"驗證碼不轉發；有疑問，自己找官方聯絡方式。","sourceTitle":"金管局：保護登入密碼及一次性密碼","sourceUrl":"https://www.hkma.gov.hk/chi/news-and-media/press-releases/2021/10/20211004-4/"},
+      {"id":"register","title":"客戶資料唔應攤開畀人睇","visualLabel":"前方攤開姓名及聯絡資料的登記板","rect":{"x":7,"y":67,"w":75,"h":30},"explanation":"本局登記板把客戶姓名及聯絡欄位攤在訪客面前。處理個人資料時，應避免無關人士直接查閱；示例表格亦提醒我們留意資料擺放方式。","habit":"只提供辦事需要的資料，留意資料如何收集和保管。","sourceTitle":"私隱專員公署：個人資料保安原則","sourceUrl":"https://www.pcpd.org.hk/childrenprivacy/tc/six_data_protection_principles/dpp_4.html"}
+    ]
+  },
+  {
+    "id": "insurance", "title": "保障講到盡，條款睇清未？", "prompt": "了解一份虛構保障計劃", "subtitle": "宣傳、摘要、申請表，邊三處值得再問？",
+    "alt": "AI 虛構保障諮詢桌：任何情況都有保障的宣傳冊、只看摘要的平板訊息，以及叫人先簽空白表的便條。",
+    "keywords": ["保險", "保险", "保障", "保單", "保单", "條款", "条款"],
+    "decoys": [{"id":"cup","visualLabel":"右下角的茶杯"},{"id":"flowers","visualLabel":"窗邊的花瓶"}],
+    "clues": [
+      {"id":"coverage","title":"一句「全包」，代替唔到保障範圍","visualLabel":"左邊「任何情況，都有保障」的宣傳冊","rect":{"x":8,"y":5,"w":36,"h":44},"explanation":"宣傳聲稱任何情況都有保障，卻沒有交代限制。了解保障時，要對照保單的保障範圍、條件及不保事項，不能只看一句口號。","habit":"問清楚：保甚麼、不保甚麼，以及適用條件。","sourceTitle":"投委會：申請投保時要了解的事項","sourceUrl":"https://www.ifec.org.hk/web/tc/financial-products/insurance/basics/applying-for-insurance.page"},
+      {"id":"summary","title":"摘要唔等於完整條款","visualLabel":"右邊「只看摘要，不用全文」的平板","rect":{"x":48,"y":18,"w":49,"h":34},"explanation":"摘要方便快速了解重點，但未必包括所有條件。應查看完整文件，遇到不明白的地方先問清楚，再考慮是否繼續。","habit":"把摘要和完整條款一起看，保留可查閱的版本。","sourceTitle":"投委會：投保錦囊——細閱詳情","sourceUrl":"https://www.ifec.org.hk/web/common/pdf/publication/sc/tips-buying-insurance-tc.pdf"},
+      {"id":"blank","title":"未填妥的表格，唔好先簽","visualLabel":"申請表旁「先簽空白表，稍後補資料」的便條","rect":{"x":60,"y":58,"w":38,"h":18},"explanation":"表格內容仍然空白，卻叫你先簽名，便無法確認之後填上的內容。應先把資料填妥、核對清楚，再處理簽署及保存副本。","habit":"每次簽署前，先核對整份文件。","sourceTitle":"投委會：切勿簽署空白表格","sourceUrl":"https://www.ifec.org.hk/web/tc/financial-products/insurance/basics/applying-for-insurance.page"}
+    ]
+  },
+  {
+    "id": "group", "title": "群組好熱鬧，消息可靠嗎？", "prompt": "在茶記看到一段金融群組訊息", "subtitle": "頭銜、轉述、查證方式，留意三個訊號。",
+    "alt": "AI 虛構茶餐廳桌面：阻止對外查證的傳單、要求刪除風險提示的電腦訊息，以及自稱專家的手機帳號。",
+    "keywords": ["群組", "群组", "消息", "財經", "财经", "專家", "专家", "轉發", "转发"],
+    "decoys": [{"id":"cup","visualLabel":"右邊的茶杯"},{"id":"notebook","visualLabel":"右下角合上的筆記簿"}],
+    "clues": [
+      {"id":"secret","title":"阻止查證，值得提高警覺","visualLabel":"左邊「唔好向外查證」的傳單","rect":{"x":3,"y":25,"w":48,"h":36},"explanation":"訊息以群組專屬為由，叫你不要對外查證，會令你難以取得獨立資料。金融資訊應能追溯來源，而不是只讓你相信群內說法。","habit":"先找獨立來源，保留完整訊息供核對。","sourceTitle":"投委會：識別投資群組的詐騙手法","sourceUrl":"https://ifec.org.hk/web/common/static/antiscam/index.html"},
+      {"id":"context","title":"刪走風險，意思就變咗","visualLabel":"電腦上「刪走風險提示，只轉發結論」的訊息","rect":{"x":53,"y":13,"w":46,"h":32},"explanation":"只留下結論、刪去限制和風險，會令別人看不到判斷所需的背景。遇到這類轉述，應找回原文及適用條件，不要把片段當成完整資訊。","habit":"轉發之前，保留來源、背景與限制。","sourceTitle":"投委會：反投資詐騙情境教育","sourceUrl":"https://ifec.org.hk/web/common/static/antiscam/index.html"},
+      {"id":"expert","title":"自稱專家，仍然要核實","visualLabel":"手機上「有頭銜就可信」的帳號訊息","rect":{"x":23,"y":59,"w":31,"h":29},"explanation":"頭銜、頭像及群友稱讚，都不足以單獨證明身分或資訊可靠。應核實對方及訊息來源，而不是因為自稱專家就照單全收。","habit":"把可核實的資料，和自我介紹分開看。","sourceTitle":"投委會：提防群組中的偽冒專家","sourceUrl":"https://ifec.org.hk/web/common/static/antiscam/index.html"}
+    ]
+  }
+]

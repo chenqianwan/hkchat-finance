@@ -1,0 +1,311 @@
+<style>
+#hkhome{max-width:480px;min-height:100svh;margin:auto;color-scheme:light dark;display:flex;flex-direction:column}
+#hkhome *{box-sizing:border-box}
+#hkhome [hidden]{display:none!important}
+#hkhome :is(h1,h2,p){margin:0}
+#hkhome a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+#hkhome :is(a,button):focus-visible{outline:3px solid var(--p-primary);outline-offset:4px}
+#hkhome .home-main{flex:1;display:flex;flex-direction:column;padding:25px 18px max(14px,env(safe-area-inset-bottom));background:radial-gradient(ellipse 90% 160px at 50% 0,var(--p-soft),transparent)}
+#hkhome .home-hero{padding:4px 0 25px;text-align:center}
+#hkhome .home-hero h1{font-size:27px;line-height:1.4;letter-spacing:-.7px;font-weight:650}
+#hkhome .home-hero h1 span{color:var(--p-primary)}
+#hkhome .home-hero p{margin-top:10px;color:var(--p-muted);font-size:13px;line-height:1.8}
+#hkhome .home-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+#hkhome .home-app{position:relative;isolation:isolate;min-width:0;min-height:204px;display:flex;flex-direction:column;padding:14px 14px 15px;border:1px solid light-dark(#ffffff42,#ffffff24);border-radius:19px;background:#25212d;color:#fff;box-shadow:0 4px 14px light-dark(#25142e12,#0000001a);transition:border-color .15s ease,transform .15s ease;touch-action:manipulation}
+#hkhome .home-photo-layer{position:absolute;inset:0;z-index:-1;border-radius:inherit;overflow:hidden;pointer-events:none;background:#302c36}
+#hkhome .home-photo-layer img{display:block;width:100%;height:100%;object-fit:cover;object-position:right center;transform:scale(1.015)}
+#hkhome .home-photo-layer::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#11101948 0%,#11101910 20%,#111019b8 46%,#111019ed 100%)}
+#hkhome .home-app[data-app="council"] .home-photo-layer img{object-position:90% center}
+#hkhome .home-app[data-app="mediation"] .home-photo-layer img{object-position:90% center}
+#hkhome .home-card-top{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:32px}
+#hkhome .home-card-link::after{content:"";position:absolute;inset:0;border-radius:19px}
+#hkhome .home-card-link:focus-visible{outline:none}
+#hkhome .home-card-link:focus-visible::after{outline:3px solid var(--p-primary);outline-offset:4px}
+#hkhome .home-info{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:3px;min-width:48px;min-height:44px;margin:-4px -5px -4px 0;padding:0 4px;border:0;border-radius:11px;background:transparent;color:#fff;font:inherit;font-size:11px;text-shadow:0 1px 5px #0008;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+#hkhome .home-info::before{content:"";position:absolute;inset:8px 0;z-index:-1;border:1px solid #ffffff2b;border-radius:20px;background:#1e192b5e;backdrop-filter:blur(9px)}
+#hkhome .home-info svg{width:13px;height:13px}
+#hkhome .home-info:hover::before,#hkhome .home-info:active::before{background:#382c48bc;border-color:#ffffff80}
+#hkhome .home-app h2{font-family:inherit;font-size:17px;font-weight:600;line-height:1.45;letter-spacing:-.3px;min-height:49px;color:#fff;text-shadow:0 1px 8px #0005}
+#hkhome .home-title-line{display:block}
+#hkhome .home-app p{font-size:12px;color:#f0ebf3;line-height:1.75;margin-top:5px;text-shadow:0 1px 5px #0008;flex:1}
+#hkhome .home-app[data-app="quiz"] .home-card-top{margin-bottom:18px}
+#hkhome .home-quiz-modes{position:relative;z-index:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:12px}
+#hkhome .home-quiz-mode{display:flex;align-items:center;justify-content:center;min-width:0;min-height:44px;padding:6px 4px;border:1px solid #ffffff52;border-radius:24px;background:#211b2ce6;color:#fff;font-size:11.5px;font-weight:600;line-height:1.35;white-space:nowrap;text-align:center;touch-action:manipulation}
+#hkhome .home-quiz-mode:first-child{background:#ead0f5;color:#291832;border-color:#ead0f5}
+#hkhome .home-quiz-mode:hover,#hkhome .home-quiz-mode:active{border-color:#fff;box-shadow:0 0 0 1px #ffffff60}
+#hkhome .home-app[data-app="match"]{grid-column:1/-1;min-height:180px}
+#hkhome .home-app[data-app="match"] .home-card-top{margin-bottom:20px}
+#hkhome .home-app[data-app="match"] h2{min-height:0}
+#hkhome .home-app[data-app="match"] p{max-width:270px}
+#hkhome .home-app[data-app="match"] .home-photo-layer img{object-position:center 55%}
+#hkhome .home-note{display:flex;align-items:center;justify-content:center;gap:7px;margin-top:22px;font-size:11px;line-height:1.8;color:var(--p-muted)}
+#hkhome .home-note svg{width:14px;height:14px;color:var(--p-primary)}
+#hkhome .home-main .p-footer{margin-top:auto;padding:28px 0 0;background:transparent}
+html.home-howto-open,html.home-howto-open body{overflow:hidden}
+#hkhome .home-howto{position:fixed;inset:0;margin:auto auto 0;width:min(100%,480px);max-width:100%;max-height:85dvh;padding:0;border:1px solid var(--p-line);border-bottom:0;border-radius:25px 25px 0 0;background:var(--p-surface);color:var(--p-text);box-shadow:0 -10px 60px #0003;overflow-y:auto;overscroll-behavior:contain}
+#hkhome .home-howto::backdrop{background:#100b18a8;backdrop-filter:blur(3px)}
+#hkhome .home-sheet-grip{width:35px;height:4px;margin:10px auto 0;border-radius:4px;background:var(--p-line)}
+#hkhome .home-sheet-head{display:flex;align-items:center;gap:10px;padding:12px 20px 0}
+#hkhome .home-sheet-label{font-size:12px;color:var(--p-muted);flex:1}
+#hkhome .home-sheet-close{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;margin-right:-8px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--p-muted);cursor:pointer;appearance:none;-webkit-appearance:none;-webkit-tap-highlight-color:transparent}
+#hkhome .home-sheet-close svg{width:21px;height:21px}
+#hkhome .home-sheet-close:active{background:var(--p-soft)}
+@media(hover:hover){#hkhome .home-sheet-close:hover{background:var(--p-soft)}}
+#hkhome .home-sheet-body{padding:14px 22px max(24px,env(safe-area-inset-bottom))}
+#hkhome .home-sheet-body h2{font-size:25px;line-height:1.4;letter-spacing:-.5px}
+#hkhome #home-howto-title:focus{outline:none}
+#hkhome .home-sheet-intro{margin-top:10px;font-size:14px;line-height:1.85;color:var(--p-muted)}
+#hkhome .home-sheet-steps{display:grid;gap:19px;list-style:none;margin:25px 0 27px;padding:0}
+#hkhome .home-sheet-steps li{display:flex;align-items:flex-start;gap:12px}
+#hkhome .home-step-number{display:grid;place-items:center;width:27px;height:27px;flex-shrink:0;border-radius:9px;background:var(--p-soft);color:var(--p-primary);font-size:12px;font-weight:600}
+#hkhome .home-sheet-steps h3{margin:1px 0 5px;font-size:15px;line-height:1.5;font-weight:600}
+#hkhome .home-sheet-steps p{font-size:13px;line-height:1.85;color:var(--p-muted)}
+#hkhome .home-sheet-start{display:flex;align-items:center;justify-content:center;gap:9px;min-height:49px;padding:12px 20px;border-radius:26px;background:var(--p-primary);color:var(--p-on);font-size:14px;font-weight:600}
+#hkhome .home-sheet-start svg{width:18px;height:18px}
+@media(min-width:600px){#hkhome .home-howto{margin:auto;border:1px solid var(--p-line);border-radius:25px}#hkhome .home-sheet-grip{display:none}#hkhome .home-sheet-head{padding-top:18px}}
+@media(hover:hover){#hkhome .home-app:hover{border-color:var(--p-primary);transform:translateY(-2px)}}
+#hkhome .home-app:active{border-color:#d2a4df}
+@media(max-width:350px){#hkhome .home-main{padding:22px 14px max(14px,env(safe-area-inset-bottom))}#hkhome .home-hero h1{font-size:25px}#hkhome .home-hero p{font-size:12px}#hkhome .home-grid{gap:10px}#hkhome .home-app{min-height:200px;padding:13px 12px;border-radius:17px}#hkhome .home-app h2{font-size:16px;min-height:47px}#hkhome .home-app p{font-size:11px;line-height:1.8}#hkhome .home-quiz-modes{gap:5px}#hkhome .home-quiz-mode{padding-inline:3px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){#hkhome .home-app{transition:none}}
+</style>
+<div id="hkhome" lang="zh-HK">
+<header class="p-top">HKChat Legal</header>
+<main class="home-main" id="home-main">
+ <section class="home-hero" aria-labelledby="home-title">
+  <h1 id="home-title">生活法律，<span>玩住識。</span></h1>
+  <p>由細字到街坊事，揀個情境試吓。</p>
+ </section>
+ <section class="home-grid" aria-label="揀選生活法律應用">
+  <article class="home-app" data-app="quiz">
+   <div class="home-photo-layer" aria-hidden="true"><img src="__HOME_PHOTO_QUIZ__" width="640" height="480" alt="" decoding="async"></div>
+   <div class="home-card-top"><button class="home-info" type="button" data-howto="quiz" aria-label="查看法律你識幾多？的玩法" aria-haspopup="dialog" aria-controls="home-howto" aria-expanded="false"><span>玩法</span><i data-lucide="chevron-down" aria-hidden="true"></i></button></div>
+   <h2 id="home-quiz-title"><a class="home-card-link" href="hkchat-quiz-mobile.html" aria-describedby="home-quiz-desc">法律<span class="home-title-line">你識幾多？</span></a></h2>
+   <p id="home-quiz-desc">一人闖關，或試玩 PK。</p>
+   <div class="home-quiz-modes" role="group" aria-label="揀選法律闖關模式">
+    <a class="home-quiz-mode" href="hkchat-quiz-mobile.html#solo">單人闖關</a>
+    <a class="home-quiz-mode" href="hkchat-quiz-mobile.html#pk">線上 PK</a>
+   </div>
+  </article>
+  <article class="home-app" data-app="council">
+   <div class="home-photo-layer" aria-hidden="true"><img src="__HOME_PHOTO_COUNCIL__" width="640" height="480" alt="" decoding="async"></div>
+   <div class="home-card-top"><button class="home-info" type="button" data-howto="council" aria-label="查看今日我做議員的玩法" aria-haspopup="dialog" aria-controls="home-howto" aria-expanded="false"><span>玩法</span><i data-lucide="chevron-down" aria-hidden="true"></i></button></div>
+   <h2 id="home-council-title"><a class="home-card-link" href="hkchat-council-mobile.html" aria-describedby="home-council-desc">今日我做議員</a></h2>
+   <p id="home-council-desc">揀地區、提議案，聽聽街坊點睇。</p>
+  </article>
+  <article class="home-app" data-app="fraud">
+   <div class="home-photo-layer" aria-hidden="true"><img src="__HOME_PHOTO_FRAUD__" width="640" height="480" alt="" decoding="async"></div>
+   <div class="home-card-top"><button class="home-info" type="button" data-howto="fraud" aria-label="查看醒目防騙的玩法" aria-haspopup="dialog" aria-controls="home-howto" aria-expanded="false"><span>玩法</span><i data-lucide="chevron-down" aria-hidden="true"></i></button></div>
+   <h2 id="home-fraud-title"><a class="home-card-link" href="hkchat-fraud-mobile.html" aria-describedby="home-fraud-desc">醒目防騙</a></h2>
+   <p id="home-fraud-desc">聽佢點講，睇吓邊度唔對路。</p>
+  </article>
+  <article class="home-app" data-app="share">
+   <div class="home-photo-layer" aria-hidden="true"><img src="__HOME_PHOTO_SHARE__" width="640" height="480" alt="" decoding="async"></div>
+   <div class="home-card-top"><button class="home-info" type="button" data-howto="share" aria-label="查看法律大找茬的玩法" aria-haspopup="dialog" aria-controls="home-howto" aria-expanded="false"><span>玩法</span><i data-lucide="chevron-down" aria-hidden="true"></i></button></div>
+   <h2 id="home-share-title"><a class="home-card-link" href="hkchat-share-mobile.html" aria-describedby="home-share-desc">法律大找茬</a></h2>
+   <p id="home-share-desc">一張生活圖，搵出三處法律疑點。</p>
+  </article>
+  <article class="home-app" data-app="match">
+   <div class="home-photo-layer" aria-hidden="true"><img src="__HOME_PHOTO_MATCH__" width="640" height="480" alt="" decoding="async"></div>
+   <div class="home-card-top"><button class="home-info" type="button" data-howto="match" aria-label="查看法律連連看的玩法" aria-haspopup="dialog" aria-controls="home-howto" aria-expanded="false"><span>玩法</span><i data-lucide="chevron-down" aria-hidden="true"></i></button></div>
+   <h2 id="home-match-title"><a class="home-card-link" href="hkchat-match-mobile.html" aria-describedby="home-match-desc">法律連連看</a></h2>
+   <p id="home-match-desc">生活情境配法律，連啱一對識多一點。</p>
+  </article>
+  <article class="home-app" data-app="fineprint">
+   <div class="home-photo-layer" aria-hidden="true"><img src="__HOME_PHOTO_FINEPRINT__" width="640" height="480" alt="" decoding="async"></div>
+   <div class="home-card-top"><button class="home-info" type="button" data-howto="fineprint" aria-label="查看細字睇真啲的玩法" aria-haspopup="dialog" aria-controls="home-howto" aria-expanded="false"><span>玩法</span><i data-lucide="chevron-down" aria-hidden="true"></i></button></div>
+   <h2 id="home-fineprint-title"><a class="home-card-link" href="hkchat-fineprint-mobile.html" aria-describedby="home-fineprint-desc">細字睇真啲</a></h2>
+   <p id="home-fineprint-desc">優惠咁吸引，條款有冇伏？</p>
+  </article>
+  <article class="home-app" data-app="mediation">
+   <div class="home-photo-layer" aria-hidden="true"><img src="__HOME_PHOTO_MEDIATION__" width="640" height="480" alt="" decoding="async"></div>
+   <div class="home-card-top"><button class="home-info" type="button" data-howto="mediation" aria-label="查看街坊和事佬的玩法" aria-haspopup="dialog" aria-controls="home-howto" aria-expanded="false"><span>玩法</span><i data-lucide="chevron-down" aria-hidden="true"></i></button></div>
+   <h2 id="home-mediation-title"><a class="home-card-link" href="hkchat-mediation-mobile.html" aria-describedby="home-mediation-desc">街坊和事佬</a></h2>
+   <p id="home-mediation-desc">街坊有拗撬，幫兩邊搵個出路。</p>
+  </article>
+ </section>
+ <p class="home-note"><i data-lucide="book-open" aria-hidden="true"></i>從日常小事，識多一點。</p>
+</main>
+<dialog class="home-howto" id="home-howto" aria-labelledby="home-howto-title" aria-describedby="home-howto-intro">
+ <div class="home-sheet-grip" aria-hidden="true"></div>
+ <div class="home-sheet-head"><span class="home-sheet-label">玩法說明</span><button class="home-sheet-close" type="button" aria-label="關閉玩法說明"><i data-lucide="x" aria-hidden="true"></i></button></div>
+ <div class="home-sheet-body">
+  <h2 id="home-howto-title" tabindex="-1" autofocus></h2>
+  <p class="home-sheet-intro" id="home-howto-intro"></p>
+  <ol class="home-sheet-steps" id="home-howto-steps"></ol>
+  <a class="home-sheet-start" id="home-howto-start" href="hkchat-quiz-mobile.html">開始玩<i data-lucide="arrow-right" aria-hidden="true"></i></a>
+ </div>
+</dialog>
+</div>
+<script>
+{
+const HOWTO = {
+  "quiz": {
+    "intro": "自己闖五關，或者試玩一場法律 PK。",
+    "steps": [
+      [
+        "揀一種玩法",
+        "單人按自己的節奏闖五關；PK 用同組五題跟演示對手比拼。"
+      ],
+      [
+        "作答，再睇解說",
+        "單人逐題睇解說；PK 等雙方交答案後，揭開比分同法律解說。"
+      ],
+      [
+        "睇結果，再挑戰",
+        "完成五題，回看得分；PK 另有勝負結果。線上 PK 目前以演示對手體驗。"
+      ]
+    ]
+  },
+  "fineprint": {
+    "intro": "優惠好吸引，睇埋細字先知有咩條件。",
+    "steps": [
+      [
+        "揀張優惠廣告",
+        "揀現有廣告，或者生成一個新挑戰，試試另一個生活場景。"
+      ],
+      [
+        "圈出要留意的細字",
+        "對照廣告和五條細字，找出重要條件；拿不準，可以點選問題問店員。"
+      ],
+      [
+        "揭開條款裡的玄機",
+        "提交後逐條對答案，睇清額外收費、使用限制，以及哪些只是正常說明。"
+      ]
+    ]
+  },
+  "council": {
+    "intro": "做一次提案人，聽街坊意見，試改一條社區規則。",
+    "steps": [
+      [
+        "揀區，再提案",
+        "從四個香港地區揀一區，再揀當區生活議題，或者寫下想討論的事。"
+      ],
+      [
+        "聽意見、改方案",
+        "聽三位虛構角色表態，勾選可疊加的修訂，也可以補充自己的想法。"
+      ],
+      [
+        "討論同表決",
+        "最多討論三輪，亦可隨時表決；看看哪些修改得到支持，哪些仍有分歧。"
+      ]
+    ]
+  },
+  "fraud": {
+    "intro": "聽說法、問疑點，找出虛構個案中的誤導風險。",
+    "steps": [
+      [
+        "揀個防騙場景",
+        "從留港學生、保健保險等領域揀個場景，或者輸入想練習的話題。"
+      ],
+      [
+        "有疑問，就追問",
+        "每輪可揀一位角色，點預設問題或自己打字追問，再對照調查記錄。"
+      ],
+      [
+        "隨時作出判斷",
+        "最多聊五輪，隨時可以指出誰有騙人風險，揭開線索並學一招防騙方法。"
+      ]
+    ]
+  },
+  "mediation": {
+    "intro": "兩邊都有話要講，由你問一句，幫街坊搵出路。",
+    "steps": [
+      [
+        "先聽兩邊講",
+        "揀個街坊糾紛，或者輸入想練習的矛盾，先聽雙方各自最在意甚麼。"
+      ],
+      [
+        "試一個協調方案",
+        "提出問題，再組合可行的安排；聽雙方回應，調整未能談攏的部分。"
+      ],
+      [
+        "整理共識同分歧",
+        "最多談三輪，也可隨時收尾；分清已同意的安排，以及仍要處理的分歧。"
+      ]
+    ]
+  },
+  "share": {
+    "intro": "一幕香港日常，藏住三個值得留意的法律問題。",
+    "steps": [
+      [
+        "AI 開個新場景",
+        "揀茶餐廳、搵工或街坊市集，亦可輸入想練習的題材。"
+      ],
+      [
+        "點出三處疑點",
+        "直接點圖片，找出不妥的細節；卡住可以用提示，也可隨時看答案。"
+      ],
+      [
+        "睇解說，再挑戰",
+        "對照圖片睇法律知識與來源，再換一幕生活情境。"
+      ]
+    ]
+  },
+  "match": {
+    "intro": "把生活小事，連到它背後的法律知識。",
+    "steps": [
+      [
+        "AI 出四組情境",
+        "揀消費、打工或私隱題材，開始一局四對的配對遊戲。"
+      ],
+      [
+        "左右各點一下",
+        "先揀生活情境，再揀相關法律知識；連啱即有一句解說，連錯可以再試。"
+      ],
+      [
+        "配齊，再變一局",
+        "回看學識的概念，再生成另一組情境，練習把知識用在不同生活場合。"
+      ]
+    ]
+  }
+};
+(() => {
+  const root = document.getElementById('hkhome');
+  const dialog = root.querySelector('#home-howto');
+  const start = root.querySelector('#home-howto-start');
+  let trigger = null;
+  root.addEventListener('click', event => {
+    const button = event.target.closest('[data-howto]');
+    const copy = button && HOWTO[button.dataset.howto];
+    if (!copy || dialog.open) return;
+    const card = button.closest('.home-app');
+    trigger = button;
+    root.querySelector('#home-howto-title').textContent = card.querySelector('h2').textContent;
+    root.querySelector('#home-howto-intro').textContent = copy.intro;
+    root.querySelector('#home-howto-steps').replaceChildren(...copy.steps.map(([title, text], index) => {
+      const item = document.createElement('li');
+      const number = document.createElement('span');
+      number.className = 'home-step-number';
+      number.textContent = index + 1;
+      number.setAttribute('aria-hidden', 'true');
+      const body = document.createElement('div');
+      const heading = document.createElement('h3');
+      heading.textContent = title;
+      const paragraph = document.createElement('p');
+      paragraph.textContent = text;
+      body.append(heading, paragraph);
+      item.append(number, body);
+      return item;
+    }));
+    start.href = card.querySelector('.home-card-link').href;
+    button.setAttribute('aria-expanded', 'true');
+    dialog.showModal();
+    root.querySelector('#home-howto-title').focus({ preventScroll: true });
+    document.documentElement.classList.add('home-howto-open');
+    dialog.scrollTop = 0;
+  });
+  root.querySelector('.home-sheet-close').addEventListener('click', () => dialog.close());
+  start.addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', event => {
+    if (event.target !== dialog) return;
+    const rect = dialog.getBoundingClientRect();
+    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close();
+  });
+  dialog.addEventListener('close', () => {
+    document.documentElement.classList.remove('home-howto-open');
+    trigger?.setAttribute('aria-expanded', 'false');
+    trigger?.focus({ preventScroll: true });
+  });
+})();
+}
+</script>

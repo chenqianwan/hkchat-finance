@@ -1,0 +1,62 @@
+[
+  {
+    "id": "bank",
+    "label": "銀行資料安全",
+    "photo": "finance",
+    "icon": "landmark",
+    "description": "短訊連結、身份核實、數碼保安",
+    "placeholder": "例如：客服叫我講出一次性密碼",
+    "topics": [
+      "短訊要求驗證密碼",
+      "客服要求共享螢幕"
+    ],
+    "cases": [
+      {
+        "key": "bank-code"
+      },
+      {
+        "key": "bank-screen"
+      }
+    ]
+  },
+  {
+    "id": "insurance",
+    "label": "保險服務界線",
+    "photo": "insurance",
+    "icon": "shield-check",
+    "description": "代辦權限、承保狀態、完整條款",
+    "placeholder": "例如：代辦話交齊文件就有保障",
+    "topics": [
+      "代辦保證批出理賠",
+      "收齊文件等於承保？"
+    ],
+    "cases": [
+      {
+        "key": "insurance-claim"
+      },
+      {
+        "key": "insurance-cover"
+      }
+    ]
+  },
+  {
+    "id": "group",
+    "label": "金融群組話術",
+    "photo": "work",
+    "icon": "messages-square",
+    "description": "冒認背書、截圖失真、群內見證",
+    "placeholder": "例如：群主用截圖聲稱獲官方認可",
+    "topics": [
+      "群組截圖聲稱官方認可",
+      "群友見證原來係示範"
+    ],
+    "cases": [
+      {
+        "key": "group-logo"
+      },
+      {
+        "key": "group-testimony"
+      }
+    ]
+  }
+]

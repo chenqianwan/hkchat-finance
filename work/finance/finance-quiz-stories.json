@@ -1,0 +1,626 @@
+[
+  {
+    "id": "bank",
+    "title": "手機銀行的一天",
+    "aliases": [
+      "銀行",
+      "手机银行",
+      "手機",
+      "銀行服務",
+      "網銀",
+      "网银",
+      "網上銀行",
+      "短訊",
+      "短讯",
+      "密碼",
+      "密码",
+      "驗證",
+      "验证",
+      "bank"
+    ],
+    "intro": "跟阿澄由晨早搭車到放工返屋企。手機接連彈出訊息：有啲要停一停，有啲可以循可靠途徑查證。你會點分？",
+    "setting": "阿澄的一天 · 香港 · 虛構情境",
+    "questions": [
+      {
+        "id": "bank-link",
+        "scene": "返工途中 · 帳戶提示",
+        "speaker": "阿澄",
+        "statement": "短訊話我個戶口要更新資料，仲附咗登入連結。個名稱睇落同銀行一樣。",
+        "question": "阿澄第一步應該點做？",
+        "options": [
+          "照撳連結，睇到銀行標誌就登入",
+          "唔經短訊連結，自己開官方 App 查證",
+          "先轉發畀同事，等佢試登入"
+        ],
+        "correct": 1,
+        "explanation": "顯示名稱同標誌唔足以核實來源。自己開一向使用嘅官方 App，或經可靠途徑搵銀行查詢，避免喺陌生連結輸入登入資料。",
+        "takeaway": "查證訊息，自己開可靠渠道。",
+        "legalLabel": "個人數碼鎖匙 · 核實登入途徑",
+        "sourceUrl": "https://www.hkma.gov.hk/media/chi/doc/key-functions/banking-stability/consumer-corner/Personal_Digital_Key_Chi_Text_Final.pdf",
+        "sourceLabel": "金管局：數碼 Key 睇緊啲",
+        "twist": {
+          "id": "bank-link-twist",
+          "scene": "返工途中 · 熟悉的對話串",
+          "speaker": "阿澄",
+          "statement": "條短訊出現喺舊有銀行訊息嘅同一個對話串，咁係咪可以直接登入？",
+          "question": "同一對話串足以證明條連結可靠嗎？",
+          "options": [
+            "足夠，舊對話串唔會出錯",
+            "未足夠，仍然自己開官方渠道查證",
+            "只要朋友收過就可以"
+          ],
+          "correct": 1,
+          "explanation": "訊息出現喺熟悉位置，仍唔代表其中連結可信。核實方式唔變：唔循來歷未明連結登入，自己開官方渠道。",
+          "takeaway": "熟悉的外觀，唔等於已核實。",
+          "legalLabel": "個人數碼鎖匙 · 識別可疑訊息",
+          "sourceUrl": "https://www.hkma.gov.hk/media/chi/doc/key-functions/banking-stability/consumer-corner/Personal_Digital_Key_Chi_Text_Final.pdf",
+          "sourceLabel": "金管局：數碼 Key 睇緊啲",
+          "changed": "只改咗訊息出現位置，連結來源仍未核實。"
+        }
+      },
+      {
+        "id": "bank-code",
+        "scene": "午飯時間 · 自稱客服",
+        "speaker": "來電者",
+        "statement": "我幫你取消可疑操作。你讀出手機收到嘅一次性密碼，我就可以處理。",
+        "question": "阿澄應該點回應？",
+        "options": [
+          "讀出密碼，因為對方係幫手",
+          "只講密碼前半段",
+          "唔透露密碼，收線後經官方途徑聯絡銀行"
+        ],
+        "correct": 2,
+        "explanation": "一次性密碼都屬於需要保密嘅認證資料。來電者嘅說法未經核實，唔應向佢透露；自行聯絡銀行查證。",
+        "takeaway": "一次性密碼，同樣要保密。",
+        "legalLabel": "個人數碼鎖匙 · 保護認證資料",
+        "sourceUrl": "https://www.hkma.gov.hk/media/chi/doc/key-functions/banking-stability/consumer-corner/Personal_Digital_Key_Chi_Text_Final.pdf",
+        "sourceLabel": "金管局：數碼 Key 睇緊啲",
+        "twist": {
+          "id": "bank-code-twist",
+          "scene": "午飯時間 · 熟人幫手",
+          "speaker": "阿澄的表哥",
+          "statement": "我識用，將你嘅網銀密碼畀我，我幫你搞掂。",
+          "question": "對方係熟人，保密原則有冇改變？",
+          "options": [
+            "冇，密碼應由自己保管",
+            "有，親人可以共用密碼",
+            "有，之後改密碼就唔使理"
+          ],
+          "correct": 0,
+          "explanation": "信任對方都唔等於應該共用登入資料。可以請佢講解步驟，但密碼由自己保管同輸入。",
+          "takeaway": "可以請人解說，唔使交出密碼。",
+          "legalLabel": "個人數碼鎖匙 · 勿與他人分享密碼",
+          "sourceUrl": "https://www.hkma.gov.hk/media/chi/doc/key-functions/banking-stability/consumer-corner/Personal_Digital_Key_Chi_Text_Final.pdf",
+          "sourceLabel": "金管局：數碼 Key 睇緊啲",
+          "changed": "來電者換成熟人，但提出嘅仍然係共用密碼。"
+        }
+      },
+      {
+        "id": "bank-app",
+        "scene": "下午茶 · 更新提示",
+        "speaker": "群組訊息",
+        "statement": "新版銀行 App 喺呢個附件，唔使經應用程式商店，裝完更方便。",
+        "question": "邊個做法較合適？",
+        "options": [
+          "先裝好，再問銀行",
+          "經銀行官方指引，到可信來源核實更新",
+          "睇下載人數多就安裝"
+        ],
+        "correct": 1,
+        "explanation": "來歷未明嘅安裝檔可能有風險。應按銀行官方指引，經官方應用程式商店或可信來源更新，並保持裝置安全更新。",
+        "takeaway": "更新 App，都要先核實來源。",
+        "legalLabel": "個人數碼鎖匙 · 安全下載與更新",
+        "sourceUrl": "https://www.hkma.gov.hk/media/chi/doc/key-functions/banking-stability/consumer-corner/Personal_Digital_Key_Chi_Text_Final.pdf",
+        "sourceLabel": "金管局：數碼 Key 睇緊啲",
+        "twist": {
+          "id": "bank-app-twist",
+          "scene": "下午茶 · 正式更新",
+          "speaker": "阿澄",
+          "statement": "今次係我自己打開官方應用程式商店，核對開發者後見到更新。",
+          "question": "係咪所有更新提示都應該一律拒絕？",
+          "options": [
+            "係，舊版本永遠較安全",
+            "唔係，核實來源後應保持軟件更新",
+            "只要圖示相同就唔使核對"
+          ],
+          "correct": 1,
+          "explanation": "重點係可信來源及核實，唔係永遠唔更新。保持作業系統、App 同安全修補更新，有助保護裝置。",
+          "takeaway": "先核實來源，再保持更新。",
+          "legalLabel": "個人數碼鎖匙 · 保持最新安全修補",
+          "sourceUrl": "https://www.hkma.gov.hk/media/chi/doc/key-functions/banking-stability/consumer-corner/Personal_Digital_Key_Chi_Text_Final.pdf",
+          "sourceLabel": "金管局：數碼 Key 睇緊啲",
+          "changed": "今次由自己進入官方商店，並已核對開發者資料。"
+        }
+      },
+      {
+        "id": "bank-alert",
+        "scene": "放工路上 · 陌生通知",
+        "speaker": "阿澄",
+        "statement": "收到一項我冇做過嘅帳戶操作通知。我諗住等到月結單先睇。",
+        "question": "而家較合適嘅做法係？",
+        "options": [
+          "等下次有空先處理",
+          "直接回覆短訊提供登入資料",
+          "經官方途徑盡快聯絡銀行核實"
+        ],
+        "correct": 2,
+        "explanation": "陌生帳戶操作需要及早核實。自行經銀行可靠渠道聯絡，唔好用通知內可疑連結或回覆敏感資料。",
+        "takeaway": "發現異常，及早向銀行查證。",
+        "legalLabel": "電子銀行 · 留意帳戶通知及異常",
+        "sourceUrl": "https://www.hkma.gov.hk/chi/smart-consumers/frequently-asked-questions/banking/p/2/",
+        "sourceLabel": "金管局：銀行服務常見問題",
+        "twist": {
+          "id": "bank-alert-twist",
+          "scene": "放工路上 · 原來未有動作",
+          "speaker": "阿澄",
+          "statement": "通知寫明有人嘗試登入，但我自己冇登入。未見其他操作，就一定冇問題？",
+          "question": "可以只因未見其他操作而忽略嗎？",
+          "options": [
+            "可以，未成功就完全唔使理",
+            "唔宜，仍應循官方渠道查證及檢查帳戶安全",
+            "可以，只要刪咗通知"
+          ],
+          "correct": 1,
+          "explanation": "未見其他操作唔代表可以確認冇風險。用可靠渠道核實通知同帳戶狀況，再按銀行指引處理。",
+          "takeaway": "未確認異常原因前，唔好只靠估。",
+          "legalLabel": "電子銀行 · 可疑帳戶活動",
+          "sourceUrl": "https://www.hkma.gov.hk/chi/smart-consumers/frequently-asked-questions/banking/p/2/",
+          "sourceLabel": "金管局：銀行服務常見問題",
+          "changed": "通知由已出現嘅操作，改為你冇發起嘅登入嘗試。"
+        }
+      },
+      {
+        "id": "bank-statement",
+        "scene": "返到屋企 · 電子結單",
+        "speaker": "阿澄",
+        "statement": "我自己開官方銀行 App，佢要我登入先睇到電子結單。一定係可疑要求？",
+        "question": "邊個理解較準確？",
+        "options": [
+          "要求登入就一定係假",
+          "官方渠道查閱個人結單，需要核實身份可以係正常安排",
+          "電子結單應該公開畀所有人睇"
+        ],
+        "correct": 1,
+        "explanation": "個人結單涉及帳戶資料。銀行可以要求客戶經正式登入程序核實身份；仍要確認使用嘅渠道同登入畫面正常。",
+        "takeaway": "身份核實，要連渠道一齊睇。",
+        "legalLabel": "電子銀行 · 電子結單與身份核實",
+        "sourceUrl": "https://www.hkma.gov.hk/chi/smart-consumers/frequently-asked-questions/banking/p/2/",
+        "sourceLabel": "金管局：銀行服務常見問題",
+        "twist": {
+          "id": "bank-statement-twist",
+          "scene": "返到屋企 · 突然彈窗",
+          "speaker": "阿澄",
+          "statement": "我從陌生電郵連結開結單，頁面突然叫我提供額外密碼，畫面同平時唔同。",
+          "question": "呢次應該點做？",
+          "options": [
+            "有結單兩個字就可以照填",
+            "將資料交齊，睇下會唔會成功",
+            "停止輸入，自己經官方渠道查證"
+          ],
+          "correct": 2,
+          "explanation": "今次途徑未核實，而且畫面有異樣。唔應因為聲稱係結單就交資料，應停止操作並自行聯絡銀行查證。",
+          "takeaway": "正常服務，都要經正常途徑使用。",
+          "legalLabel": "個人數碼鎖匙 · 留意登入過程異樣",
+          "sourceUrl": "https://www.hkma.gov.hk/media/chi/doc/key-functions/banking-stability/consumer-corner/Personal_Digital_Key_Chi_Text_Final.pdf",
+          "sourceLabel": "金管局：數碼 Key 睇緊啲",
+          "changed": "由自己開官方 App，變成陌生電郵連結同異常彈窗。"
+        }
+      }
+    ]
+  },
+  {
+    "id": "insurance",
+    "title": "第一次睇保單",
+    "aliases": [
+      "保險",
+      "保险",
+      "保單",
+      "保单",
+      "保障",
+      "投保",
+      "醫療",
+      "医疗",
+      "續保",
+      "续保",
+      "insurance"
+    ],
+    "intro": "阿晴幫自己整理一份虛構保險文件。宣傳頁寫得簡單，申請表同條款就多幾層細節。陪佢逐步睇清楚，唔急住落決定。",
+    "setting": "阿晴的文件夾 · 香港 · 虛構情境",
+    "questions": [
+      {
+        "id": "insurance-disclose",
+        "scene": "午休 · 填申請表",
+        "speaker": "阿晴",
+        "statement": "表格問過往病歷。有一項我覺得好輕微，係咪可以自己決定唔填？",
+        "question": "較合適嘅做法係？",
+        "options": [
+          "按問題如實提供完整準確資料，有疑問先問清楚",
+          "自己覺得唔嚴重就唔使填",
+          "只填最近發生嘅事就夠"
+        ],
+        "correct": 0,
+        "explanation": "唔應自行隱去被問及嘅資料。按問題如實填寫；唔清楚涵蓋範圍時向保險公司確認，保存回覆。",
+        "takeaway": "填申請表，唔好自行省略被問資料。",
+        "legalLabel": "投保資料 · 真實及準確披露",
+        "sourceUrl": "https://www.ifec.org.hk/web/tc/financial-products/insurance/basics/applying-for-insurance.page",
+        "sourceLabel": "投委會：申請投保",
+        "twist": {
+          "id": "insurance-disclose-twist",
+          "scene": "午休 · 記唔清日期",
+          "speaker": "阿晴",
+          "statement": "我記得有求診，但確實日期唔肯定。求其填一日，好過留低疑問？",
+          "question": "阿晴應該點處理？",
+          "options": [
+            "估一日，之後唔使理",
+            "查閱紀錄並向保險公司說明不確定之處",
+            "既然唔記得，就當冇發生"
+          ],
+          "correct": 1,
+          "explanation": "準確披露包括唔將猜測當事實。可以先查紀錄，並向保險公司了解應如何補充，避免留下錯誤資料。",
+          "takeaway": "唔肯定嘅資料，查清楚再確認。",
+          "legalLabel": "投保資料 · 核對與補充",
+          "sourceUrl": "https://www.ifec.org.hk/web/tc/financial-products/insurance/basics/applying-for-insurance.page",
+          "sourceLabel": "投委會：申請投保",
+          "changed": "今次唔係想省略，而係部分資料未能確認。"
+        }
+      },
+      {
+        "id": "insurance-exclusions",
+        "scene": "放工 · 睇宣傳頁",
+        "speaker": "阿晴",
+        "statement": "宣傳頁寫「安心保障」。咁係咪遇到任何健康情況都會受保？",
+        "question": "應該點理解？",
+        "options": [
+          "係，宣傳用語等於所有情況都受保",
+          "有圖畫示範嘅情況就一定受保",
+          "要睇正式條款、保障範圍同除外責任"
+        ],
+        "correct": 2,
+        "explanation": "概括宣傳用語唔能代替保單內容。醫療保障一般有條件同除外責任，要核對正式文件，唔能單憑口號判斷。",
+        "takeaway": "先睇範圍同除外，再理解保障。",
+        "legalLabel": "保單條款 · 保障範圍及除外責任",
+        "sourceUrl": "https://www.ifec.org.hk/web/tc/financial-products/insurance/product-types/medical-insurance.page",
+        "sourceLabel": "投委會：醫療保險",
+        "twist": {
+          "id": "insurance-exclusions-twist",
+          "scene": "放工 · 朋友的經驗",
+          "speaker": "阿晴的朋友",
+          "statement": "我之前喺另一份保單成功申請過，所以你呢份都一定得。",
+          "question": "朋友嘅經驗可以保證結果嗎？",
+          "options": [
+            "可以，情況相似就一樣",
+            "唔可以，要睇各自保單條款同實際情況",
+            "可以，只要同一類保險"
+          ],
+          "correct": 1,
+          "explanation": "不同保單嘅保障、定義及除外責任可以不同。朋友嘅經驗可作提問線索，唔係你份保單嘅結果保證。",
+          "takeaway": "別人的保單，唔等於自己的條款。",
+          "legalLabel": "保單條款 · 個別保障條件",
+          "sourceUrl": "https://www.ifec.org.hk/web/tc/financial-products/insurance/product-types/index.page",
+          "sourceLabel": "投委會：保險產品種類",
+          "changed": "資料來源由宣傳口號，換成另一份保單嘅個人經驗。"
+        }
+      },
+      {
+        "id": "insurance-form",
+        "scene": "傍晚 · 簽署之前",
+        "speaker": "介紹人",
+        "statement": "你先喺空白申請表簽名啦，其餘資料我之後幫你補返。",
+        "question": "阿晴較合適嘅回應係？",
+        "options": [
+          "先簽，再等對方通知",
+          "等內容填妥並核對清楚，先考慮簽署",
+          "簽細啲個名就冇問題"
+        ],
+        "correct": 1,
+        "explanation": "唔應簽署空白表格。簽署前要確定內容準確，而且明白條款及條件，唔把核對責任留待之後。",
+        "takeaway": "內容未填妥，唔急住簽。",
+        "legalLabel": "申請文件 · 勿簽空白表格",
+        "sourceUrl": "https://www.ifec.org.hk/web/tc/financial-products/insurance/basics/applying-for-insurance.page",
+        "sourceLabel": "投委會：申請投保",
+        "twist": {
+          "id": "insurance-form-twist",
+          "scene": "傍晚 · 表格已填好",
+          "speaker": "阿晴",
+          "statement": "今次表格填好咗，但有兩項唔係我提供嘅資料。可以簽完先更正嗎？",
+          "question": "今次需要做邊一步？",
+          "options": [
+            "先核對及更正，明白內容後再確認",
+            "已經填好，就唔需要再睇",
+            "先簽名，錯資料自然會失效"
+          ],
+          "correct": 0,
+          "explanation": "表格填滿唔代表內容正確。應先處理疑問及錯誤，再確認文件，亦要保留最終版本。",
+          "takeaway": "有字唔等於正確，確認前先核對。",
+          "legalLabel": "申請文件 · 確認內容準確",
+          "sourceUrl": "https://www.ifec.org.hk/web/tc/financial-products/insurance/basics/applying-for-insurance.page",
+          "sourceLabel": "投委會：申請投保",
+          "changed": "空白表格變成已填表格，但部分內容有出入。"
+        }
+      },
+      {
+        "id": "insurance-cover",
+        "scene": "夜晚 · 條款小字",
+        "speaker": "阿晴",
+        "statement": "條款提到等候期。我想知道，係咪保單一生效，所有項目就即刻適用？",
+        "question": "邊個理解較合適？",
+        "options": [
+          "所有保障一定即刻開始",
+          "只要有保單編號，就唔使睇等候期",
+          "要按該項保障嘅等候期、定義及其他條件判斷"
+        ],
+        "correct": 2,
+        "explanation": "部分醫療保障會設等候期或其他適用條件。生效日期本身，唔能取代對個別保障條款嘅核對。",
+        "takeaway": "生效日期，唔係唯一適用條件。",
+        "legalLabel": "醫療保障 · 等候期與保障條件",
+        "sourceUrl": "https://www.ifec.org.hk/web/tc/blog/2025/05/understanding-medical-and-critical-illness-insurance.page",
+        "sourceLabel": "投委會：看懂醫療及危疾保險",
+        "twist": {
+          "id": "insurance-cover-twist",
+          "scene": "夜晚 · 等候期已過",
+          "speaker": "阿晴",
+          "statement": "假設條款列出嘅等候期已過，就代表今次情況一定受保？",
+          "question": "可以直接下定論嗎？",
+          "options": [
+            "可以，等候期係唯一條件",
+            "唔可以，仲要睇保障定義、除外責任等條件",
+            "可以，唔需要睇任何文件"
+          ],
+          "correct": 1,
+          "explanation": "等候期過咗，只係滿足其中一項條件；仍需按保單所列保障及除外責任，核對實際情況。",
+          "takeaway": "一項條件符合，唔代表所有條件符合。",
+          "legalLabel": "醫療保障 · 整體條款判讀",
+          "sourceUrl": "https://www.ifec.org.hk/web/tc/blog/2025/05/understanding-medical-and-critical-illness-insurance.page",
+          "sourceLabel": "投委會：看懂醫療及危疾保險",
+          "changed": "今次已滿足等候期，但其他保障條件未核對。"
+        }
+      },
+      {
+        "id": "insurance-record",
+        "scene": "週末 · 整理文件夾",
+        "speaker": "阿晴",
+        "statement": "有咗宣傳單張，保單同申請時交過嘅文件副本可唔可以唔留？",
+        "question": "邊種整理方式較合適？",
+        "options": [
+          "只保留宣傳圖，因為比較易睇",
+          "只記住介紹人嘅稱呼",
+          "保留正式保單、已提交文件及重要往來紀錄"
+        ],
+        "correct": 2,
+        "explanation": "正式保單列出保障細節。保存保單及提交文件副本，方便日後核對、查詢、續保或提出申請時使用。",
+        "takeaway": "正式文件同提交紀錄，一齊留底。",
+        "legalLabel": "文件管理 · 保存保單與證明文件",
+        "sourceUrl": "https://www.ifec.org.hk/web/tc/financial-products/insurance/basics/applying-for-insurance.page",
+        "sourceLabel": "投委會：申請投保",
+        "twist": {
+          "id": "insurance-record-twist",
+          "scene": "週末 · 收到續保通知",
+          "speaker": "阿晴",
+          "statement": "收到新嘅續保通知。我有舊保單，係咪唔需要再睇新文件？",
+          "question": "下一步應該點做？",
+          "options": [
+            "核對新通知及條款，唔清楚就向保險公司確認",
+            "舊文件可以代替所有新通知",
+            "只睇標題有續保兩個字就夠"
+          ],
+          "correct": 0,
+          "explanation": "續保安排同條件要按保單及最新通知理解。保留舊文件有助對照，但唔能代替閱讀新文件。",
+          "takeaway": "留底之餘，亦要睇清最新通知。",
+          "legalLabel": "保單管理 · 核對續保安排",
+          "sourceUrl": "https://www.ifec.org.hk/web/tc/financial-products/insurance/product-types/medical-insurance.page",
+          "sourceLabel": "投委會：醫療保險",
+          "changed": "整理已完成，故事轉到收到一份新續保通知。"
+        }
+      }
+    ]
+  },
+  {
+    "id": "daily",
+    "title": "整理生活收支",
+    "aliases": [
+      "日常",
+      "生活",
+      "收支",
+      "預算",
+      "预算",
+      "理財",
+      "理财",
+      "資訊",
+      "资讯",
+      "記帳",
+      "记账",
+      "儲蓄",
+      "储蓄",
+      "daily"
+    ],
+    "intro": "週末，阿朗決定整理生活收支。由一疊收據，到群組轉來嘅理財貼文，先分清資料，再想清楚每個判斷嘅根據。",
+    "setting": "阿朗的週末 · 香港 · 虛構情境",
+    "questions": [
+      {
+        "id": "daily-record",
+        "scene": "星期六 · 翻開收據",
+        "speaker": "阿朗",
+        "statement": "我只記得幾項大開支，其餘細項冇記。用印象做預算應該差唔多？",
+        "question": "較有用嘅準備係？",
+        "options": [
+          "收集紀錄，整理實際收入同各類開支",
+          "只記最容易諗起嘅項目",
+          "照抄朋友嘅分類同估計"
+        ],
+        "correct": 0,
+        "explanation": "完整紀錄有助睇清收支習慣。收集結單、收據等資料，再按實際情況分類，會比只憑印象更可靠。",
+        "takeaway": "先整理實際紀錄，再理解收支。",
+        "legalLabel": "收支資料 · 收集紀錄與分類",
+        "sourceUrl": "https://www.ifec.org.hk/web/tc/moneyessentials/budgeting.page",
+        "sourceLabel": "投委會：制定個人收支預算",
+        "twist": {
+          "id": "daily-record-twist",
+          "scene": "星期六 · 零散紀錄",
+          "speaker": "阿朗",
+          "statement": "有電子收據、有紙本，仲有啲記喺記事簿。係咪一定要全部同一格式先有用？",
+          "question": "應該重視邊一點？",
+          "options": [
+            "格式一定要完全相同",
+            "只留電子資料，紙本全部唔計",
+            "把不同紀錄整理核對，避免遺漏或重複"
+          ],
+          "correct": 2,
+          "explanation": "資料可以來自不同地方。關鍵係有系統地整理、核對同分類，唔因格式不同就遺漏或重複記錄。",
+          "takeaway": "格式可以不同，資料要對得上。",
+          "legalLabel": "收支資料 · 整合資料來源",
+          "sourceUrl": "https://www.ifec.org.hk/web/tc/moneyessentials/budgeting.page",
+          "sourceLabel": "投委會：制定個人收支預算",
+          "changed": "由缺少紀錄，變成資料齊備但散落不同地方。"
+        }
+      },
+      {
+        "id": "daily-annual",
+        "scene": "星期六 · 漏咗的項目",
+        "speaker": "阿朗",
+        "statement": "我只列每月都會出現嘅項目。按年處理嘅生活開支，等發生先諗？",
+        "question": "做預算時應該點處理？",
+        "options": [
+          "唔係每月發生，就唔屬於開支",
+          "把已知非每月開支都列入考慮",
+          "只要未收到通知就永遠唔使記"
+        ],
+        "correct": 1,
+        "explanation": "預算唔只包括每月重複項目。已知嘅按年或一次性開支，都需要提前列入整理同考慮。",
+        "takeaway": "唔係月月出現，都可能要預先考慮。",
+        "legalLabel": "收支預算 · 非每月及一次性開支",
+        "sourceUrl": "https://www.ifec.org.hk/web/tc/moneyessentials/budgeting.page",
+        "sourceLabel": "投委會：制定個人收支預算",
+        "twist": {
+          "id": "daily-annual-twist",
+          "scene": "星期六 · 完全未確認",
+          "speaker": "阿朗",
+          "statement": "朋友話我下年可能有一項開支，但我未確認會唔會發生。應該當成已發生嘅實際紀錄？",
+          "question": "點樣區分較清楚？",
+          "options": [
+            "將預計項目同已發生紀錄分開，確認後更新",
+            "全部當成已發生",
+            "未確定就永遠唔可以再檢視"
+          ],
+          "correct": 0,
+          "explanation": "實際紀錄同預算假設係不同資料。可以另列待確認項目，之後核實及更新，避免將估計當成已發生。",
+          "takeaway": "實際與預計，分開記清楚。",
+          "legalLabel": "收支預算 · 區分紀錄與預計",
+          "sourceUrl": "https://www.ifec.org.hk/web/tc/moneyessentials/budgeting.page",
+          "sourceLabel": "投委會：制定個人收支預算",
+          "changed": "由已知開支，改為未確定會否發生嘅項目。"
+        }
+      },
+      {
+        "id": "daily-needs",
+        "scene": "星期日 · 購物清單",
+        "speaker": "阿朗",
+        "statement": "朋友個個都有新配件，我都想要。只要好想擁有，就一定係必要開支？",
+        "question": "較合適嘅判斷方式係？",
+        "options": [
+          "流行就一定必要",
+          "朋友擁有就一定必要",
+          "按自己實際用途，分清需要同想要"
+        ],
+        "correct": 2,
+        "explanation": "需要同想要要按具體生活情況判斷。流行程度唔能代替實際用途；整理優先次序時，應先諗清楚用途同替代方式。",
+        "takeaway": "想擁有，同有實際需要要分清。",
+        "legalLabel": "財務策劃 · 需要、意願與優先次序",
+        "sourceUrl": "https://www.ifec.org.hk/web/common/pdf/publication/tc/ifec-financial-planning-booklet-tc.pdf",
+        "sourceLabel": "投委會：財務策劃",
+        "twist": {
+          "id": "daily-needs-twist",
+          "scene": "星期日 · 用途變咗",
+          "speaker": "阿朗",
+          "statement": "舊裝置壞咗，影響我處理必要工作。今次仍可直接當成純粹追潮流？",
+          "question": "邊個理解較準確？",
+          "options": [
+            "所有新裝置都一定係想要",
+            "用途改變，要重新判斷實際需要同替代方式",
+            "只要朋友都有，就唔需要思考"
+          ],
+          "correct": 1,
+          "explanation": "同一物品喺不同情況可能有不同用途。今次有必要工作需求，應重新評估，而唔係只沿用上次分類。",
+          "takeaway": "分類睇用途，唔只睇物品名稱。",
+          "legalLabel": "財務策劃 · 按實際情況整理需要",
+          "sourceUrl": "https://www.ifec.org.hk/web/common/pdf/publication/tc/ifec-financial-planning-booklet-tc.pdf",
+          "sourceLabel": "投委會：財務策劃",
+          "changed": "由追潮流，變成舊裝置故障並影響必要工作。"
+        }
+      },
+      {
+        "id": "daily-info",
+        "scene": "星期日 · 群組貼文",
+        "speaker": "阿朗",
+        "statement": "群組轉咗篇一般理財教育文章。可唔可以當成已經全面了解我個人情況嘅方案？",
+        "question": "邊個理解較準確？",
+        "options": [
+          "可以，文章對所有人都一樣適用",
+          "唔可以，一般教育資料未考慮個別情況",
+          "只要轉發次數多就可以"
+        ],
+        "correct": 1,
+        "explanation": "一般教育內容可幫助理解概念，但冇全面評估讀者個別情況。先了解資料用途同限制，唔把通用例子當成個人結論。",
+        "takeaway": "一般教育資訊，唔等於個人方案。",
+        "legalLabel": "金融資訊 · 理解教育資料的用途",
+        "sourceUrl": "https://www.ifec.org.hk/web/tc/other-resources/liability-statement.page",
+        "sourceLabel": "投委會：網站及社交媒體專頁免責聲明",
+        "twist": {
+          "id": "daily-info-twist",
+          "scene": "星期日 · 找到原文",
+          "speaker": "阿朗",
+          "statement": "我搵返投委會原文，知道出處。咁係咪代表文章已替我作出個人決定？",
+          "question": "查到出處之後，邊點仍然要記住？",
+          "options": [
+            "來源可靠就代表所有人都應作同一決定",
+            "有機構名稱就代表本遊戲獲該機構認可",
+            "可靠出處有助學習，但仍係一般資料"
+          ],
+          "correct": 2,
+          "explanation": "核實出處有助正確理解資訊；內容仍有其用途同適用範圍。引用資料亦唔代表來源機構認可本遊戲。",
+          "takeaway": "核實出處之後，仍要睇適用範圍。",
+          "legalLabel": "金融資訊 · 來源與適用範圍",
+          "sourceUrl": "https://www.ifec.org.hk/web/tc/other-resources/liability-statement.page",
+          "sourceLabel": "投委會：網站及社交媒體專頁免責聲明",
+          "changed": "由群組轉載，變成已找到原文；資料仍屬一般教育。"
+        }
+      },
+      {
+        "id": "daily-review",
+        "scene": "週末尾聲 · 完成初稿",
+        "speaker": "阿朗",
+        "statement": "整理完一次收支，之後生活有變都唔使再檢視？",
+        "question": "較合適嘅習慣係？",
+        "options": [
+          "定期比對實際紀錄，有變化再調整",
+          "做好一次就永遠唔需要改",
+          "只睇朋友有冇改計劃"
+        ],
+        "correct": 0,
+        "explanation": "生活安排同收支項目會改變。定期檢視實際紀錄及進度，有助發現原先預計同現況嘅差別。",
+        "takeaway": "定期回看，讓資料跟得上生活。",
+        "legalLabel": "收支預算 · 定期檢視與更新",
+        "sourceUrl": "https://www.ifec.org.hk/web/tc/moneyessentials/budgeting.page",
+        "sourceLabel": "投委會：制定個人收支預算",
+        "twist": {
+          "id": "daily-review-twist",
+          "scene": "週末尾聲 · 發現分類錯誤",
+          "speaker": "阿朗",
+          "statement": "回看時發現同一項目記咗兩次。為咗同上次一樣，應該照留？",
+          "question": "阿朗應該點做？",
+          "options": [
+            "保留重複，避免改動紀錄",
+            "核對來源、更正重複，再更新整理結果",
+            "將所有紀錄刪除，唔再記"
+          ],
+          "correct": 1,
+          "explanation": "檢視可以發現資料錯誤。核對後更正重複項目，先有可靠基礎理解收支；唔需要為保留舊結果而保留錯誤。",
+          "takeaway": "檢視係為咗更準確，唔係保留舊答案。",
+          "legalLabel": "收支資料 · 核對並修正紀錄",
+          "sourceUrl": "https://www.ifec.org.hk/web/tc/moneyessentials/budgeting.page",
+          "sourceLabel": "投委會：制定個人收支預算",
+          "changed": "生活安排冇變，但檢視時發現記錄本身有重複。"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,24 @@
+#hkfineprint .fp-generator{margin:0 0 22px;border:1px solid var(--p-line);border-radius:18px;background:var(--p-soft);overflow:hidden}
+#hkfineprint .fp-generate-button{display:flex;align-items:center;gap:12px;width:100%;padding:16px 14px;min-height:82px;border:0;background:none;text-align:left}
+#hkfineprint .fp-generate-icon{display:grid;place-items:center;background:var(--p-surface);width:44px;height:44px;flex:0 0 auto;border-radius:14px;color:var(--p-primary)}
+#hkfineprint .fp-generate-icon svg{width:23px;height:23px}
+#hkfineprint .fp-generate-button strong{font-size:15px;color:var(--p-primary);display:block;font-weight:600}
+#hkfineprint .fp-generate-button small{font-size:11px;color:var(--p-muted);display:block;margin-top:3px}
+#hkfineprint .fp-generate-plus{margin-left:auto;font-size:24px;font-weight:300;color:var(--p-primary);flex-shrink:0}
+#hkfineprint .fp-generating{padding:17px 14px}
+#hkfineprint .fp-generation-top{display:flex;align-items:center;gap:10px}
+#hkfineprint .fp-generation-top>div{min-width:0;flex:1}
+#hkfineprint .fp-generation-top strong{display:block;font-size:13px;font-weight:600;color:var(--p-primary)}
+#hkfineprint .fp-generation-top small{display:block;font-size:11px;color:var(--p-muted);margin-top:3px}
+#hkfineprint .fp-generation-spinner{width:24px;height:24px;border:2px solid var(--p-line);border-top-color:var(--p-primary);border-radius:50%;flex-shrink:0;animation:fp-spin .9s linear infinite}
+#hkfineprint .fp-generating-button{font-size:10px;border:0;border-radius:20px;background:var(--p-surface);color:var(--p-primary);padding:5px 8px;min-height:32px;white-space:nowrap}
+#hkfineprint .fp-generation-progress{height:3px;background:var(--p-line);border-radius:5px;margin:15px 0 12px;overflow:hidden}
+#hkfineprint .fp-generation-progress i{display:block;height:100%;background:var(--p-primary);border-radius:5px;transition:width .6s ease}
+#hkfineprint .fp-generation-skeleton{display:grid;gap:7px}
+#hkfineprint .fp-generation-skeleton i{display:block;height:7px;width:82%;border-radius:5px;background:linear-gradient(100deg,var(--p-line),var(--p-surface),var(--p-line));background-size:200% 100%;animation:fp-shimmer 1.5s linear infinite}
+#hkfineprint .fp-generation-skeleton i:last-child{width:57%}
+#hkfineprint .fp-new-label{display:block;width:fit-content;font-size:10px;line-height:1.5;color:var(--p-primary);background:var(--p-soft);border-radius:6px;padding:2px 6px;margin-bottom:4px}
+#hkfineprint .fp-generated-scene{border-color:light-dark(#ddc5e4,#604868)}
+@keyframes fp-spin{to{transform:rotate(360deg)}}
+@keyframes fp-shimmer{to{background-position:-200% 0}}
+@media(prefers-reduced-motion:reduce){#hkfineprint .fp-generation-spinner,#hkfineprint .fp-generation-skeleton i{animation:none}#hkfineprint .fp-generation-progress i{transition:none}}
