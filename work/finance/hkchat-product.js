@@ -5,6 +5,7 @@
  if(!toggle||!nav)return;
  const close=()=>{nav.hidden=true;toggle.setAttribute('aria-expanded','false');};
  toggle.addEventListener('click',()=>{nav.hidden=!nav.hidden;toggle.setAttribute('aria-expanded',String(!nav.hidden));});
+ nav.addEventListener('click',e=>{if(e.target.closest('a'))close();});
  document.addEventListener('click',e=>{if(!app.querySelector('.p-header').contains(e.target))close();});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!nav.hidden){close();toggle.focus();}});
  window.lucide?.createIcons({attrs:{width:18,height:18}});

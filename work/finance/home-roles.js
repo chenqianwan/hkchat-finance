@@ -9,7 +9,7 @@
       tab.tabIndex=on?0:-1;
       root.querySelector('#home-'+tab.dataset.collection).hidden=!on;
     }
-    root.querySelector('#home-mode-note').textContent=mode==='roles'?'虛構職場 · 三輪角色體驗':'AI 情境演示 · 玩住識金融';
+    root.querySelector('#home-mode-note').textContent=mode==='roles'?'虛構職場 · 揀個情境即刻玩':'AI 情境演示 · 玩住識金融';
     if(updateURL)history.replaceState(null,'','#'+mode);
   }
   for(const tab of tabs){
@@ -21,6 +21,13 @@
       select(next.dataset.collection,true);next.focus();
     });
   }
-  window.addEventListener('hashchange',()=>select(location.hash.slice(1)));
-  select(location.hash.slice(1));
+  function route(){
+    const hash=location.hash.slice(1);
+    select(hash);
+    if(hash.startsWith('role-')) root.dispatchEvent(new CustomEvent('hkchat:open-role-group',{detail:hash.slice(5)}));
+    else if(root.querySelector('#home-howto').open) root.querySelector('#home-howto').close();
+  }
+  window.addEventListener('hashchange',route);
+  window.addEventListener('popstate',route);
+  route();
 })();
