@@ -6,7 +6,11 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent.parent
 OUT = ROOT / 'outputs/hkchat-finance'
 OUT.mkdir(parents=True, exist_ok=True)
-APPS = [('quiz','財智快打','trophy'),('spot','金融大找茬','scan-eye'),('fineprint','金融細字挑戰','file-search'),('fraud','金融防騙局','scan-search')]
+GAME_APPS = [('quiz','財智快打','trophy'),('spot','金融大找茬','scan-eye'),('fineprint','金融細字挑戰','file-search'),('fraud','金融防騙局','scan-search')]
+
+ROLES = json.loads((HERE/'role-apps.json').read_text())
+ROLE_APPS = [(r['key'],r['title'],r['icon']) for r in ROLES]
+APPS = ROLE_APPS + GAME_APPS
 
 def photo(name):
     return 'data:image/webp;base64,' + base64.b64encode((OUT/'assets'/name).read_bytes()).decode()
@@ -30,12 +34,24 @@ def home():
         card=card.replace('揀選法律闖關模式','揀選財智闖關模式').replace('線上 PK','PK 對戰')
         selected.append(card)
     source=re.sub(r'(<section class="home-grid"[^>]*>).*?(</section>)',lambda m:m[1]+'\n'+''.join(selected)+'\n'+m[2],source,count=1,flags=re.S)
-    source=source.replace('HKChat Legal','HKChat Finance').replace('生活法律，','生活金融，').replace('由細字到街坊事，揀個情境試吓。','由銀行到日常，揀個挑戰玩吓。').replace('揀選生活法律應用','揀選金融生活應用').replace('從日常小事，識多一點。','AI 情境演示 · 玩住識金融')
+    source=source.replace('HKChat Legal','HKChat Finance').replace('生活法律，','生活金融，').replace('由細字到街坊事，揀個情境試吓。','揀個身份做主角，或者玩個生活挑戰。').replace('揀選生活法律應用','揀選金融生活應用').replace('從日常小事，識多一點。','AI 情境演示 · 玩住識金融')
     howto={
       'quiz':{'intro':'自己闖五關，或者試玩一場財智 PK。','steps':[['揀一種玩法','銀行、保障或日常理財，揀個情境生成五關挑戰。'],['作答，再睇解說','每題揀一個答案，睇清理由和知識來源；單人模式會按作答調整後面的題目。'],['睇結果，再挑戰','回看本局得分和重點。PK 目前使用演示對手，體驗同題比拼。']]},
       'spot':{'intro':'一張 AI 生活圖，藏住三處值得留意的金融細節。','steps':[['揀個金融場景','從服務枱、保障諮詢、金融群組揀一幕，也可以輸入題材配對情境。'],['點出三處疑點','直接點圖片找細節；卡住可以用提示，或改用文字找。'],['睇解說，再換一幕','對照每處細節與教育資料來源，隨時看答案或開始下一幕。']]},
       'fineprint':{'intro':'廣告講得吸引，對照細字才知道適用條件。','steps':[['揀張虛構廣告','從金融服務場景開始，或生成另一張條款挑戰。'],['點出重要條件','選出需要再問清楚的細字；也可以點預設問題了解更多。'],['提交，再睇發現','逐條對照理由，分清宣傳、限制與一般說明，再玩下一局。']]},
       'fraud':{'intro':'三位虛構角色，各有說法。由你追問，再找出誤導風險。','steps':[['揀個金融話題','從銀行資料、保障服務或金融群組揀一個場景，也可輸入題材。'],['有疑問，就追問','每輪可揀一位角色，點預設問題或自己打字，再對照記錄。'],['隨時作出判斷','最多五輪，隨時可以收尾。結果會展示線索和核實方法。']]}}
+    for role in ROLES:
+        howto[role['key']] = {'intro':role['intro'],'steps':role['steps']}
+    rolecards=[]
+    for role in ROLES:
+        key,title=role['key'],role['title']
+        rolecards.append('<article class="home-app" data-app="'+key+'"><div class="home-photo-layer" aria-hidden="true"><img src="'+photo('role-'+key+'.webp')+'" width="800" height="600" alt="" decoding="async" loading="lazy"></div><div class="home-card-top"><button class="home-info" type="button" data-howto="'+key+'" aria-label="查看'+title+'的玩法" aria-haspopup="dialog" aria-controls="home-howto" aria-expanded="false"><span>玩法</span><i data-lucide="chevron-down" aria-hidden="true"></i></button></div><h2><a class="home-card-link" href="hkchat-'+key+'-mobile.html" aria-describedby="home-'+key+'-desc">'+title+'</a></h2><p id="home-'+key+'-desc">'+role['description']+'</p></article>')
+    tabs='<div class="home-collections" role="tablist" aria-label="選擇體驗類型"><button type="button" id="home-roles-tab" role="tab" aria-selected="true" aria-controls="home-roles" data-collection="roles">角色體驗 <span>8</span></button><button type="button" id="home-games-tab" role="tab" aria-selected="false" aria-controls="home-games" tabindex="-1" data-collection="games">生活挑戰 <span>4</span></button></div>'
+    rolepanel='<section class="home-grid" id="home-roles" role="tabpanel" aria-labelledby="home-roles-tab">'+''.join(rolecards)+'</section>'
+    source=source.replace('<section class="home-grid" aria-label="揀選金融生活應用">',tabs+rolepanel+'<section class="home-grid" id="home-games" role="tabpanel" aria-labelledby="home-games-tab" hidden>')
+    source=source.replace('AI 情境演示 · 玩住識金融','<span id="home-mode-note">虛構職場 · 三輪角色體驗</span>')
+    source=source.replace('</style>',(HERE/'home-roles.css').read_text()+'</style>',1)
+    source+='\n<script>'+ (HERE/'home-roles.js').read_text()+'</script>\n'
     source=re.sub(r'const HOWTO = .*?;\n\(\(\) =>',lambda m:'const HOWTO = '+json.dumps(howto,ensure_ascii=False)+';\n(() =>',source,count=1,flags=re.S)
     source=source.replace('</style>','\n#hkhome .home-app{min-height:226px}#hkhome .home-app[data-app="quiz"] h2{min-height:25px}#hkhome .home-app[data-app="spot"] .home-photo-layer img{object-position:center 33%}#hkhome .home-note{margin-bottom:14px}\n</style>',1)
     (HERE/'home-fragment.html').write_text(source)
@@ -45,13 +61,16 @@ pages=[('index.html','首頁','house')]+[(f'hkchat-{key}-mobile.html',title,icon
 mark='data:image/svg+xml;base64,'+base64.b64encode((HERE/'hkchat-official-mark.svg').read_bytes()).decode()
 def header(current):
     links=''.join(f'<a href="{file}"'+(' aria-current="page"' if file==current else '')+f'><i data-lucide="{icon}" aria-hidden="true"></i>'+('返回首頁' if file=='index.html' and current!=file else title)+'</a>' for file,title,icon in pages)
+    for groupkey,label in [('manager','角色體驗'),('quiz','生活挑戰')]:
+        marker='<a href=\"hkchat-'+groupkey+'-mobile.html\"'
+        links=links.replace(marker,'<p class=\"p-nav-group\">'+label+'</p>'+marker,1)
     return '<header class="p-header"><div class="p-heading"><button class="p-menu-button" type="button" aria-label="打開金融導航" aria-controls="p-navigation" aria-expanded="false"><i data-lucide="menu" aria-hidden="true"></i></button><a class="p-wordmark" href="index.html" aria-label="HKChat Finance 首頁"><img class="p-brand-mark" src="'+mark+'" width="27" height="26" alt="" aria-hidden="true">HKChat</a></div><span class="p-section-pill">Finance</span><nav class="p-nav" id="p-navigation" aria-label="金融功能" hidden>'+links+'</nav></header>'
 
 reset=(HERE/'hkchat-refresh-reset.js').read_text().replace("startsWith('hkchat-')","startsWith('hkchat-finance')")
 shim=reset+"\nwindow.openai={widgetState:null,setWidgetState:async function(next){this.widgetState=next;}};"
-mobile='html,body{margin:0;padding:0!important;width:100%;min-height:100%;overflow-x:clip;scroll-behavior:auto;color-scheme:light dark;background:light-dark(#fff,#17151b)}body{display:block}@media(min-width:481px){body{background:light-dark(#f7f7f8,#100e13)}}:is(#hkhome,#hkquiz,#hkspot,#hkfineprint,#hkdetect){min-height:100svh;min-height:100dvh;max-width:480px;margin:0 auto;border-radius:0!important}input,textarea,select{font-size:16px}button,a,input,select,textarea,summary{touch-action:manipulation}button{-webkit-tap-highlight-color:transparent}noscript{display:block;padding:24px;font:16px sans-serif}'
-product=(HERE/'hkchat-product.css').read_text()
-runtime=(HERE/'hkchat-product.js').read_text()
+mobile='html,body{margin:0;padding:0!important;width:100%;min-height:100%;overflow-x:clip;scroll-behavior:auto;color-scheme:light dark;background:light-dark(#fff,#17151b)}body{display:block}@media(min-width:481px){body{background:light-dark(#f7f7f8,#100e13)}}:is(#hkhome,#hkquiz,#hkspot,#hkfineprint,#hkdetect,#hkroles){min-height:100svh;min-height:100dvh;max-width:480px;margin:0 auto;border-radius:0!important}input,textarea,select{font-size:16px}button,a,input,select,textarea,summary{touch-action:manipulation}button{-webkit-tap-highlight-color:transparent}noscript{display:block;padding:24px;font:16px sans-serif}'
+product=(HERE/'hkchat-product.css').read_text().replace(',#hkspot)',',#hkspot,#hkroles)')+'\n#hkroles{max-width:480px;margin:auto;background:var(--p-bg);color:var(--p-text);color-scheme:light dark}#hkroles [hidden]{display:none!important}.p-nav-group{font-size:11px;color:var(--p-muted);margin:8px 13px 4px;letter-spacing:.4px}#hkroles [data-focus][tabindex=\"-1\"]:focus{outline:none}\n'
+runtime=(HERE/'hkchat-product.js').read_text().replace(',#hkspot\'',',#hkspot,#hkroles\'')
 vendor=(HERE/'lucide.min.js').read_text().replace('</script','<\\/script')
 fragments={'index.html':home()}
 for key,_,_ in APPS:
@@ -61,8 +80,9 @@ for key,_,_ in APPS:
 for file,fragment in fragments.items():
     title=dict((a,b) for a,b,_ in pages)[file]
     fragment=re.sub(r'<header class="(?:p|d)-top">.*?</header>',lambda m:header(file),fragment,count=1,flags=re.S)
-    fragment=fragment.replace('</main>','<footer class="p-footer">HKChat · Finance</footer></main>',1)
-    html='<!doctype html><html lang="zh-HK"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="color-scheme" content="light dark"><meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#17151b" media="(prefers-color-scheme: dark)"><meta name="description" content="HKChat Finance：財智快打、金融大找茬、金融細字挑戰與金融防騙局，四個香港生活金融小遊戲。"><title>HKChat Finance · '+title+'</title><script>'+shim+'</script><style>'+mobile+'</style></head><body><noscript>請啟用 JavaScript，體驗金融生活小遊戲。</noscript><script>'+vendor+'</script>'+fragment+'<style>'+product+'</style><script>'+runtime+'</script></body></html>'
+    footer='<footer class="p-footer">HKChat · Finance</footer>'
+    fragment=fragment.replace('</main>','</main>'+footer if file in {f'hkchat-{key}-mobile.html' for key,_,_ in ROLE_APPS} else footer+'</main>',1)
+    html='<!doctype html><html lang="zh-HK"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="color-scheme" content="light dark"><meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#17151b" media="(prefers-color-scheme: dark)"><meta name="description" content="HKChat Finance：八個第一人稱金融角色體驗，加上四個生活金融小遊戲，香港日常玩住識。"><title>HKChat Finance · '+title+'</title><script>'+shim+'</script><style>'+mobile+'</style></head><body><noscript>請啟用 JavaScript，體驗金融生活小遊戲。</noscript><script>'+vendor+'</script>'+fragment+'<style>'+product+'</style><script>'+runtime+'</script></body></html>'
     (OUT/file).write_text(html)
     print(file,len(html.encode()),'bytes')
 (OUT/'.nojekyll').touch()

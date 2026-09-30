@@ -1,0 +1,114 @@
+{
+  "manager": {
+    "title": "今日我做銀行經理",
+    "strap": "聽齊三方，再落決定。",
+    "intro": "你係榕灣銀行虛構分行嘅經理。人手有限，街坊需要各有不同；由你定一套大家用得到嘅服務安排。",
+    "photoAlt": "虛構銀行分行內，經理與訪客商談服務安排的情境照",
+    "workflow": ["砌方案", "聽意見", "修訂定案"],
+    "start": "接手呢間分行",
+    "scenarios": [
+      {
+        "id": "booking",
+        "tag": "預約與即場服務",
+        "title": "有預約，先有位？",
+        "teaser": "午飯時間排長龍，網上預約又成日滿額。",
+        "context": "榕灣分行想試行預約服務。返工客怕等，唔慣用手機嘅街坊怕冇位；前線暫時加唔到人手。你要決定第一版安排。",
+        "constraint": "本情境設定：同一班人手，同時處理預約同即場輪候。",
+        "editorTitle": "我會點安排服務？",
+        "preview": "booking",
+        "options": [
+          {"id":"phone","label":"電話都預約到","detail":"由職員代登記，唔使一定用手機；前線要預留接聽時間。","on":"網上及電話都可預約。","off":"只接受網上預約。","initial":false},
+          {"id":"walkin","label":"保留即場名額","detail":"每日留一部分時段畀即場客，網上可預約時段相應減少。","on":"每天保留即場服務名額。","off":"所有時段優先留畀已預約客人。","initial":false},
+          {"id":"queue","label":"講清輪候安排","detail":"現場顯示輪候進度；滿額時由職員解釋下一步。","on":"顯示輪候進度，滿額時由職員解釋替代安排。","off":"由客人逐一向櫃位查問輪候安排。","initial":true},
+          {"id":"trial","label":"先試行，再調整","detail":"試行一星期，每日記錄兩類客人等候情況，由經理調動接待崗位。","on":"先試行一星期，由經理按每日輪候情況調動接待崗位。","off":"直接長期使用，暫不安排每日檢視。","initial":false}
+        ],
+        "people": [
+          {"name":"芬姐","role":"即場客代表","initial":"芬","stance":[{"when":{"walkin":false},"vote":"no"},{"when":{"phone":true,"walkin":true},"vote":"yes"}],"defaultVote":"hold","reasons":[{"option":"walkin","yes":"有即場名額，我唔會因為冇預約就白行一趟。","no":"全部位留畀預約客，我唔識上網就好難入到隊。"},{"option":"phone","yes":"可以打電話搵職員幫手，我都用得到。","no":"如果只靠網上預約，我仲係要搵人幫。"}],"remaining":"即場名額幾時會用晒？希望試行時記低，唔好只睇預約客嘅等候時間。"},
+          {"name":"阿俊","role":"午飯時間到訪嘅客人","initial":"俊","stance":[{"when":{"queue":false},"vote":"no"},{"when":{"walkin":true,"trial":false},"vote":"hold"}],"defaultVote":"yes","reasons":[{"option":"queue","yes":"睇到輪候進度，我先估到可唔可以喺午飯時間辦完。","no":"冇輪候進度，我有預約都唔知要等幾耐。"},{"option":"walkin","yes":"留位畀即場客我明，但預約時段少咗，我想知會唔會更難約。","no":"預約位多啲方便我，但即場客嘅困難仲未處理。"}],"remaining":"預約唔代表即刻辦完；仲要測試繁忙時段有幾多延誤。"},
+          {"name":"家敏","role":"前線接待主管","initial":"敏","stance":[{"when":{"phone":true,"walkin":true,"trial":false},"vote":"no"},{"when":{"trial":true,"queue":true},"vote":"yes"}],"defaultVote":"hold","reasons":[{"option":"phone","yes":"電話預約要同櫃面共用人手，接聽工作唔會自動消失。","no":"單一預約渠道易安排，但職員可能要處理更多即場求助。"},{"option":"trial","yes":"每日由經理檢視同調人，我先有空間處理塞車情況。","no":"未有檢視安排，幾條隊一齊塞住時，前線好難自己調動。"}],"remaining":"要先排清接電話、接待同櫃位嘅輪值，先知道方案能否持續。"}
+        ],
+        "resultNext": "下一步：用繁忙與非繁忙時段做桌面排班演練，分開記錄預約、即場與電話求助嘅等候情況。",
+        "learning": "我嘅決定同時影響入到隊嘅機會、等候是否可預計，以及前線能否做到。支持人數唔會代替實際試行。"
+      },
+      {
+        "id":"access",
+        "tag":"人工協助與自主",
+        "title":"教一次，定幫到底？",
+        "teaser":"自助服務推行後，求助枱排起另一條隊。",
+        "context":"分行新增自助查閱服務。部分客人想學識自己用，亦有人需要人工解說。你要安排協助方式，同時畀客人保留自己決定嘅空間。",
+        "constraint":"本情境設定：一位流動接待員，未能同時陪住每一位客人。",
+        "editorTitle":"我會點安排人工協助？",
+        "preview":"access",
+        "options":[
+          {"id":"human","label":"保留人工解說選項","detail":"客人可以直接要求人工解說，毋須先試自助機；需要安排輪候。","on":"客人可直接選擇人工解說，按輪候次序安排。","off":"客人須先試自助服務，再提出人工協助。","initial":true},
+          {"id":"guide","label":"提供大字分步指引","detail":"用短句同大字列出步驟，流動接待員可以逐步解說。","on":"提供大字分步指引及逐步解說。","off":"沿用現有一頁式說明。","initial":false},
+          {"id":"private","label":"由客人自己確認","detail":"需要安靜解說時轉到側邊座位；職員唔代客確認選項。","on":"需要時移到側邊解說，由客人自己確認選項。","off":"沿用公開求助枱流程，未另設確認提醒。","initial":false},
+          {"id":"return","label":"較長問題另約跟進","detail":"簡單問題即場解說，較長問題提供另約選項；客人可能要再來。","on":"簡單問題即場解說，較長問題可另約跟進。","off":"所有問題都留喺同一條即場求助隊處理。","initial":false}
+        ],
+        "people":[
+          {"name":"陳伯","role":"需要逐步解說嘅客人","initial":"陳","stance":[{"when":{"human":false},"vote":"no"},{"when":{"guide":true,"return":false},"vote":"yes"}],"defaultVote":"hold","reasons":[{"option":"human","yes":"可以直接揀人工解說，我先唔會一路試一路驚。","no":"一定要先試自助，我可能連點求助都唔清楚。"},{"option":"guide","yes":"大字同短步驟幫到我，下次可以再照住做。","no":"一頁講晒咁多嘢，我未必跟得切。"},{"option":"return","yes":"另約有時間慢慢講，但我再行一趟都要有人陪。","no":"一次問清楚方便我，但我明白後面仲有人等。"}],"remaining":"較長問題如要另約，應問清楚客人再到訪有冇困難。"},
+          {"name":"樂怡","role":"重視自主嘅客人","initial":"怡","stance":[{"when":{"private":false},"vote":"no"},{"when":{"private":true,"guide":true},"vote":"yes"}],"defaultVote":"hold","reasons":[{"option":"private","yes":"有側邊解說同自己確認嘅提醒，我較放心慢慢問。","no":"喺公開求助枱講細節，我未必敢開口，亦怕職員幫我揀埋。"},{"option":"guide","yes":"有清晰指引，我可以自己理解再決定。","no":"只係聽職員口頭講，我想返去再睇都唔容易。"}],"remaining":"側邊座位是否夠安靜、提示是否清楚，仍要請客人實際試用。"},
+          {"name":"志豪","role":"流動接待員","initial":"豪","stance":[{"when":{"return":false,"human":true},"vote":"no"},{"when":{"return":true,"guide":true},"vote":"yes"}],"defaultVote":"hold","reasons":[{"option":"return","yes":"較長問題可以另約，我先照顧到同一時間到場嘅人。","no":"所有問題都即場處理，一個長問題就會塞住成條隊。"},{"option":"guide","yes":"有統一分步指引，我唔使次次由零開始講。","no":"冇簡明指引，重複解說會佔用好多接待時間。"}],"remaining":"另約時段同後備人手要排好，唔可以只係叫客人下次再嚟。"}
+        ],
+        "resultNext":"下一步：請三類虛構使用者試行一次流程，記錄佢哋卡住嘅步驟，再確認側邊解說與跟進時段安排。",
+        "learning":"方便、理解同自主未必一次過兼得。好嘅服務安排，要交代邊個幫、點樣幫，同未解決嘅困難。"
+      }
+    ]
+  },
+  "product": {
+    "title":"金融 App 主理人",
+    "strap":"你改一個掣，用戶點感受？",
+    "intro":"你接手虛構「榕灣 App」嘅產品設計。試砌通知同權限流程，睇住手機預覽改變，再聽三位持份者點講。",
+    "photoAlt":"產品設計師在香港辦公室討論手機介面的虛構情境照",
+    "workflow":["砌原型","試反應","定版本"],
+    "start":"打開設計工作枱",
+    "scenarios":[
+      {
+        "id":"notifications",
+        "tag":"通知體驗",
+        "title":"有提醒，唔好變打擾",
+        "teaser":"服務提示同推廣混埋，用戶一氣之下全關。",
+        "context":"榕灣 App 想重新設計通知中心。現有設計將服務更新同活動推廣混埋，鎖屏亦會顯示提示詳情。你可以改四個設定。",
+        "constraint":"本情境只模擬服務提示與活動資訊；冇真實帳戶或交易通知。",
+        "editorTitle":"我嘅通知版本",
+        "preview":"notifications",
+        "options":[
+          {"id":"separate","label":"服務與推廣分開揀","detail":"用戶可以只收服務提示；推廣由用戶另外開啟。","on":"服務提示與推廣分開選擇，推廣預設關閉。","off":"服務提示與推廣共用一個開關。","initial":false},
+          {"id":"quiet","label":"推廣設安靜時段","detail":"晚上暫停推廣，留待日間顯示；服務提示照常。","on":"夜間暫停推廣；服務提示照常顯示。","off":"推廣可在任何時段顯示。","initial":false},
+          {"id":"hidden","label":"鎖屏隱藏提示詳情","detail":"只顯示「你有新提示」，打開 App 才睇到內容。","on":"鎖屏只顯示有新提示，內容在 App 內查閱。","off":"鎖屏直接顯示提示詳情。","initial":true},
+          {"id":"digest","label":"推廣改做每日摘要","detail":"將多則活動合併；用戶可能較遲先見到活動消息。","on":"已開啟嘅推廣合併為每日摘要。","off":"已開啟嘅推廣逐則發送。","initial":false}
+        ],
+        "people":[
+          {"name":"阿晴","role":"想少啲打擾嘅用戶","initial":"晴","stance":[{"when":{"separate":false,"quiet":false},"vote":"no"},{"when":{"separate":true,"quiet":true},"vote":"yes"}],"defaultVote":"hold","reasons":[{"option":"separate","yes":"我可以留低服務提示，再自己決定收唔收推廣。","no":"一個掣管晒，我想關推廣就要連服務提示一齊關。"},{"option":"quiet","yes":"晚上唔再彈推廣，呢個安排幫到我。","no":"就算推廣合併咗，夜晚彈出都會打擾我。"}],"remaining":"安靜時段能否自己改？返夜班嘅人未必跟同一個作息。"},
+          {"name":"以衡","role":"留意畫面私隱嘅用戶","initial":"衡","stance":[{"when":{"hidden":false},"vote":"no"},{"when":{"hidden":true,"separate":true},"vote":"yes"}],"defaultVote":"hold","reasons":[{"option":"hidden","yes":"鎖屏唔露詳情，旁邊有人時我比較安心。","no":"鎖屏直接顯示詳情，望到我部手機嘅人都有機會睇到。"},{"option":"separate","yes":"兩類通知分開，我清楚知道自己開咗乜。","no":"服務同推廣一齊開，我覺得個選擇唔夠清晰。"}],"remaining":"隱藏詳情會多一步打開 App；提示文字仍要畀用戶分清有冇需要即刻查看。"},
+          {"name":"嘉敏","role":"活動內容同事","initial":"敏","stance":[{"when":{"separate":true,"digest":true},"vote":"hold"},{"when":{"quiet":true,"digest":false},"vote":"yes"},{"when":{"quiet":false,"digest":false},"vote":"hold"}],"defaultVote":"hold","reasons":[{"option":"separate","yes":"推廣由用戶主動開，內容要更有用，先有機會被選擇。","no":"共用開關看似接觸到多人，但被一齊關閉就連服務提示都睇唔到。"},{"option":"digest","yes":"每日摘要減少打擾，但活動消息可能等得太耐；我要重排內容。","no":"逐則發送較快，但要控制發送量，唔好令人想全關。"}],"remaining":"活動同事仍想保留較快送達；摘要嘅時間與內容排序需要再傾。"}
+        ],
+        "resultNext":"下一步：用呢個原型做理解測試，請用戶指出邊個掣控制推廣、鎖屏會顯示乜，再記錄困惑位置。",
+        "learning":"通知好唔好用，唔只睇有冇送到。用戶能否理解、選擇，同控制被打擾嘅程度，一樣係設計問題。"
+      },
+      {
+        "id":"permissions",
+        "tag":"位置權限",
+        "title":"搵分行，要開幾多權限？",
+        "teaser":"想搵附近服務，未必想一直分享位置。",
+        "context":"產品團隊正設計「附近分行」頁。原型一打開就要求位置權限，未解釋點用；你要決定請求時機、替代方法同位置用途。",
+        "constraint":"手機畫面係互動原型，唔會向裝置索取任何真實權限或位置。",
+        "editorTitle":"我嘅位置權限版本",
+        "preview":"permissions",
+        "options":[
+          {"id":"ondemand","label":"點「附近分行」先問","detail":"先睇首頁；用到相關功能時再解釋同請求位置。","on":"點「附近分行」後先解釋及請求位置。","off":"打開 App 首頁就顯示位置請求。","initial":false},
+          {"id":"manual","label":"可以自己揀地區","detail":"拒絕位置權限都可以手動找分行，但會多一步。","on":"唔分享位置亦可手動揀地區找分行。","off":"未分享位置時，附近分行頁未提供手動搜尋。","initial":false},
+          {"id":"scope","label":"位置只用嚟搵分行","detail":"原型文字清楚限制用途，唔將呢次位置用作活動推廣。","on":"本次位置只用作尋找分行，不用作活動推廣。","off":"本次位置亦會用作附近活動推薦。","initial":true},
+          {"id":"clear","label":"離開頁面就清走位置","detail":"唔保留本次位置，下次用可能要再確認。","on":"離開分行頁後清走本次位置。","off":"保留最近一次位置，下次開頁時沿用。","initial":false}
+        ],
+        "people":[
+          {"name":"阿晴","role":"趕時間嘅用戶","initial":"晴","stance":[{"when":{"ondemand":false,"manual":false},"vote":"no"},{"when":{"ondemand":true,"manual":true,"clear":false},"vote":"yes"}],"defaultVote":"hold","reasons":[{"option":"ondemand","yes":"用到先問，我開 App 睇其他內容時唔會被打斷。","no":"我未話想搵分行就問位置，會覺得好突然。"},{"option":"clear","yes":"每次清走令我安心啲，但下次搵同一區可能要再確認。","no":"記住最近位置方便，但我希望知道而家沿用緊邊一區。"}],"remaining":"如果最近位置已經過時，搜尋結果要點提醒用戶？呢個流程仲要試。"},
+          {"name":"樂怡","role":"唔想分享位置嘅用戶","initial":"怡","stance":[{"when":{"manual":false},"vote":"no"},{"when":{"manual":true,"scope":true,"clear":true},"vote":"yes"}],"defaultVote":"hold","reasons":[{"option":"manual","yes":"可以自己揀地區，我拒絕權限都唔會被困住。","no":"唔開位置就冇得搵分行，對我嚟講唔算真係有選擇。"},{"option":"scope","yes":"位置只用嚟搵分行，畫面講嘅用途容易明白。","no":"我只係想搵分行，唔想順便用位置收附近活動推薦。"},{"option":"clear","yes":"離開就清走，方便我理解今次分享去到邊度為止。","no":"仲保留上次位置，我想知道幾時可以清走。"}],"remaining":"手動揀地區要易搵，唔可以收埋喺權限說明最底。"},
+          {"name":"家敏","role":"搜尋功能同事","initial":"敏","stance":[{"when":{"manual":true,"clear":true},"vote":"hold"},{"when":{"ondemand":true,"manual":true},"vote":"yes"}],"defaultVote":"hold","reasons":[{"option":"manual","yes":"多一條手動搜尋路徑，測試同維護都要覆蓋兩種情況。","no":"單一路徑容易做，但拒絕位置嘅用戶會卡住。"},{"option":"clear","yes":"離開就清走要處理重新確認同頁面返回，工程細節要再試。","no":"沿用上次位置較快，但要避免用舊位置當成而家位置。"}],"remaining":"同事仍想少啲重複確認；要測試返回上一頁同切換地區嘅行為。"}
+        ],
+        "resultNext":"下一步：分別走一次「分享位置」「拒絕位置」同「返回上一頁」，核對每一步仍有清晰出口。",
+        "learning":"權限設計要連埋拒絕後嘅路徑一齊做。每個方便功能都要交代點用資料，同唔用嗰陣點行落去。"
+      }
+    ]
+  }
+}

@@ -2,5 +2,8 @@
 __pycache__/
 work/finance/*-fragment.html
 work/finance/*-preview.html
+work/finance/roles/*-preview.html
+work/finance/roles/*-preview-*.html
+work/finance/roles/__pycache__/
 outputs/hkchat-finance/*.html
 outputs/hkchat-finance/.nojekyll
