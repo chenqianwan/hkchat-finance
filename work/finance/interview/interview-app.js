@@ -17,7 +17,8 @@
   const button=(text,act,secondary=false,extra='')=>'<button type="button" class="'+(secondary?'iv-secondary':'iv-primary')+'" data-act="'+act+'" '+extra+'>'+text+'</button>';
   const field=(key,label,value,multiline=true,placeholder='',max=700)=>'<label class="iv-field"><span>'+E(label)+'</span>'+(multiline?'<textarea data-profile="'+key+'" maxlength="'+max+'" placeholder="'+E(placeholder)+'">'+E(value)+'</textarea>':'<input data-profile="'+key+'" maxlength="'+max+'" value="'+E(value)+'" placeholder="'+E(placeholder)+'">')+'</label>';
   const statusName={observed:'找到文字線索',develop:'可再補充',unknown:'未能判讀'};
-  const disclosure=()=>'<p class="iv-disclosure">情境演示 · 回應按預設線索配對，未接即時 AI 模型。文字提示只供練習，唔代表完整理解、能力評核或錄取預測。背景同回答只留喺此頁記憶體；重新整理會清除。</p>';
+  const disclosure=()=>'<p class="iv-disclosure">情境演示 · 回應按預設線索配對，未接即時 AI 模型。文字提示只供練習；模擬錄取機率為示例，唔代表能力評核或實際招聘結果。背景同回答只留喺此頁記憶體；重新整理會清除。</p>';
+  const offerDemoNote='公司與招聘情境均屬虛構。機率為預設示例，未按履歷或回答計算，不代表實際錄取評估。';
   const flow=step=>'<ol class="iv-flow" aria-label="面試流程">'+['準備背景','模擬面試','復盤提升'].map((label,i)=>'<li'+(i===step?' aria-current="step"':'')+'><span>0'+(i+1)+'</span>'+label+'</li>').join('')+'</ol>';
   function say(text){document.getElementById('iv-announcer').textContent=text;}
   function render(html,focus=true){
@@ -157,10 +158,16 @@
     s.answers.forEach((a,i)=>{if(!a)return;const item=resultFor(s.rounds[i],a).items.find(x=>x.status==='observed'&&x.quote);if(item)results.push({index:i,item});});
     return results.slice(0,2);
   }
+  function offerResults(){
+    return '<section class="iv-section iv-offers" aria-labelledby="iv-offers-title"><div class="iv-section-head"><h2 id="iv-offers-title">模擬錄取預測</h2><span class="iv-offer-badge">DEMO · 5 項</span></div><p class="iv-offer-note">'+E(offerDemoNote)+'</p><ol class="iv-offer-list">'+C.offerPredictions(role()).map((item,i)=>
+      '<li class="iv-offer-card"><div class="iv-offer-head"><div class="iv-offer-heading"><p class="iv-offer-company"><span class="iv-offer-index">0'+(i+1)+'</span>'+E(item.company)+'</p><h3>'+E(item.title)+'</h3>'+(i===0?'<span class="iv-offer-current">本次練習職位</span>':'')+'</div><div class="iv-offer-probability"><strong>'+item.probability+'<span>%</span></strong><span>模擬錄取機率</span></div></div><div class="iv-offer-bar" aria-hidden="true"><span style="width:'+item.probability+'%"></span></div><p class="iv-offer-focus">'+E(item.focus)+'</p></li>'
+    ).join('')+'</ol></section>';
+  }
   function report(){
     s.view='report';const done=s.answers.filter(Boolean).length,follow=s.answers.filter(a=>a?.followText).length,needs=priorities(),found=strengths(),examples=s.answers.filter(a=>a?.sampleStarted||a?.followSampleStarted).length;
     render('<a class="iv-back" href="index.html">‹ 返回首頁</a>'+flow(2)+
       '<section class="iv-report-hero"><div class="iv-kicker">'+(done===5?'本次面試完成':'本次練習紀錄')+'</div><h1 tabindex="-1" data-heading>下次，講得更具體。</h1><p>'+E(role().title)+'<br>'+E(s.profile.school||'自訂背景')+' · '+E(s.profile.focus)+'</p><div class="iv-report-counts"><div><strong>'+done+' / 5</strong><span>已回答題目</span></div><div><strong>'+follow+'</strong><span>追問補充</span></div><div><strong>'+examples+'</strong><span>示範起稿題目</span></div></div></section>'+
+      (done?offerResults():'')+
       '<p class="iv-note">以下只對照本次文字中的表達線索；未被辨認不等於你不具備該能力。'+(examples?'本次曾使用示範起稿，結果只展示復盤方式。':'')+'</p>'+
       (found.length?'<section class="iv-section"><div class="iv-section-head"><h2>這些表達，值得保留</h2><span>引用你的原句</span></div>'+found.map(({index,item})=>'<article class="iv-guidance"><div class="iv-kicker">第 '+(index+1)+' 題 · '+E(item.label)+'</div><blockquote class="iv-quote">「'+E(item.quote)+'」</blockquote></article>').join('')+'</section>':'')+
       (done===0?'<article class="iv-guidance"><h2>先答一題，先有內容可復盤。</h2><p>今次未有提交回答，唔會產生能力判斷或改進結論。</p><div class="iv-actions">'+button('返回第一題','resume')+'</div></article>':
@@ -229,7 +236,8 @@
     }catch(e){if(token!==fileToken)return;s.busy=false;s.error=e.message||'暫時未能讀取，請貼上履歷文字再試。';setup(false);say(s.error);}
   }
   function transcript(){
-    let text='中環見工記｜面試練習復盤\n'+role().title+'\n背景：'+(s.profile.school||'自訂')+'｜'+s.profile.focus+'\n'+(s.source==='demo'?'虛構示範履歷':'使用者確認的背景')+'\n預設線索演示；不是能力評核或錄取預測。\n';
+    let text='中環見工記｜面試練習復盤\n'+role().title+'\n背景：'+(s.profile.school||'自訂')+'｜'+s.profile.focus+'\n'+(s.source==='demo'?'虛構示範履歷':'使用者確認的背景')+'\n預設線索演示；不是能力評核或實際招聘結果。\n';
+    if(s.answers.some(Boolean))text+='\n模擬錄取預測｜5 項\n'+offerDemoNote+'\n'+C.offerPredictions(role()).map((item,i)=>(i+1)+'. '+item.company+'｜'+item.title+'｜模擬錄取機率 '+item.probability+'%\n'+item.focus).join('\n')+'\n';
     s.rounds.forEach((r,i)=>{const a=s.answers[i];text+='\n\n第 '+(i+1)+' 題｜'+r.label+'\n'+r.question+'\n';if(!a){text+='本次未回答。';return;}text+='回答'+(originLabel(a)?'（'+originLabel(a)+'）':'')+'：\n'+a.text;if(a.followText)text+='\n追問：'+a.assessment.followUp.question+'\n補充'+(followLabel(a)?'（'+followLabel(a)+'）':'')+'：'+a.followText;for(const item of resultFor(r,a).items)text+='\n'+statusName[item.status]+'｜'+item.label+(item.quote?'\n原句：'+item.quote:'')+'\n練習方向：'+item.guidance;if(a.practice)text+='\n重練版本：\n'+a.practice.text;});
     return text;
   }

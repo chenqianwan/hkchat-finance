@@ -94,6 +94,33 @@
       skills: ['資料核對', '分析判斷', '專業操守', '團隊溝通']};
   }
 
+  // Fictional employers and fixed demo percentages, independent of the
+  // candidate's background or answers. These are not hiring estimates.
+  function offerPredictions(selectedRole) {
+    const title = selectedRole && typeof selectedRole.title === 'string' && selectedRole.title.trim()
+      ? selectedRole.title : roles[0].title;
+    const track = selectedRole && (selectedRole.track || selectedRole.id);
+    const risk = track === 'risk' || (!track && resolveRole(title).track === 'risk');
+    const options = risk ? [
+      ['紫港銀行（虛構）', title, '整理業務資料，核對風險線索與跟進安排。'],
+      ['星榕金融（虛構）', '合規支援助理', '核對服務流程與文件要求，整理待確認事項。'],
+      ['霧灣科技（虛構）', '風險數據分析助理', '整理風險資料與異常紀錄，說明分析限制。'],
+      ['晴嶼銀行（虛構）', '內部控制助理', '檢查工作紀錄與流程銜接，協助追蹤改善事項。'],
+      ['銀葉金融（虛構）', '金融營運分析員', '核對營運資料差異，整理交接與後續處理。']
+    ] : [
+      ['紫港銀行（虛構）', title, '了解客戶需要，核對服務資料並協調跟進。'],
+      ['星榕金融（虛構）', '金融服務專員', '解說已確認的服務資訊，記錄客戶查詢。'],
+      ['霧灣科技（虛構）', '金融科技項目助理', '整理業務需要與測試回饋，協助跨團隊溝通。'],
+      ['晴嶼銀行（虛構）', '銀行營運培訓生', '熟悉服務流程，整理工作紀錄與交接事項。'],
+      ['銀葉金融（虛構）', '金融資料分析助理', '核對資料來源，以清楚圖表及文字交代結果。']
+    ];
+    const probabilities = [82, 76, 71, 67, 63];
+    return options.map(([company, roleTitle, focus], index) => ({
+      id: 'offer-demo-' + (risk ? 'risk' : 'product') + '-' + (index + 1),
+      company, title: roleTitle, probability: probabilities[index], focus
+    }));
+  }
+
   // A criterion is observed only when multiple relevant cues occur together.
   // Wording such as "not checked" must not become evidence of completed work.
   // Stable criterion and round ids are retained for existing saved practice flows.
@@ -442,7 +469,7 @@
     return {details, strengths, nextSteps,
       title: '你的面試練習回顧',
       guidance: '先挑一個缺少具體例子的回答重寫，再練習用白話交代業務判斷與跟進安排；把個人經驗連到金融職位，並分清真實經歷與假設方案。',
-      limitation: '這是表達練習回饋，沒有錄取機率、適任分數或招聘結論；有限文字規則不能代替專業面試評估。'};
+      limitation: '模擬錄取機率為預設示例，不代表實際招聘結果或個人能力評估；表達練習回饋採用有限文字規則，不能代替專業面試評估。'};
   }
-  global.HKInterviewContent = {profiles, roles, suggestRoles, resolveRole, rounds, assess, assessResponses, report};
+  global.HKInterviewContent = {profiles, roles, suggestRoles, resolveRole, offerPredictions, rounds, assess, assessResponses, report};
 })(typeof window !== 'undefined' ? window : globalThis);
