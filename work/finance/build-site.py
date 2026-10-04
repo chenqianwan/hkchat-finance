@@ -97,6 +97,8 @@ for file,fragment in fragments.items():
     footer='<footer class="p-footer">HKChat · Finance</footer>'
     fragment=fragment.replace('</main>','</main>'+footer if file in {f'hkchat-{key}-mobile.html' for key,_,_ in ROLE_APPS} else footer+'</main>',1)
     html='<!doctype html><html lang="zh-HK"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="color-scheme" content="light dark"><meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#17151b" media="(prefers-color-scheme: dark)"><meta name="description" content="HKChat Finance：職場、銀行、App 設計與財經編輯四組角色體驗，加上四個生活金融小遊戲，香港日常玩住識。"><title>HKChat Finance · '+title+'</title><script>'+shim+'</script><style>'+mobile+'</style></head><body><noscript>請啟用 JavaScript，體驗金融生活小遊戲。</noscript><script>'+vendor+'</script>'+fragment+'<style>'+product+'</style><script>'+runtime+'</script></body></html>'
+    if file == 'hkchat-interview-mobile.html':
+        html = html.replace('</head>', '<link rel="icon" href="'+mark+'"></head>', 1)
     (OUT/file).write_text(html)
     print(file,len(html.encode()),'bytes')
 (OUT/'.nojekyll').touch()
