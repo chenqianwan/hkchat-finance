@@ -412,6 +412,15 @@
       limitation: '本 demo 以有限文字規則標示線索，可能漏掉同義表達或理解不到語境；請對照原文自行檢查。'};
   }
 
+  function assessResponses(round, rawAnswer, rawFollowAnswer) {
+    const answer = typeof rawAnswer === 'string' ? rawAnswer.trim() : '';
+    const followAnswer = typeof rawFollowAnswer === 'string' ? rawFollowAnswer.trim() : '';
+    if (!followAnswer) return assess(round, answer);
+    // An unfinished hint must not erase evidence from the other response.
+    const usable = [answer, followAnswer].filter(text => text && !/【[^】]*】/u.test(text));
+    return assess(round, usable.join('\n'));
+  }
+
   function report(roundList, rawAnswers) {
     const answers = Array.isArray(rawAnswers) ? rawAnswers : [];
     const details = roundList.map((round, index) => {
@@ -420,7 +429,7 @@
       const followAnswer = entry && typeof entry === 'object' ? entry.followAnswer || entry.followUpAnswer || '' : '';
       return {id: round.id, label: round.label, answer, followAnswer,
         assessment: assess(round, answer),
-        revisedAssessment: followAnswer ? assess(round, answer + '\n' + followAnswer) : null};
+        revisedAssessment: followAnswer ? assessResponses(round, answer, followAnswer) : null};
     });
     const strengths = [], nextSteps = [];
     details.forEach(detail => {
@@ -435,5 +444,5 @@
       guidance: '先挑一個缺少具體例子的回答重寫，再練習用白話交代業務判斷與跟進安排；把個人經驗連到金融職位，並分清真實經歷與假設方案。',
       limitation: '這是表達練習回饋，沒有錄取機率、適任分數或招聘結論；有限文字規則不能代替專業面試評估。'};
   }
-  global.HKInterviewContent = {profiles, roles, suggestRoles, resolveRole, rounds, assess, report};
+  global.HKInterviewContent = {profiles, roles, suggestRoles, resolveRole, rounds, assess, assessResponses, report};
 })(typeof window !== 'undefined' ? window : globalThis);

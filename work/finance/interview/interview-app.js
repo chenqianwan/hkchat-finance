@@ -122,24 +122,28 @@
   }
   const interviewer=r=>'<div class="iv-interviewer"><span class="iv-avatar" aria-hidden="true">'+E((r.interviewer.role||'HR').split(' ')[0].slice(0,3))+'</span><div><strong>'+E(r.interviewer.name)+'</strong><small>'+E(r.interviewer.role)+' · 模擬面試官</small></div></div>';
   function editor(id,label,value){
-    return '<label class="iv-field iv-answer-box"><span>'+E(label)+'</span><textarea id="'+id+'" maxlength="1400" placeholder="先講結論，再用一件你做過的事作例子。中文、粵語書面表達或英文均可。">'+E(value)+'</textarea></label><div class="iv-counter"><span>先講清楚，比堆術語更重要</span><span id="iv-count">'+value.length+' / 1400</span></div>';
+    return '<label class="iv-field iv-answer-box"><span>'+E(label)+'</span><textarea id="'+id+'" maxlength="1400" placeholder="直接寫你的回答，短句也可以。可先講自己的想法，再補充例子。">'+E(value)+'</textarea></label><div class="iv-counter"><span>自由作答，毋須指定字句</span><span id="iv-count">'+value.length+' / 1400</span></div>';
+  }
+  function answerSuggestion(r,follow=false){
+    const text=sampleText(r,follow),isExample=s.source==='demo'&&(follow?s.answers[s.index].assessment.followUp.sampleKind:r.sampleKind)!=='structure';
+    const chars=Array.from(text),preview=chars.slice(0,85).join('')+(chars.length>85?'…':'');
+    return '<aside class="iv-answer-suggestion" aria-label="預設試玩提示"><div class="iv-suggestion-title"><strong>'+(isExample?'預設試玩回答':'預設回答提示')+'</strong><span>可選</span></div><p class="iv-suggestion-preview">'+E(preview)+'</p><button type="button" class="iv-secondary iv-suggestion-button" data-act="'+(follow?'follow-sample':'sample')+'">'+(isExample?'填入示範回答':'填入回答提示')+' <span aria-hidden="true">↓</span></button><p class="iv-suggestion-note">'+(isExample?'按一下填入，可修改後再提交。也可直接寫自己的回答。':'可先填入試玩，再補上真實經歷；未填提示不作判讀。')+'</p></aside>';
   }
   function question(){
     s.view='question';const r=round();
     render(sessionTop()+interviewer(r)+'<div class="iv-question"><div class="iv-kicker">'+E(r.label)+'</div><h1 tabindex="-1" data-heading>'+E(r.question)+'</h1></div><aside class="iv-context"><strong>本題背景</strong>'+E(r.context)+'</aside>'+
-      editor('iv-answer','輪到你回答',s.draft)+
+      answerSuggestion(r)+editor('iv-answer','輪到你回答',s.draft)+
       '<details class="iv-details"><summary>卡住？看看答題方向</summary><div><ul>'+r.promptHints.map(h=>'<li>'+E(h)+'</li>').join('')+'</ul></div></details>'+
-      '<div class="iv-sample-bar"><button type="button" class="iv-text-button" data-act="sample">'+(s.source==='demo'&&r.sampleKind!=='structure'?'用示範回答試玩':'插入回答骨架')+'</button><span>'+(s.source==='demo'&&r.sampleKind!=='structure'?'可編輯後再提交':'請補上自己的真實經歷')+'</span></div>'+
       '<p class="iv-error" id="iv-error" role="alert"></p><div class="iv-actions">'+button('回答，接住追問 <span aria-hidden="true">→</span>','answer')+button('先收尾，睇目前復盤','finish-early',true)+'</div>'+disclosure());
   }
   function response(){
     s.view='response';const r=round(),a=s.answers[s.index],f=a.assessment.followUp;
     render(sessionTop()+interviewer(r)+'<div class="iv-kicker">'+E(r.label)+'</div><h1 tabindex="-1" data-heading style="font-size:24px;margin-top:6px">再講深一步</h1><div class="iv-bubble"><span>你剛才的回答'+(originLabel(a)?' · '+originLabel(a):'')+'</span><p>'+E(a.text)+'</p></div>'+
       '<section class="iv-follow"><div class="iv-kicker">面試官追問 · 可選</div><h2>'+E(f.question)+'</h2><p>'+E(f.why)+'</p></section>'+
-      (a.followText?'<div class="iv-bubble"><span>你對追問的補充'+(followLabel(a)?' · '+followLabel(a):'')+'</span><p>'+E(a.followText)+'</p></div><p class="iv-note">已保留補充，復盤會一併對照這兩段回答。</p>':s.followEditing?editor('iv-follow-answer','補充一個具體例子／步驟',s.followDraft)+'<div class="iv-sample-bar"><button type="button" class="iv-text-button" data-act="follow-sample">'+(s.source==='demo'&&f.sampleKind!=='structure'?'用示範補充起稿':'用補充骨架起稿')+'</button></div><div class="iv-actions">'+button('記下這段補充','save-follow',true)+'</div>':'<div class="iv-actions">'+button('我想回應追問','open-follow',true)+'</div>')+
+      (a.followText?'<div class="iv-bubble"><span>你對追問的補充'+(followLabel(a)?' · '+followLabel(a):'')+'</span><p>'+E(a.followText)+'</p></div><p class="iv-note">已保留補充，復盤會一併對照這兩段回答。</p>':s.followEditing?answerSuggestion(r,true)+editor('iv-follow-answer','補充一個具體例子／步驟',s.followDraft)+'<div class="iv-actions">'+button('記下這段補充','save-follow',true)+'</div>':'<div class="iv-actions">'+button('我想回應追問','open-follow',true)+'</div>')+
       '<p class="iv-error" id="iv-error" role="alert"></p><div class="iv-actions">'+button(s.index===4?'完成面試，睇復盤':'下一題 <span aria-hidden="true">→</span>','next')+'</div><div class="iv-sample-bar"><button type="button" class="iv-text-button" data-act="edit-answer">修改本題回答</button><button type="button" class="iv-text-button" data-act="finish-early">先收尾</button></div>'+disclosure());
   }
-  const resultFor=(r,a)=>a?C.assess(r,a.text+(a.followText?'\n'+a.followText:'')):null;
+  const resultFor=(r,a)=>a?C.assessResponses(r,a.text,a.followText):null;
   function evidence(items){
     return '<ul class="iv-evidence-list">'+items.map(item=>'<li><div class="iv-evidence-head"><strong>'+E(item.label)+'</strong><span class="iv-status iv-status-'+E(item.status)+'">'+E(statusName[item.status]||'未能判讀')+'</span></div>'+(item.quote?'<blockquote class="iv-quote">「'+E(item.quote)+'」</blockquote>':'')+'<p>'+E(item.guidance)+'</p></li>').join('')+'</ul>';
   }
@@ -166,6 +170,7 @@
       s.rounds.map((r,i)=>{const a=s.answers[i];if(!a)return '<article class="iv-guidance"><div class="iv-kicker">0'+(i+1)+' · '+E(r.label)+'</div><p>本次未回答，未作分析。</p></article>';const review=resultFor(r,a);
         return '<details class="iv-review" data-review="'+i+'"><summary><span>0'+(i+1)+'</span><strong>'+E(r.label)+'</strong><span>'+(originLabel(a)|| (followLabel(a)?'含示範補充':'查看復盤'))+' ＋</span></summary><div class="iv-review-body"><h3>'+E(r.question)+'</h3><div class="iv-bubble"><span>你的原回答'+(originLabel(a)?' · '+originLabel(a):'')+'</span><p>'+E(a.text)+'</p></div>'+
           (a.followText?'<div class="iv-bubble"><span>追問：'+E(a.assessment.followUp.question)+'</span><p>'+E(a.followText)+'</p></div>':'')+
+          (/【[^】]*】/.test(a.text+'\n'+a.followText)?'<p class="iv-note">未填完的回答提示會保留在紀錄中；線索判讀只採用已填寫的回答或補充。</p>':'')+
           (!review.recognised?'<p class="iv-warning">這段文字未能可靠配對預設線索。下面提供整理方向，唔當作能力評分。</p>':'')+
           evidence(review.items)+'<details class="iv-details"><summary>'+(s.source==='demo'&&r.sampleKind!=='structure'?'示範可以點講':'可參考的回答結構')+'</summary><div><p class="iv-note">'+(s.source==='demo'&&r.sampleKind!=='structure'?'以下只使用虛構示範背景，不是對你經歷的推斷。':'以下是提綱與假設做法，請自行補上真實經歷。')+'</p><div class="iv-example">'+E(r.strongExample||r.sampleAnswer)+'</div></div></details>'+
           (a.practice?'<details class="iv-details"><summary>查看今次重練紀錄</summary><div><div class="iv-example">'+E(a.practice.text)+'</div>'+evidence(a.practice.assessment.items)+'</div></details>':'')+
@@ -210,8 +215,7 @@
   }
   function submit(){
     const text=s.draft.trim();
-    if(text.length<12){error('先寫一句完整回答，或者展開答題方向。');return;}
-    if(/【[^】]*】/.test(text)){error('請先用自己的內容填好回答骨架，再提交。');return;}
+    if(!text){error('寫幾個字就可以繼續，或點上方預設提示填入試玩。');return;}
     const r=round();s.answers[s.index]={text,assessment:C.assess(r,text),sample:s.source==='demo'&&text===r.sampleAnswer.trim(),sampleStarted:s.usedSample,followText:'',followSample:false,followSampleStarted:false,practice:null};
     s.followDraft='';s.followEditing=false;s.followUsedSample=false;response();
   }
@@ -257,18 +261,18 @@
     if(act==='manual'){++fileToken;s.busy=false;s.customReady=true;s.confirmed=false;setup(false);document.querySelector('[data-profile="school"]')?.focus();}
     if(act==='parse-text'){if(s.paste.trim().length<30){error('請貼上至少一段教育、技能或項目經歷。');return;}++fileToken;s.busy=false;s.rawText=s.paste.slice(0,16000);s.profile={...blank(),...window.HKInterviewResume.suggest(s.rawText),custom:true,id:'custom'};s.customReady=true;s.confirmed=false;s.fileName='貼上的履歷文字';s.warnings=[];invalidateJobs();setup(false);}
     if(act==='start')start();
-    if(act==='sample'){s.draft=sampleText(round());s.usedSample=s.source==='demo'&&round().sampleKind!=='structure';const el=document.getElementById('iv-answer');el.value=s.draft;el.dispatchEvent(new Event('input',{bubbles:true}));el.focus();}
+    if(act==='sample'){s.draft=sampleText(round());s.usedSample=s.source==='demo'&&round().sampleKind!=='structure';const el=document.getElementById('iv-answer');el.value=s.draft;el.dispatchEvent(new Event('input',{bubbles:true}));el.focus();say('已填入預設提示，可以修改後再提交。');}
     if(act==='answer'&&s.view==='question')submit();
     if(act==='open-follow'){s.followEditing=true;response();document.getElementById('iv-follow-answer')?.focus();}
-    if(act==='follow-sample'){s.followDraft=sampleText(round(),true);s.followUsedSample=s.source==='demo'&&s.answers[s.index].assessment.followUp.sampleKind!=='structure';const el=document.getElementById('iv-follow-answer');el.value=s.followDraft;el.dispatchEvent(new Event('input',{bubbles:true}));el.focus();}
-    if(act==='save-follow'){if(s.followDraft.trim().length<12||/【[^】]*】/.test(s.followDraft)){error('請寫一段具體補充，並填好骨架中的內容。');return;}s.answers[s.index].followText=s.followDraft.trim();s.answers[s.index].followSampleStarted=s.followUsedSample;s.answers[s.index].followSample=s.source==='demo'&&s.followDraft.trim()===s.answers[s.index].assessment.followUp.sampleAnswer.trim();s.followEditing=false;response();}
+    if(act==='follow-sample'){s.followDraft=sampleText(round(),true);s.followUsedSample=s.source==='demo'&&s.answers[s.index].assessment.followUp.sampleKind!=='structure';const el=document.getElementById('iv-follow-answer');el.value=s.followDraft;el.dispatchEvent(new Event('input',{bubbles:true}));el.focus();say('已填入預設提示，可以修改後再提交。');}
+    if(act==='save-follow'){if(!s.followDraft.trim()){error('寫幾個字作補充，或點上方預設提示填入試玩。');return;}s.answers[s.index].followText=s.followDraft.trim();s.answers[s.index].followSampleStarted=s.followUsedSample;s.answers[s.index].followSample=s.source==='demo'&&s.followDraft.trim()===s.answers[s.index].assessment.followUp.sampleAnswer.trim();s.followEditing=false;response();}
     if(act==='next'){if(s.followEditing&&s.followDraft.trim()){confirmAction(()=>{s.followDraft='';s.followEditing=false;next();},'未保存追問補充','離開會捨棄這段未保存文字；你也可以返回先記下補充。');return;}next();}
     if(act==='edit-answer'){s.draft=s.answers[s.index].text;s.usedSample=s.answers[s.index].sampleStarted;question();}
     if(act==='finish-early'){const draft=s.view==='question'?s.draft:s.followEditing?s.followDraft:'';if(draft.trim())confirmAction(finish,'先結束今次練習？','已提交的回答會保留在復盤；目前未提交的草稿不會納入分析。');else finish();}
     if(act==='resume'){s.index=s.rounds.findIndex((_,i)=>!s.answers[i]);if(s.index<0){report();return;}s.draft='';s.usedSample=false;question();}
     if(act==='report')report();
     if(act==='practice')practice(Number(b.dataset.index));
-    if(act==='save-practice'){if(s.practiceDraft.trim().length<12){error('請先寫一段完整的新版回答。');return;}if(/【[^】]*】/.test(s.practiceDraft)){error('請先填好骨架中的內容。');return;}s.practiceResult=C.assess(s.rounds[s.practiceIndex],s.practiceDraft.trim());s.answers[s.practiceIndex].practice={text:s.practiceDraft.trim(),assessment:s.practiceResult};practiceView();document.querySelector('.iv-section')?.scrollIntoView({block:'start',behavior:'instant'});say('重練版本已記錄，原回答保留。');}
+    if(act==='save-practice'){if(!s.practiceDraft.trim()){error('先寫下今次想講的回答，短句也可以。');return;}s.practiceResult=C.assess(s.rounds[s.practiceIndex],s.practiceDraft.trim());s.answers[s.practiceIndex].practice={text:s.practiceDraft.trim(),assessment:s.practiceResult};practiceView();document.querySelector('.iv-section')?.scrollIntoView({block:'start',behavior:'instant'});say('重練版本已記錄，原回答保留。');}
     if(act==='restart')confirmAction(start,'用同一背景重新練？','今次回答與重練紀錄將清除。可以先下載復盤，再開新一局。');
     if(act==='back-setup')confirmAction(()=>{s.answers=[];s.rounds=[];s.draft='';s.followDraft='';s.error='';setup();},'返回背景設定？','將清除本局回答；已確認的背景仍然保留在此頁。');
     if(act==='download'){const url=URL.createObjectURL(new Blob([transcript()],{type:'text/plain;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='HKChat-面試練習復盤.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);say('復盤文字檔已準備。');}

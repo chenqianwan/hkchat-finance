@@ -110,6 +110,13 @@
 #hkroles .iv-context{padding:14px 15px;border-radius:13px;background:var(--p-soft);font-size:12px;line-height:1.85;margin-bottom:20px}
 #hkroles .iv-context strong{display:block;color:var(--p-primary);font-size:10px;margin-bottom:5px;letter-spacing:.4px}
 #hkroles .iv-answer-box textarea{min-height:210px}
+#hkroles .iv-answer-suggestion{margin-top:16px;padding:15px;border:1px solid var(--p-line);border-radius:14px;background:var(--p-soft)}
+#hkroles .iv-suggestion-title{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--p-primary)}
+#hkroles .iv-suggestion-title strong{font-size:13px;font-weight:600}
+#hkroles .iv-suggestion-title>span{font-size:10px}
+#hkroles .iv-suggestion-preview{font-size:12px;line-height:1.85;color:var(--p-text);margin-top:9px}
+#hkroles .iv-suggestion-button{margin-top:12px;min-height:44px;border-color:var(--p-primary);color:var(--p-primary);font-size:12px}
+#hkroles .iv-suggestion-note{font-size:10px;line-height:1.8;color:var(--p-muted);margin-top:8px}
 #hkroles .iv-counter{display:flex;justify-content:space-between;gap:10px;margin-top:7px;font-size:10px;color:var(--p-muted)}
 #hkroles .iv-sample-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px}
 #hkroles .iv-sample-bar>span{font-size:10px;color:var(--p-muted)}
