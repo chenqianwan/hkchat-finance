@@ -1,0 +1,21 @@
+{
+  "tool": "image_gen.imagegen",
+  "mode": "built-in",
+  "intent": "generate",
+  "use_case": "photorealistic-natural",
+  "prompt": "Use case: photorealistic-natural\nAsset type: landscape 4:3 role selection card photo for the HKChat Finance insurance adviser conversation simulator.\nPrimary request: a cinematic, convincingly natural photograph of a fictional Hong Kong East Asian insurance adviser in their early 30s, smart casual charcoal blazer and unbuttoned light cream shirt, speaking with one adult client across a wooden desk in a quiet Hong Kong office. The adviser listens with a calm friendly expression and makes a gentle open hand gesture toward a plain blank cream brochure on the desk.\nScene/backdrop: restrained contemporary Hong Kong office, walnut desk, warm neutral interior, large window with dense Hong Kong buildings softly out of focus. No luxury excess.\nSubject: the adviser is in clear focus near the center-right, facing a client whose shoulder and partial profile are softly seen on the left; two people only, both fictional adults. Plausible conversational body language, realistic hands and subtle expressions.\nStyle/medium: premium candid editorial office photography, realistic skin and hair texture, subtle cinematic color grading, 50mm lens feel, no artificial beauty retouching.\nComposition/framing: landscape 4:3 aspect ratio. People occupy the upper half and center-right; keep lower-left quiet, darker and low-detail, using naturally shaded desk/foreground for later UI text overlay. Do not render an overlay or text. Frame faces fully with comfortable headroom.\nLighting/mood: muted warm daylight through the window, soft natural shadows, calm and trustworthy, professional without pushy sales energy.\nColor palette: restrained warm browns, greige, cream and charcoal; compatible with a dark purple interface.\nConstraints: no text, no logos, no branding, no watermarks. Brochure surfaces must be completely blank. No cash, no coins, no finance charts, no graphs, no contracts, no readable documents, no screens with content. No handshake, no staged sales grin, no exaggerated gestures.",
+  "output_path": "outputs/hkchat-finance/assets/role-insurance.webp",
+  "export": {
+    "format": "WebP",
+    "width": 800,
+    "quality": 82,
+    "preserve_aspect_ratio": true
+  },
+  "validation": {
+    "subject": "Fictional Hong Kong East Asian adviser speaking to one adult client across a wooden desk",
+    "composition": "Adviser center-right, client dark foreground at left; blank brochure; soft-focus buildings outside",
+    "style": "Natural warm-daylight editorial office photography",
+    "visible_text": false,
+    "logos": false
+  }
+}

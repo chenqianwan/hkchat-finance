@@ -96,9 +96,16 @@ for file,fragment in fragments.items():
     fragment=re.sub(r'<header class="(?:p|d)-top">.*?</header>',lambda m:header(file),fragment,count=1,flags=re.S)
     footer='<footer class="p-footer">HKChat · Finance</footer>'
     fragment=fragment.replace('</main>','</main>'+footer if file in {f'hkchat-{key}-mobile.html' for key,_,_ in ROLE_APPS} else footer+'</main>',1)
-    html='<!doctype html><html lang="zh-HK"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="color-scheme" content="light dark"><meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#17151b" media="(prefers-color-scheme: dark)"><meta name="description" content="HKChat Finance：職場初體驗、銀行、App 設計、財經編輯與金融面試，加上四個生活金融小遊戲，香港日常玩住識。"><title>HKChat Finance · '+title+'</title><script>'+shim+'</script><style>'+mobile+'</style></head><body><noscript>請啟用 JavaScript，體驗金融生活小遊戲。</noscript><script>'+vendor+'</script>'+fragment+'<style>'+product+'</style><script>'+runtime+'</script></body></html>'
+    html='<!doctype html><html lang="zh-HK"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="color-scheme" content="light dark"><meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#17151b" media="(prefers-color-scheme: dark)"><meta name="description" content="HKChat Finance：職場初體驗、銀行、保險顧問、財經主播與金融面試，加上四個生活金融小遊戲，香港日常玩住識。"><title>HKChat Finance · '+title+'</title><script>'+shim+'</script><style>'+mobile+'</style></head><body><noscript>請啟用 JavaScript，體驗金融生活小遊戲。</noscript><script>'+vendor+'</script>'+fragment+'<style>'+product+'</style><script>'+runtime+'</script></body></html>'
     if file == 'hkchat-interview-mobile.html':
         html = html.replace('</head>', '<link rel="icon" href="'+mark+'"></head>', 1)
     (OUT/file).write_text(html)
     print(file,len(html.encode()),'bytes')
+# Retire the two removed experiences while keeping existing bookmarks useful.
+for old, target, title in [
+    ('hkchat-product-mobile.html', 'hkchat-insurance-mobile.html', '今日我做保險顧問'),
+    ('hkchat-verify-mobile.html', 'hkchat-anchor-mobile.html', '今日我做財經主播'),
+]:
+    redirect = '<!doctype html><html lang="zh-HK"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url='+target+'"><title>HKChat Finance · 前往新體驗</title><style>html{color-scheme:light dark}body{font:16px/1.8 system-ui;padding:28px;max-width:480px;margin:auto}a{color:light-dark(#9952a6,#d2a2de)}</style></head><body><p>此體驗已更新。</p><a href="'+target+'">前往'+title+' →</a></body></html>'
+    (OUT/old).write_text(redirect)
 (OUT/'.nojekyll').touch()
