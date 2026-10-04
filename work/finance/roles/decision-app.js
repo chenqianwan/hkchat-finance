@@ -4,15 +4,19 @@
   const main = document.getElementById('role-main');
   const config = JSON.parse(document.getElementById('role-config').textContent);
   const isProduct = config.key === 'product';
+  const generator = window.HKScenario;
+  let customScenario = null;
+  let customPrompt = '';
+  let preparing = false;
   const storageKey = `hkchat-finance-role-${config.key}`;
   const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  const findScenario = id => config.scenarios.find(s => s.id === id);
+  const findScenario = id => customScenario?.id === id ? customScenario : config.scenarios.find(s => s.id === id);
   const defaults = s => Object.fromEntries(s.options.map(o => [o.id, o.initial]));
   const fresh = () => ({version:1, view:'home', selected:config.scenarios[0].id, run:null});
   const voteLabels = {yes:'支持試行', hold:'有保留', no:'未能支持'};
   let state = fresh();
   const announce = message => {document.getElementById('r-announcement').textContent = message;};
-  const save = () => {try {localStorage.setItem(storageKey, JSON.stringify(state));} catch (_) {}};
+  const save = () => {try {localStorage.setItem(storageKey, JSON.stringify(state.run?.id === 'custom-manager' ? fresh() : state));} catch (_) {}};
   const validDraft = (draft, s) => draft && s.options.every(o => typeof draft[o.id] === 'boolean');
   try {
     const stored = JSON.parse(localStorage.getItem(storageKey));
@@ -45,7 +49,8 @@
     return `<section class="r-photo-hero p-photo-hero"><img src="${config.photo}" alt="${esc(config.photoAlt)}"><div class="r-photo-copy"><p>代入角色 · 最多三輪</p><h1 tabindex="-1">${esc(config.title)}</h1><span>${esc(config.strap)}</span></div></section>
       <p class="r-intro">${esc(config.intro)}</p>
       <ol class="r-workflow">${config.workflow.map((x,i) => `<li><span>${i+1}</span>${esc(x)}</li>`).join('')}</ol>
-      <section aria-labelledby="r-choose"><div class="r-section-line"><h2 id="r-choose">揀一個難題</h2><span>兩個情境</span></div>
+      ${!isProduct ? generator.form({placeholder:'例如：午飯時間分行排長龍，長者又唔識網上預約',examples:['午飯時間排長龍，點照顧即場客？','客人唔識用自助機，又想保留私隱'],value:customPrompt}) : ''}
+      <section aria-labelledby="r-choose"><div class="r-section-line"><h2 id="r-choose">或者，由靈感開始</h2><span>兩個示範題材</span></div>
       <div class="r-scenarios">${config.scenarios.map((x,i) => `<button type="button" class="r-scenario" data-scenario="${esc(x.id)}" aria-pressed="${x.id === state.selected}"><span class="r-scenario-number">0${i+1}</span><span><small>${esc(x.tag)}</small><strong>${esc(x.title)}</strong><span>${esc(x.teaser)}</span></span><span class="r-select-mark" aria-hidden="true">${x.id === state.selected ? '✓' : '＋'}</span></button>`).join('')}</div></section>
       ${button('start',esc(config.start)+' <span aria-hidden="true">→</span>')}
       ${state.run ? button('resume',state.run.finished ? '回看上次決策' : '繼續上次方案','r-secondary') : ''}
@@ -123,6 +128,7 @@
     app.dataset.view=state.view;
     app.dataset.stage=state.view === 'play' ? (isProduct ? (last() && sameDraft() ? 'tested' : 'prototype') : state.run.stage) : state.view;
     main.innerHTML=state.view === 'home' ? home() : state.view === 'result' ? result() : isProduct ? productPlay() : managerPlay();
+    if (state.view === 'home' && !isProduct) generator.bind(main, prompt => prepareStart(null, prompt));
     save();
     if(focus) {
       main.querySelector('h1')?.focus({preventScroll:true});
@@ -135,6 +141,36 @@
     state.run={id, draft:defaults(s), note:'', rounds:[], stage:'draft', finished:false};
     state.view='play';
     render();
+  }
+  function generateScenario(prompt) {
+    const busy = /排隊|排队|輪候|轮候|午飯|午饭|繁忙|預約|预约|queue|lunch/i.test(prompt);
+    const topic = prompt.length > 36 ? prompt.slice(0,36) + '…' : prompt;
+    const options = [
+      {id:'listen',label:'先問清楚最急嘅需要',detail:'接待員逐一確認來意，分清即時解說與需要進一步跟進的問題。',on:'先確認每位客人的需要，再安排合適的解說。',off:'沿用同一套流程，未先確認個別需要。',initial:true},
+      {id:'human',label:busy ? '安排即場接待與輪候解說' : '保留人工解說與簡明指引',detail:busy ? '由接待員說明輪候次序與替代時段，但會佔用部分前線人手。' : '客人可找職員逐步解說；指引用短句，讓客人自己確認。',on:busy ? '安排即場接待，講清楚輪候與替代時段。' : '保留人工解說，提供簡明指引。',off:'暫時沿用現有接待方式，未加設協助。',initial:false},
+      {id:'private',label:'留一個安靜解說位置',detail:'需要談細節時轉到側邊座位，讓客人自己選擇和確認；座位需要輪流使用。',on:'有需要時使用側邊座位，由客人自己確認選項。',off:'所有問題沿用大堂接待，未安排側邊解說。',initial:false},
+      {id:'review',label:'先試行，再按記錄調整',detail:'主管安排負責人，記錄未解決的問題，再檢視人手與跟進時間。',on:'指定負責人記錄問題，試行後再調整安排。',off:'直接沿用方案，未指定檢視和跟進安排。',initial:false}
+    ];
+    return {id:'custom-manager',tag:'你出題 · 生成情境',title:topic,teaser:prompt,
+      context:`今次嘅虛構分行難題：「${prompt}」。你要提出一套服務安排，聽取客人與前線同事的不同需要，再決定如何修訂。`,
+      constraint:'演示設定：現有人手不變，側邊只有一組解說座位。以下回應按你的安排配對，不補充真實銀行規則。',
+      editorTitle:'面對呢個難題，我會點安排？',options,
+      people:[
+        {name:'芬姐',role:'需要協助嘅客人',initial:'芬',stance:[{when:{human:false},vote:'no'},{when:{listen:true,human:true},vote:'yes'}],defaultVote:'hold',reasons:[{option:'listen',yes:`你有先問清楚「${topic}」入面我最急嘅需要，我先知道可以點處理。`,no:'未問過我想處理乜，就未必安排到適合我嘅服務。'},{option:'human',yes:'有職員解說下一步，我唔使自己估應該去邊。',no:'未有額外協助，我唔明白流程時仍然唔知搵邊個。'}],remaining:'安排實行之後，要問返需要協助嘅客人是否跟得上。'},
+        {name:'樂怡',role:'重視理解與自主嘅客人',initial:'怡',stance:[{when:{private:false},vote:'no'},{when:{private:true,listen:true},vote:'yes'}],defaultVote:'hold',reasons:[{option:'private',yes:'有側邊位置慢慢講，而且由我自己確認，較放心提出疑問。',no:'如果所有細節都喺大堂講，我可能唔敢問清楚。'},{option:'listen',yes:'先聽我嘅需要，唔會一開始就替我揀好。',no:'大家需要唔一樣，我希望先有機會講清楚。'}],remaining:'側邊位置亦要安排輪候，唔可以承諾人人即時用到。'},
+        {name:'家敏',role:'前線接待主管',initial:'敏',stance:[{when:{human:true,review:false},vote:'no'},{when:{review:true,listen:true},vote:'yes'}],defaultVote:'hold',reasons:[{option:'human',yes:'增加解說要排好輪值，唔係多一項服務就自然多一個人。',no:'人手暫時較易安排，但客人未解決嘅困難可能再返嚟。'},{option:'review',yes:`針對「${topic}」留低記錄，我哋先知道下一輪應該改邊部分。`,no:'未有負責人跟進，問題可能只係由今日推到聽日。'}],remaining:'試行前要分配接待、解說與跟進的負責人。'}
+      ],resultNext:`下一步：針對「${prompt}」記錄客人卡住的位置、前線負擔與未處理事項，再修訂服務安排。`,learning:'本局練習是平衡協助、自主與前線工作。角色支持數只反映這次示範分支。'};
+  }
+  async function prepareStart(id, prompt = '') {
+    if (preparing) return;
+    if (isProduct) {start(id); return;}
+    preparing = true;
+    if (prompt) customPrompt = prompt;
+    const ready = await generator.prepare(main, {prompt:prompt || findScenario(id).title,onCancel:() => {state.view='home';render();}});
+    preparing = false;
+    if (!ready) return;
+    if (prompt) {customScenario = generateScenario(prompt); id = customScenario.id;}
+    start(id);
   }
   function snapshot(direct) {
     if(state.run.rounds.length >= 3) return false;
@@ -155,10 +191,10 @@
       save(); return;
     }
     const action=target.dataset.action;
-    if(action==='start') {start(state.selected); return;}
-    if(action==='home') {state.view='home'; render(); return;}
+    if(action==='start') {prepareStart(state.selected); return;}
+    if(action==='home') {state.view='home'; if(state.selected==='custom-manager') state.selected=config.scenarios[0].id; render(); return;}
     if(action==='resume' && state.run) {state.view=state.run.finished || state.run.rounds.length>=3?'result':'play'; render(); return;}
-    if(action==='replay' && state.run) {start(state.run.id); return;}
+    if(action==='replay' && state.run) {prepareStart(state.run.id); return;}
     if(state.view!=='play' || !state.run) return;
     if(action==='revise' && state.run.rounds.length<3) {state.run.stage='draft'; render(); return;}
     if(action==='consult' && state.run.rounds.length<3) {

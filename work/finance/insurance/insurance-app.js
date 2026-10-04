@@ -1,8 +1,8 @@
 const main=document.getElementById('role-main'),root=document.getElementById('hkroles');
 const E=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const fresh=id=>({view:'home',id:id||DATA.cases[0].id,index:0,draft:'',selected:null,records:[],trialIndex:0,trial:null});
+const fresh=id=>({view:'home',id:id||DATA.cases[0].id,index:0,draft:'',selected:null,records:[],trialIndex:0,trial:null,custom:null});
 let s=fresh(),pending=null;
-const scene=()=>DATA.cases.find(c=>c.id===s.id)||DATA.cases[0];
+const scene=()=>s.custom||DATA.cases.find(c=>c.id===s.id)||DATA.cases[0];
 const stage=()=>scene().stages[s.view==='practice'?s.trialIndex:s.index];
 const labels={clear:'講清楚了',partial:'可再補一句',overclaim:'需要澄清',custom:'自訂文字 · 待覆核'};
 const btn=(label,act,secondary=false,extra='')=>'<button type="button" class="'+(secondary?'cv-secondary':'cv-primary')+'" data-act="'+act+'" '+extra+'>'+label+'</button>';
@@ -16,7 +16,7 @@ function sources(){return '<details class="cv-disclosure"><summary>了解更多 
 function customer(){const c=scene();return '<div class="ins-customer"><span class="ins-avatar" aria-hidden="true">'+E(c.customer.name.slice(-1))+'</span><div><strong>'+E(c.customer.name)+'</strong><small>'+E(c.customer.identity)+'</small></div></div>'}
 function bubble(text,label){return '<section class="cv-call"><span>'+E(label||scene().customer.name+' · 虛構客戶')+'</span><p>'+E(text)+'</p></section>'}
 function tags(items){return '<div class="ins-fact-tags">'+items.map(x=>'<span>'+E(x)+'</span>').join('')+'</div>'}
-function home(){s.view='home';render(homeLink()+'<section class="ins-hero"><img src="'+DATA.photo+'" alt="AI 生成的香港辦公室保險顧問與客戶會面情境"><div><div class="cv-kicker">換上保險顧問視角</div><h1>今日我做保險顧問</h1><p>聽到客人需要，先講得入心。<br>範圍、限制同選擇，一樣講清楚。</p><div class="ins-meta"><span>3 輪會面</span><span>約 3 分鐘</span><span>隨時收尾</span></div></div></section><p class="ins-home-copy">今次你坐喺顧問嗰邊。先聽客人想了解甚麼，再解釋虛構方案，睇吓對方點接話。</p><h2 class="cv-home-heading">今日先見邊位客人？</h2><div class="cv-cases">'+DATA.cases.map(c=>'<button type="button" class="cv-case" data-case="'+E(c.id)+'"><span>'+E(c.tag)+' · '+E(c.customer.name)+'</span><strong>'+E(c.title)+'</strong><small>'+E(c.desc)+'</small><span class="cv-start-hint">入座，開始會面 →</span></button>').join('')+'</div>'+note())}
+function home(){s.view='home';render(homeLink()+'<section class="ins-hero"><img src="'+DATA.photo+'" alt="AI 生成的香港辦公室保險顧問與客戶會面情境"><div><div class="cv-kicker">換上保險顧問視角</div><h1>今日我做保險顧問</h1><p>聽到客人需要，先講得入心。<br>範圍、限制同選擇，一樣講清楚。</p><div class="ins-meta"><span>3 輪會面</span><span>約 3 分鐘</span><span>隨時收尾</span></div></div></section><p class="ins-home-copy">今次你坐喺顧問嗰邊。先聽客人想了解甚麼，再解釋虛構方案，睇吓對方點接話。</p>'+window.HKScenario.form({placeholder:'例如：客人準備去日本滑雪，朋友話旅遊保險一定包，想練習點樣問清楚。',examples:['客人準備去日本滑雪，朋友話旅遊保險一定包','客人剛轉工，擔心門診同牙科保障點樣銜接','客人想了解保障，但今日唔想即刻做決定'],value:s.custom?.userPrompt||''})+'<h2 class="cv-home-heading">或者，由示範客戶開始</h2><div class="cv-cases">'+DATA.cases.map(c=>'<button type="button" class="cv-case" data-case="'+E(c.id)+'"><span>'+E(c.tag)+' · '+E(c.customer.name)+'</span><strong>'+E(c.title)+'</strong><small>'+E(c.desc)+'</small><span class="cv-start-hint">入座，開始會面 →</span></button>').join('')+'</div>'+note());window.HKScenario.bind(main,prompt=>startCustom(prompt))}
 function top(){return '<div class="cv-topline"><button type="button" class="cv-back" data-act="change">‹ 換位客人</button><span class="cv-muted">第 '+(s.index+1)+' / 3 輪</span></div><ol class="cv-progress" aria-label="會面進度">'+['問需要','講範圍','解疑慮'].map((x,i)=>'<li'+(i===s.index?' aria-current="step"':'')+'>'+x+'</li>').join('')+'</ol>'}
 function choices(){return '<div class="ins-choices" role="group" aria-label="選擇你的說法">'+stage().choices.map(c=>'<button type="button" class="ins-choice" data-choice="'+E(c.id)+'" aria-pressed="'+(s.selected===c.id)+'"><strong>'+E(c.label)+'</strong><span>'+E(c.text)+'</span></button>').join('')+'</div><details class="ins-compose"><summary>想用自己的說法？點此改寫</summary><label class="cv-field" for="ins-draft"><span>我的說法</span><textarea id="ins-draft" maxlength="700" placeholder="先揀一句起稿，或者寫低自己的說法。">'+E(s.draft)+'</textarea></label><p class="ins-prompt">改寫內容只會記錄原文，列作待覆核；客戶接話只對應完整預設句。</p></details><p class="ins-draft-note" id="ins-selection">'+(s.selected?'已揀好說法，可以回應客人。':s.draft.trim()?'使用自訂說法，將保留原文。':'先揀一句，或者寫下你的說法。')+'</p><p class="cv-error" id="ins-error" role="alert"></p>'}
 function history(){return s.records.length?'<details class="cv-log"><summary>回看已完成對話（'+s.records.length+' 輪）</summary>'+s.records.map((r,i)=>'<article><strong>第 '+(i+1)+' 輪 · 我的說法</strong><p>'+E(r.text)+'</p><strong>'+E(r.kind==='custom'?'未模擬客戶接話':scene().customer.name)+'</strong><p>'+E(r.reply||'保留自訂文字，待覆核。')+'</p></article>').join('')+'</details>':''}
@@ -29,9 +29,37 @@ function report(){s.view='result';const c=scene(),done=s.records.length,needs=s.
 function practice(i){s.view='practice';s.trialIndex=i;s.draft=s.records[i].trial?.text||s.records[i].text;s.selected=match(s.draft)?.id||null;s.trial=null;practiceView()}
 function practiceView(){const r=s.records[s.trialIndex];render('<button type="button" class="ins-back" data-act="report">‹ 返回會面紀錄</button><p class="cv-kicker">重練第 '+(s.trialIndex+1)+' 輪 · 原對話會保留</p><h1>'+E(stage().title)+'</h1>'+bubble(stage().prompt)+facts()+choices()+'<div class="cv-actions">'+btn('看看另一種說法','save-trial')+'</div>'+(s.trial?'<section class="cv-gap"><h2>兩種說法，兩個回應</h2><div class="ins-compare">'+[{label:'原本',r},{label:'重練',r:s.trial}].map(x=>'<article><h3>'+x.label+'</h3>'+badge(x.r.kind)+'<p>'+E(x.r.text)+'</p><p class="cv-muted">'+E(x.r.reply||'自訂文字，未模擬客戶回應。')+'</p></article>').join('')+'</div><div class="cv-coach"><strong>重練提示</strong><p>'+E(s.trial.coach)+'</p></div><div class="cv-actions">'+btn('保留重練紀錄，返回復盤','report',true)+'</div></section>':'')+note())}
 function error(text){const el=document.getElementById('ins-error');if(el){el.textContent=text;el.scrollIntoView({block:'center',behavior:'instant'})}say(text)}
-function transcript(){const c=scene();return '今日我做保險顧問｜'+c.title+'\n虛構對話練習・預設回應，不代表真實保障或索償結果。\n'+c.stages.map((t,i)=>{const r=s.records[i];if(!r)return '\n第 '+(i+1)+' 輪：未進行。';return '\n第 '+(i+1)+' 輪｜'+t.title+'\n客人：'+t.prompt+'\n我：'+r.text+'\n'+(r.reply?'客人回應：'+r.reply:'自訂文字，未模擬客戶回應。')+'\n練習觀察：'+r.coach+(r.trial?'\n重練：'+r.trial.text+'\n重練提示：'+r.trial.coach:'')}).join('\n')}
+function transcript(){const c=scene();return '今日我做保險顧問｜'+c.title+(c.userPrompt?'\n自訂情境：'+c.userPrompt:'')+'\n虛構對話練習・預設回應，不代表真實保障或索償結果。\n'+c.stages.map((t,i)=>{const r=s.records[i];if(!r)return '\n第 '+(i+1)+' 輪：未進行。';return '\n第 '+(i+1)+' 輪｜'+t.title+'\n客人：'+t.prompt+'\n我：'+r.text+'\n'+(r.reply?'客人回應：'+r.reply:'自訂文字，未模擬客戶回應。')+'\n練習觀察：'+r.coach+(r.trial?'\n重練：'+r.trial.text+'\n重練提示：'+r.trial.coach:'')}).join('\n')}
 function confirm(action,finish=false){pending=action;const d=document.getElementById('ins-confirm');d.querySelector('h2').textContent=finish?'先結束這次會面？':'重新開始這次會面？';d.querySelector('p').textContent=finish?'已提交對話會保留；目前未提交的草稿不會列入紀錄。':'將清除本局對話與重練紀錄。你可以先返回複製筆記。';d.showModal();d.querySelector('[data-confirm=cancel]').focus()}
-function start(id){s=fresh(id);s.view='meeting';meeting()}
+function customCase(prompt){
+ const travel=/旅行|旅遊|旅程|出國|行程|滑雪|潛水|獨木舟|划艇|航班|行山|日本|trip|travel|ski/i.test(prompt),base=DATA.cases.find(c=>c.id===(travel?'weekend-trip':'new-job'))||DATA.cases[0],c=JSON.parse(JSON.stringify(base)),card=travel?'週末練習 B':'日常練習 A';
+ const included=travel?'標示步道散步意外':'一般門診',excluded=travel?'獨木舟相關事故':'例行牙科檢查';
+ c.id='custom-insurance';c.userPrompt=prompt;c.title='我的客戶情境';c.tag='自訂會面 · 示範';c.desc=prompt;
+ c.customer={name:base.customer.name,identity:'今次由你設定的虛構客戶',opening:'我想同你傾呢個情境：「'+prompt+'」。我仲未整理齊資料，想你先幫我釐清要問啲咩。'};
+ c.context='本局圍繞你輸入的情境練習對話，並用固定的虛構「'+card+'」作解釋範圍的例子。輸入內容不會改寫練習卡，也不代表已確認的保障、承保或索償結果。';
+ c.facts[0]={title:'本局情境｜仍要問清楚',text:'你設定的情境：「'+prompt+'」。客戶的實際需要及相關資料仍待澄清；本卡只提供下列兩項固定的虛構範圍。'};
+ c.stages[0]={title:'先聽清楚這個情境',prompt:'關於「'+prompt+'」，你會先問我啲咩？我唔想一開口就聽到「一定冇問題」。',context:'先問這個情境最想解決的疑問及現有資料，再用練習卡示範；不要從輸入內容推斷保障。',choices:[
+  {id:'custom-1-clear',label:'從這個情境問需要',text:'關於「'+prompt+'」，你最擔心邊一部分？手上有咩資料可以一齊核對？我哋先問清楚，再分開講已知同未確認嘅地方。',reply:'我想先知呢個情境要核對啲咩，相關資料仲未整理齊。你咁問，我可以逐樣補充，唔使即刻做決定。',coach:'你用客戶提出的情境作起點，同時確認資料缺口，沒有把情境當成已核實的保障事實。',kind:'clear',evidence:['回應自訂情境','資料仍待核對']},
+  {id:'custom-1-partial',label:'先跳到練習卡',text:'我哋先睇呢張練習卡列咗啲咩，其他問題之後先講。',reply:'但我提出嘅係「'+prompt+'」。你仲未問我最擔心邊度，同有咩資料喎。',coach:'練習卡可以用來說明，但先問客戶在這個情境的需要，才能知道哪些資料仍待澄清。',kind:'partial',evidence:['尚未釐清情境需要','練習卡不等於客戶保障']},
+  {id:'custom-1-overclaim',label:'未核對就說一定得',text:'你講呢個情況好普通，有保險就一定處理到，唔使再問咁多。',reply:'你仲未問清楚「'+prompt+'」，又未睇資料，點可以肯定？我想先釐清。',coach:'你把尚未核對的情境說成有確定答案。應收回保證，再問需要與資料。',kind:'overclaim',evidence:['情境尚未核對','不能從輸入推斷結果']}
+ ],guidance:'用客戶自己的情境開場，再問「最擔心甚麼」和「有哪些資料」；把未知清楚留下。'};
+ c.stages[1]={...c.stages[1],title:'用練習卡講清楚界線',prompt:'我講嘅「'+prompt+'」未必同呢張卡一樣。先用「'+card+'」做例子：'+included+'同'+excluded+'點分？',context:'只解釋這張固定虛構卡的範圍和限制；不要把它套用成輸入情境的保障結論。',choices:[
+  {id:'custom-2-clear',label:'講範圍，也講套用界線',text:'「'+card+'」將'+included+'列入範圍，'+excluded+'就唔包括；列入亦唔等於一定賠。呢張係練習卡，你講嘅情境要另核對資料。咁樣分清楚嗎？',reply:'明白，呢張卡只係例子：'+included+'列入範圍，'+excluded+'唔包括；我提出嘅情境仍要另外核對。',coach:'你完整說明卡上的範圍、限制，也區分了例子與客戶自己的情境。',kind:'clear',evidence:[included+'列入範圍',excluded+'不包括','自訂情境另待核對']},
+  {id:'custom-2-partial',label:'只提卡上包括的部分',text:'呢張練習卡有'+included+'，你先記住呢點，其他遲啲再講。',reply:'咁'+excluded+'呢？我仲想知道點分清楚張卡同我提出嘅情境。',coach:'你說的範圍有根據，但遺漏了卡上的限制，以及情境仍要另外核對這件事。',kind:'partial',evidence:[excluded+'不包括','不能直接套用到自訂情境']},
+  {id:'custom-2-overclaim',label:'直接套用成全部包括',text:'呢張卡有保障，你講嘅情況應該都一樣，肯定包晒。',reply:'但卡寫住'+excluded+'唔包括，而且「'+prompt+'」仲未核對。你咁講，我更加唔清楚。',coach:'你把固定練習卡直接套用到另一個情境，也忽略了明列限制。應更正承諾，分開已知與未知。',kind:'overclaim',evidence:['卡上有明確限制','自訂情境未核實']}
+ ],guidance:'用卡上明列的範圍與限制作對照，再說明這個例子不能直接判定客戶提出的情境。'};
+ c.stages[2]={title:'回應疑慮，讓客戶選擇',prompt:'返到「'+prompt+'」，仲有資料未核對。我今日只想先了解，可唔可以遲啲先決定？',context:'接受客戶先了解的選擇，整理今天知道甚麼和仍要核對甚麼。',choices:[
+  {id:'custom-3-clear',label:'整理重點，尊重暫停',text:'當然可以。今日先記低：練習卡有範圍同限制，你提出嘅情境仍要核對資料，我唔會保證結果。先到呢度，之後想唔想再了解，由你決定。',reply:'好，我先整理返「'+prompt+'」嘅資料。今日先到呢度，有需要再問你。',coach:'你回應了客戶想暫停的意願，保留未核實的部分，也沒有把示範當成真實保障結論。',kind:'clear',evidence:['尊重先了解的選擇','情境資料仍待核對']},
+  {id:'custom-3-partial',label:'替客戶安排下一次',text:'可以遲啲決定，我聽日再搵你繼續。',reply:'我未決定聽日繼唔繼續。關於「'+prompt+'」，可唔可以等我整理好資料，想問先搵你？',coach:'你同意暫緩決定，卻未問意願就安排跟進。讓客戶選擇是否繼續和何時繼續。',kind:'partial',evidence:['未取得跟進意願','資料仍未齊備']},
+  {id:'custom-3-overclaim',label:'催客戶先答應',text:'其實都解釋完，應該冇問題，你而家答應先，資料之後補就得。',reply:'我已經話「'+prompt+'」仲未核對，同今日只想了解。你仲催我，我想停止。',coach:'解釋完例子不代表客戶的情境已核實。應停止催促，接受客戶今天只想了解。',kind:'overclaim',evidence:['不能先保證再補資料','客戶已提出暫停']}
+ ],guidance:'先接受暫停，再整理「今天的例子」與「仍待核對的情境」；不要代客戶安排決定。'};
+ c.takeaway='今次圍繞「'+prompt+'」練習：先問需要，再用固定練習卡講清楚範圍與限制，最後尊重客戶的選擇。';
+ c.followup='重玩同一情境時，試用更短的一句，同時講出已知、未確認和客戶可以選擇的下一步。';
+ return c;
+}
+function startCustom(prompt){const c=customCase(prompt);return start(c.id,c)}
+async function start(id,custom=null){s=fresh(id);s.custom=custom;s.view='generating';root.dataset.view=s.view;const c=scene();if(await window.HKScenario.prepare(main,{label:'準備客戶會面',prompt:custom?.userPrompt||c.title,onCancel:home})){s.view='meeting';meeting()}}
+
 main.addEventListener('input',e=>{if(e.target.id!=='ins-draft')return;s.draft=e.target.value;s.selected=match(s.draft)?.id||null;main.querySelectorAll('[data-choice]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.choice===s.selected)));document.getElementById('ins-selection').textContent=s.selected?'完整預設說法，將展示對應客戶回應。':'使用自訂說法，將保留原文，列作待覆核。';document.getElementById('ins-error').textContent=''});
 main.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b||b.disabled)return;
  if(b.dataset.case){start(b.dataset.case);return}
@@ -44,7 +72,7 @@ main.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b
  if(a==='practice')practice(Number(b.dataset.index));
  if(a==='save-trial'&&s.view==='practice'){if(s.draft.trim().length<8){error('先揀另一句，或寫一句完整的說法。');return}s.trial=assess(s.draft);s.records[s.trialIndex].trial=s.trial;practiceView();main.querySelector('.ins-compare')?.scrollIntoView({block:'start',behavior:'instant'});say('已保存重練版本，原對話保留。')}
  if(a==='report')report();
- if(a==='restart')confirm(()=>start(s.id));
+ if(a==='restart')confirm(()=>start(s.id,s.custom));
  if(a==='change'){if(s.records.length||s.draft.trim())confirm(()=>{s=fresh();home()});else{s=fresh();home()}}
  if(a==='copy'){try{await navigator.clipboard.writeText(transcript());b.textContent='已複製會面筆記';say('筆記已複製。')}catch{b.textContent='未能複製，可長按選取對話';say('未能複製，可長按選取對話。')}}
 });

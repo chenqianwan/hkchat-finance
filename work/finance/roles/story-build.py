@@ -15,8 +15,8 @@ args = argparse.ArgumentParser()
 args.add_argument('--preview', action='store_true')
 opts = args.parse_args()
 data = json.loads((HERE / 'story-data.json').read_text())
-css = (HERE / 'story-mobile.css').read_text()
-runtime = (HERE / 'story-runtime.js').read_text()
+css = (HERE / 'story-mobile.css').read_text() + '\n' + (HERE / 'scenario-generator.css').read_text()
+runtime = (HERE / 'scenario-generator.js').read_text() + '\n' + (HERE / 'story-runtime.js').read_text()
 for key, content in data.items():
     asset = ASSETS / f'role-{key}.webp'
     if not asset.exists():

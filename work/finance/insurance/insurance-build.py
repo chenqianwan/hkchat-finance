@@ -9,8 +9,8 @@ ROOT = FINANCE.parent.parent
 data = json.loads((HERE / 'insurance-cases.json').read_text())
 photo = ROOT / 'outputs/hkchat-finance/assets/role-insurance.webp'
 data['photo'] = 'data:image/webp;base64,' + base64.b64encode(photo.read_bytes()).decode()
-css = (FINANCE / 'roles/conversation-shared.css').read_text() + '\n' + (HERE / 'insurance.css').read_text()
-app = (HERE / 'insurance-app.js').read_text()
+css = (FINANCE / 'roles/conversation-shared.css').read_text() + '\n' + (HERE / 'insurance.css').read_text() + '\n' + (FINANCE / 'roles/scenario-generator.css').read_text()
+app = (FINANCE / 'roles/scenario-generator.js').read_text() + '\n' + (HERE / 'insurance-app.js').read_text()
 payload = json.dumps(data, ensure_ascii=False).replace('</', '<\\/')
 html = '<style>' + css + '''</style>
 <div id="hkroles" data-role-app="insurance">

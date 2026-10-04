@@ -10,8 +10,8 @@ CONFIGS = {
  'relationship':dict(title='今日我做客戶經理',kicker='換上客戶經理視角',desc='客戶有啲唔明。邊聽邊問，將資料同未確定嘅事講清楚。',time='約 4 分鐘',alt='AI 生成示意照片：客戶經理在香港辦公室接聽電話。',fallback='home-fraud.webp'),
  'anchor':dict(title='今日我做財經主播',kicker='換上主播視角',desc='將一個金融概念講成人話，接住觀眾追問，寫成你嘅小節目。',time='約 4 分鐘',alt='AI 生成示意照片：香港廣播室內準備文字節目的主播。',fallback='home-fineprint.webp'),
 }
-css=(HERE/'conversation-shared.css').read_text()
-runtime=(HERE/'conversation-shared.js').read_text()
+css=(HERE/'conversation-shared.css').read_text()+'\n'+(HERE/'scenario-generator.css').read_text()
+runtime=(HERE/'scenario-generator.js').read_text()+'\n'+(HERE/'conversation-shared.js').read_text()
 for key,config in CONFIGS.items():
     config={**config,'key':key}
     path=ASSETS/f'role-{key}.webp'

@@ -8,8 +8,8 @@ HERE = Path(__file__).resolve().parent
 FINANCE = HERE.parent
 ROOT = FINANCE.parent.parent
 data = json.loads((HERE / 'decision-data.json').read_text())
-css = (HERE / 'decision-ui.css').read_text()
-js = (HERE / 'decision-app.js').read_text()
+css = (HERE / 'decision-ui.css').read_text() + '\n' + (HERE / 'scenario-generator.css').read_text()
+js = (HERE / 'scenario-generator.js').read_text() + '\n' + (HERE / 'decision-app.js').read_text()
 
 for key, config in data.items():
     photo = ROOT / 'outputs' / 'hkchat-finance' / 'assets' / f'role-{key}.webp'
