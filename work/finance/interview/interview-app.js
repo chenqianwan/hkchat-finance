@@ -6,10 +6,12 @@
   const blank=()=>({id:'custom',name:'我的履歷',label:'我的背景',school:'',focus:'',experience:'',project:'',skills:[],summary:'',custom:true});
   const s={view:'setup',source:'demo',profile:copy(C.profiles[0]),profileId:C.profiles[0].id,roleId:C.roles[0].id,index:0,rounds:[],answers:[],draft:'',followDraft:'',followEditing:false,busy:false,fileName:'',rawText:'',paste:'',warnings:[],customReady:false,confirmed:false,error:'',practiceIndex:0,practiceDraft:'',practiceResult:null,usedSample:false,followUsedSample:false};
   let fileToken=0, pendingConfirm=null;
+  const jobs={items:[],loading:false,dirty:true,batch:0,title:C.roles[0].title,touched:false};
+  let jobToken=0,jobTimers=[],jobObserver=null;
   const originLabel=a=>a.sample?'示範回答':a.sampleStarted?'曾用示範起稿':'';
   const followLabel=a=>a.followSample?'示範補充':a.followSampleStarted?'曾用示範起稿':'';
   try{localStorage.removeItem('hkchat-finance-role-interview');}catch{}
-  const role=()=>C.roles.find(r=>r.id===s.roleId)||C.roles[0];
+  const role=()=>C.resolveRole(jobs.title);
   const round=()=>s.rounds[s.index];
   const list=value=>Array.isArray(value)?value:String(value||'').split(/[,，、\n]/).map(x=>x.trim()).filter(Boolean);
   const button=(text,act,secondary=false,extra='')=>'<button type="button" class="'+(secondary?'iv-secondary':'iv-primary')+'" data-act="'+act+'" '+extra+'>'+text+'</button>';
@@ -45,16 +47,62 @@
         (s.rawText?'<details class="iv-details"><summary>對照讀取到的原文</summary><div><div class="iv-raw">'+E(s.rawText)+'</div></div></details>':'')+
         '<label class="iv-note iv-consent"><input id="iv-confirm-profile" type="checkbox" '+(s.confirmed?'checked':'')+'> 我已核對以上內容，用這份背景開始練習。</label></section>':'');
   }
+  function jobCards(){
+    if(jobs.loading)return '<div class="iv-job-generating" aria-hidden="true">'+[0,1,2].map(()=>'<div class="iv-job-skeleton"><span></span><i></i><i></i></div>').join('')+'</div>';
+    return '<div class="iv-job-grid">'+jobs.items.map(r=>'<button class="iv-job" type="button" data-job="'+E(r.id)+'" aria-pressed="'+(jobs.title.trim()===r.title)+'"><span class="iv-job-copy"><strong>'+E(r.title)+'</strong><small>'+E(r.brief)+'</small></span><span class="iv-radio" aria-hidden="true"></span></button>').join('')+'</div>';
+  }
+  function jobPicker(){
+    return '<section class="iv-section iv-job-picker" id="iv-job-picker" aria-labelledby="iv-job-heading"><div class="iv-section-head"><h2 id="iv-job-heading">想練哪個崗位？</h2><span>虛構招聘情境</span></div><div class="iv-job-toolbar"><p class="iv-job-status" id="iv-job-status" role="status" aria-live="polite">'+(jobs.items.length?(jobs.dirty?'背景已更新，可重新生成。':'崗位已準備好，點一下填入下方。'):'按目前背景，準備幾個練習方向。')+'</p><button type="button" class="iv-text-button iv-job-refresh" data-act="generate-jobs" '+(s.busy?'disabled':'')+'><span aria-hidden="true">✦</span> '+(jobs.items.length?'重新生成':'生成崗位')+'</button></div><div id="iv-job-suggestions" aria-busy="false">'+jobCards()+'</div><label class="iv-field iv-job-input" for="iv-job-title"><span>或者，自己輸入崗位</span><input id="iv-job-title" maxlength="60" value="'+E(jobs.title)+'" placeholder="例如：銀行營運專員" aria-describedby="iv-job-help iv-job-error" autocomplete="off"></label><p class="iv-note iv-job-help" id="iv-job-help">可先點上面的崗位直接填入，再改成你想練的名稱。</p><p class="iv-error" id="iv-job-error" role="alert"></p><p class="iv-job-demo">崗位生成為靜態演示 · 面試會沿用你填寫的名稱</p></section>';
+  }
+  function stopJobGeneration(){
+    jobToken++;jobTimers.forEach(clearTimeout);jobTimers=[];jobObserver?.disconnect();jobObserver=null;jobs.loading=false;
+  }
+  function refreshJobChoices(){
+    main.querySelectorAll('[data-job]').forEach(b=>b.setAttribute('aria-pressed',String(jobs.items.find(r=>r.id===b.dataset.job)?.title===jobs.title.trim())));
+  }
+  function invalidateJobs(){
+    stopJobGeneration();jobs.dirty=true;
+    const panel=document.getElementById('iv-job-suggestions');
+    if(panel){panel.innerHTML=jobCards();panel.setAttribute('aria-busy','false');}
+    const status=document.getElementById('iv-job-status');if(status)status.textContent='背景已更新，可按目前內容重新生成。';
+    const button=main.querySelector('[data-act="generate-jobs"]');if(button)button.disabled=s.busy;
+  }
+  function observeJobs(){
+    const picker=document.getElementById('iv-job-picker');
+    if(!picker||jobs.items.length||s.busy)return;
+    if(!('IntersectionObserver' in window)){generateJobs();return;}
+    jobObserver=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){jobObserver?.disconnect();jobObserver=null;generateJobs();}},{threshold:0.15});
+    jobObserver.observe(picker);
+  }
+  function generateJobs(){
+    if(s.view!=='setup'||s.busy||jobs.loading)return;
+    stopJobGeneration();
+    const token=jobToken,profile=copy(s.profile),panel=document.getElementById('iv-job-suggestions'),status=document.getElementById('iv-job-status'),button=main.querySelector('[data-act="generate-jobs"]');
+    if(!panel)return;
+    jobs.loading=true;panel.setAttribute('aria-busy','true');panel.innerHTML=jobCards();button.disabled=true;
+    status.textContent='整理背景，生成練習崗位…';
+    jobTimers.push(setTimeout(()=>{if(token===jobToken&&panel.isConnected)status.textContent='正在組合崗位與練習重點…';},550));
+    jobTimers.push(setTimeout(()=>{
+      if(token!==jobToken||s.view!=='setup'||!panel.isConnected)return;
+      jobs.items=C.suggestRoles(profile,jobs.batch++);jobs.loading=false;jobs.dirty=false;
+      if(!jobs.touched&&jobs.items.length)jobs.title=jobs.items[0].title;
+      panel.innerHTML=jobCards();panel.setAttribute('aria-busy','false');
+      const input=document.getElementById('iv-job-title');if(input&&!jobs.touched)input.value=jobs.title;
+      button.disabled=false;button.innerHTML='<span aria-hidden="true">✦</span> 重新生成';
+      status.textContent='崗位已準備好，點一下填入下方。';jobTimers=[];
+    },1250));
+  }
   function setup(focus=true){
+    stopJobGeneration();
     s.view='setup';
     const html='<a class="iv-back" href="index.html">‹ 返回首頁</a>'+
       '<section class="iv-hero"><img src="'+INTERVIEW_PHOTO+'" alt="AI 生成的香港辦公室模擬面試情境"><div><div class="iv-kicker">FINANCE INTERVIEW LAB</div><h1 tabindex="-1" data-heading>中環見工記</h1><p>由你的背景出發，練到下一次回答。<br>金融行業模擬面試</p></div></section>'+flow(0)+
       '<section><div class="iv-section-head"><h2>先帶入你的背景</h2><span>01 / 準備</span></div><div class="iv-source-tabs" role="group" aria-label="背景來源"><button type="button" data-source="demo" aria-pressed="'+(s.source==='demo')+'">用示範背景</button><button type="button" data-source="custom" aria-pressed="'+(s.source==='custom')+'">用我的履歷</button></div>'+
       (s.source==='demo'?'<div class="iv-profile-choices" role="group" aria-label="選擇示範背景">'+C.profiles.map(p=>'<button type="button" class="iv-chip" data-profile-id="'+E(p.id)+'" aria-pressed="'+(s.profileId===p.id)+'">'+E(p.name)+'</button>').join('')+'</div>'+profileCard()+'<p class="iv-note">不同學習背景，都可以練金融行業面試。科大 AI × 金融只是其中一份虛構履歷；並非院校推薦或真實校友紀錄。</p><details class="iv-details"><summary>查看／調整這份背景</summary><div>'+profileFields()+'</div></details>':uploadPanel())+'</section>'+
-      '<section class="iv-section"><div class="iv-section-head"><h2>想練哪個崗位？</h2><span>虛構招聘情境</span></div><div class="iv-job-grid">'+C.roles.map(r=>'<button class="iv-job" type="button" data-job="'+E(r.id)+'" aria-pressed="'+(s.roleId===r.id)+'"><span class="iv-job-copy"><strong>'+E(r.title)+'</strong><small>'+E(r.brief)+'</small></span><span class="iv-radio" aria-hidden="true"></span></button>').join('')+'</div></section>'+
+      jobPicker()+
       '<section class="iv-section"><div class="iv-section-head"><h2>這次會練甚麼</h2><span>5 題 · 約 8–10 分鐘</span></div><ol class="iv-agenda"><li>求職動機</li><li>經歷深挖</li><li>業務判斷</li><li>專業操守</li><li>溝通協作</li></ol><p class="iv-note">每題最多一次追問，可提前收尾。先看答題方向，再用自己的話回答。</p></section>'+
       '<p class="iv-error" id="iv-error" role="alert">'+E(s.error)+'</p><div class="iv-actions">'+button('準備好，開始面試 <span aria-hidden="true">→</span>','start',false,s.busy?'disabled':'')+'</div>'+disclosure();
-    render(html,focus);
+    render(html,focus);observeJobs();
   }
   function validateProfile(){
     if(s.busy)return '履歷仍在讀取中，請稍候。';
@@ -154,8 +202,11 @@
   }
   function start(){
     const reason=validateProfile();if(reason){error(reason);return;}
+    const title=jobs.title.trim();
+    if(title.length<2||title.length>60){const field=document.getElementById('iv-job-title');document.getElementById('iv-job-error').textContent='選一個上方崗位，或輸入 2–60 字的崗位名稱。';field.setAttribute('aria-invalid','true');field.focus();return;}
+    jobs.title=title;stopJobGeneration();
     s.profile.custom=s.source==='custom';
-    s.rounds=C.rounds(copy(s.profile),s.roleId);s.answers=[];s.index=0;s.draft='';s.followDraft='';s.usedSample=false;s.error='';question();
+    s.rounds=C.rounds(copy(s.profile),role());s.answers=[];s.index=0;s.draft='';s.followDraft='';s.usedSample=false;s.error='';question();
   }
   function submit(){
     const text=s.draft.trim();
@@ -166,7 +217,7 @@
   }
   function finish(){s.error='';report();}
   async function parseFile(file){
-    if(!file)return;const token=++fileToken;s.busy=true;s.error='';s.fileName='';s.rawText='';s.warnings=[];s.profile=blank();s.customReady=false;s.confirmed=false;setup(false);
+    if(!file)return;const token=++fileToken;s.busy=true;invalidateJobs();s.error='';s.fileName='';s.rawText='';s.warnings=[];s.profile=blank();s.customReady=false;s.confirmed=false;setup(false);
     try{
       const result=await window.HKInterviewResume.read(file);
       if(token!==fileToken||s.source!=='custom')return;
@@ -179,7 +230,8 @@
     return text;
   }
   main.addEventListener('input',e=>{
-    if(e.target.dataset.profile){const key=e.target.dataset.profile;s.profile[key]=key==='skills'?list(e.target.value):e.target.value;s.confirmed=false;const c=document.getElementById('iv-confirm-profile');if(c)c.checked=false;}
+    if(e.target.dataset.profile){const key=e.target.dataset.profile;s.profile[key]=key==='skills'?list(e.target.value):e.target.value;s.confirmed=false;const c=document.getElementById('iv-confirm-profile');if(c)c.checked=false;invalidateJobs();}
+    if(e.target.id==='iv-job-title'){jobs.title=e.target.value;jobs.touched=true;refreshJobChoices();e.target.removeAttribute('aria-invalid');document.getElementById('iv-job-error').textContent='';}
     if(e.target.id==='iv-answer')s.draft=e.target.value;
     if(e.target.id==='iv-follow-answer')s.followDraft=e.target.value;
     if(e.target.id==='iv-practice-answer')s.practiceDraft=e.target.value;
@@ -194,15 +246,16 @@
   main.addEventListener('drop',e=>{if(e.target.closest('#iv-upload')){e.preventDefault();parseFile(e.dataTransfer.files[0]);}});
   main.addEventListener('click',async e=>{
     const b=e.target.closest('button');if(!b||b.disabled)return;
-    if(b.dataset.source){if(b.dataset.source===s.source)return;++fileToken;s.busy=false;s.source=b.dataset.source;s.error='';s.confirmed=false;s.profile=s.source==='demo'?copy(C.profiles.find(p=>p.id===s.profileId)||C.profiles[0]):blank();s.customReady=false;s.fileName='';s.rawText='';s.warnings=[];setup(false);return;}
-    if(b.dataset.profileId){if(b.dataset.profileId===s.profileId)return;s.profileId=b.dataset.profileId;s.profile=copy(C.profiles.find(p=>p.id===s.profileId));setup(false);return;}
-    if(b.dataset.job){s.roleId=b.dataset.job;setup(false);return;}
+    if(b.dataset.source){if(b.dataset.source===s.source)return;++fileToken;s.busy=false;s.source=b.dataset.source;s.error='';s.confirmed=false;s.profile=s.source==='demo'?copy(C.profiles.find(p=>p.id===s.profileId)||C.profiles[0]):blank();s.customReady=false;s.fileName='';s.rawText='';s.warnings=[];invalidateJobs();setup(false);return;}
+    if(b.dataset.profileId){if(b.dataset.profileId===s.profileId)return;s.profileId=b.dataset.profileId;s.profile=copy(C.profiles.find(p=>p.id===s.profileId));invalidateJobs();setup(false);return;}
+    if(b.dataset.job){const selected=jobs.items.find(r=>r.id===b.dataset.job);if(!selected)return;jobs.title=selected.title;jobs.touched=true;const input=document.getElementById('iv-job-title');input.value=jobs.title;input.removeAttribute('aria-invalid');document.getElementById('iv-job-error').textContent='';refreshJobChoices();say('已填入'+jobs.title+'，可以直接修改。');return;}
     if(b.dataset.practice!==undefined){practice(Number(b.dataset.practice));return;}
     const act=b.dataset.act;
+    if(act==='generate-jobs'){generateJobs();return;}
     if(act==='file')document.getElementById('iv-file').click();
-    if(act==='clear-resume'){++fileToken;s.busy=false;s.profile=blank();s.customReady=false;s.confirmed=false;s.fileName='';s.rawText='';s.paste='';s.warnings=[];s.error='';setup(false);}
+    if(act==='clear-resume'){++fileToken;s.busy=false;s.profile=blank();s.customReady=false;s.confirmed=false;s.fileName='';s.rawText='';s.paste='';s.warnings=[];s.error='';invalidateJobs();setup(false);}
     if(act==='manual'){++fileToken;s.busy=false;s.customReady=true;s.confirmed=false;setup(false);document.querySelector('[data-profile="school"]')?.focus();}
-    if(act==='parse-text'){if(s.paste.trim().length<30){error('請貼上至少一段教育、技能或項目經歷。');return;}++fileToken;s.busy=false;s.rawText=s.paste.slice(0,16000);s.profile={...blank(),...window.HKInterviewResume.suggest(s.rawText),custom:true,id:'custom'};s.customReady=true;s.confirmed=false;s.fileName='貼上的履歷文字';s.warnings=[];setup(false);}
+    if(act==='parse-text'){if(s.paste.trim().length<30){error('請貼上至少一段教育、技能或項目經歷。');return;}++fileToken;s.busy=false;s.rawText=s.paste.slice(0,16000);s.profile={...blank(),...window.HKInterviewResume.suggest(s.rawText),custom:true,id:'custom'};s.customReady=true;s.confirmed=false;s.fileName='貼上的履歷文字';s.warnings=[];invalidateJobs();setup(false);}
     if(act==='start')start();
     if(act==='sample'){s.draft=sampleText(round());s.usedSample=s.source==='demo'&&round().sampleKind!=='structure';const el=document.getElementById('iv-answer');el.value=s.draft;el.dispatchEvent(new Event('input',{bubbles:true}));el.focus();}
     if(act==='answer'&&s.view==='question')submit();

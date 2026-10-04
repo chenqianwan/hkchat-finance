@@ -102,6 +102,21 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
 #hkroles .iv-job small{display:block;font-size:11px;line-height:1.85;color:var(--p-muted);margin-top:5px}
 #hkroles .iv-radio{width:17px;height:17px;flex-shrink:0;border:1px solid var(--p-line);border-radius:50%;margin-top:3px}
 #hkroles .iv-job[aria-pressed=true] .iv-radio{border:5px solid var(--p-primary);background:var(--p-on)}
+#hkroles .iv-job-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:-6px 0 9px;min-height:44px}
+#hkroles .iv-job-status{font-size:11px;line-height:1.8;color:var(--p-muted);flex:1;min-width:0}
+#hkroles .iv-job-refresh{gap:5px;white-space:nowrap;flex-shrink:0;font-size:11px}
+#hkroles #iv-job-suggestions{min-height:280px}
+#hkroles .iv-job-generating{display:grid;gap:10px}
+#hkroles .iv-job-skeleton{border:1px solid var(--p-line);border-radius:16px;padding:19px 16px;min-height:100px;background:var(--p-surface);overflow:hidden}
+#hkroles .iv-job-skeleton :is(span,i){display:block;position:relative;overflow:hidden;height:9px;border-radius:5px;background:var(--p-soft);margin-top:9px;width:94%}
+#hkroles .iv-job-skeleton span{width:49%;height:14px;margin-top:0;margin-bottom:14px}
+#hkroles .iv-job-skeleton i:last-child{width:72%}
+#hkroles .iv-job-skeleton :is(span,i):after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,light-dark(#dbc1e5,#745181),transparent);animation:iv-job-shimmer 1.15s ease-in-out infinite}
+#hkroles .iv-job-input{padding-top:17px;margin-top:18px;border-top:1px solid var(--p-line)}
+#hkroles .iv-job-help{margin-top:7px}
+#hkroles .iv-job-demo{font-size:10px;line-height:1.8;color:var(--p-muted);margin-top:12px}
+@keyframes iv-job-shimmer{to{transform:translateX(100%)}}
+@media(prefers-reduced-motion:reduce){#hkroles .iv-job-skeleton :is(span,i):after{animation:none;transform:none;opacity:.35}}
 #hkroles .iv-upload{border:1px dashed var(--p-primary);border-radius:17px;padding:23px 18px;background:var(--p-soft);text-align:center;transition:background .15s}
 #hkroles .iv-upload.is-dragging{box-shadow:inset 0 0 0 2px var(--p-primary)}
 #hkroles .iv-upload h3{font-size:16px;margin-bottom:7px}
@@ -248,6 +263,58 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       skills: ['風險辨識', '資料查證', '分析判斷', '紀錄追溯', '清楚匯報']}
   ];
 
+  // Finite local examples, not live vacancies or a suitability ranking.
+  // Keep the original roles array and ids unchanged for saved demo flows.
+  const roleLibrary = [
+    {...roles[0], track: 'product', cues: /銀行|金融|服務|bank|finance|service/iu},
+    {...roles[1], track: 'risk', cues: /風險|核對|查證|risk|review/iu},
+    {id: 'finance-data', title: '金融資料分析助理', track: 'risk',
+      team: '虛構金融資料團隊 · Graduate / Junior',
+      brief: '整理資料與核對來源，解釋分析結果及限制，協助同事跟進資訊缺口。',
+      skills: ['資料整理', '來源核對', '分析判斷', '清楚匯報'],
+      cues: /Python|SQL|Excel|資料|數據|分析|data|analy/iu},
+    {id: 'fintech-project', title: '金融科技項目助理', track: 'product',
+      team: '虛構金融科技團隊 · Graduate / Junior',
+      brief: '整理服務需要與測試回饋，核對項目資料，協助業務及技術同事溝通。',
+      skills: ['需要整理', '測試紀錄', '資料核對', '團隊溝通'],
+      cues: /AI|RAG|科技|工具|測試|專題|tech|project|test/iu},
+    {id: 'finance-service', title: '金融服務專員', track: 'product',
+      team: '虛構金融服務團隊 · Graduate / Junior',
+      brief: '了解客戶查詢、用白話說明已確認的服務資訊，記錄需要並協調跟進。',
+      skills: ['客戶需要', '清楚解說', '服務資訊', '協調跟進'],
+      cues: /客戶|客服|查詢|服務|溝通|customer|service|communicat/iu},
+    {id: 'finance-operations', title: '金融營運助理', track: 'risk',
+      team: '虛構金融營運團隊 · Graduate / Junior',
+      brief: '核對流程與工作紀錄，整理待辦及資料差異，向負責同事清楚交接。',
+      skills: ['流程理解', '紀錄核對', '待辦跟進', '工作交接'],
+      cues: /流程|紀錄|記錄|交接|營運|process|record|handover|operat/iu}
+  ];
+
+  function publicRole(role) {
+    const {cues, ...result} = role;
+    return {...result, skills: [...role.skills]};
+  }
+  function suggestRoles(input, batch = 0) {
+    const profile = confirmedProfile(input);
+    const fields = [profile.focus, profile.experience, profile.project, profile.summary, ...profile.skills];
+    const ordered = roleLibrary.map((role, index) => ({role, index,
+      score: fields.reduce((total, field) => total + (role.cues.test(field) ? 1 : 0), 0)
+    })).sort((a, b) => b.score - a.score || a.index - b.index);
+    const page = Number.isFinite(Number(batch)) ? Math.max(0, Math.floor(Number(batch))) : 0;
+    const start = (page % 2) * 3;
+    return ordered.slice(start, start + 3).map(entry => publicRole(entry.role));
+  }
+  function resolveRole(rawTitle) {
+    const title = typeof rawTitle === 'string' ? rawTitle.trim().slice(0, 60) : '';
+    const known = roleLibrary.find(role => role.title.toLowerCase() === title.toLowerCase());
+    if (known) return {...publicRole(known), title};
+    return {id: 'custom', title, custom: true,
+      track: /風險|風控|合規|審計|risk|compliance|audit/iu.test(title) ? 'risk' : 'product',
+      team: '虛構金融工作情境',
+      brief: '按你輸入的職位名稱練習；具體職責待補充，先練習資料核對、判斷與團隊溝通。',
+      skills: ['資料核對', '分析判斷', '專業操守', '團隊溝通']};
+  }
+
   // A criterion is observed only when multiple relevant cues occur together.
   // Wording such as "not checked" must not become evidence of completed work.
   // Stable criterion and round ids are retained for existing saved practice flows.
@@ -372,10 +439,13 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       : '我的 FAQ 專題用虛構服務文件作知識庫。我主要負責整理文件、檢索測試及答案來源標示。我先核對資料來源，是因為說法有依據，其他人才能查證。我以測試表對照原文，記錄引用不對及漏掉條件的錯例；資料不足時轉人工。這是課堂示範，沒有正式部署，也未能證明真實服務成效。對金融工作而言，我能帶來的是資料核對、清楚說明限制及留下跟進紀錄的習慣。';
   }
 
-  function rounds(input, roleId) {
+  function rounds(input, roleIdOrObject) {
     const profile = confirmedProfile(input);
+    const role = roleIdOrObject && typeof roleIdOrObject === 'object'
+      ? resolveRole(roleIdOrObject.title)
+      : {...(roles.find(x => x.id === roleIdOrObject) || roles[0]), track: roleIdOrObject === 'risk' ? 'risk' : 'product'};
+    const roleId = role.track;
     const risk = roleId === 'risk';
-    const role = roles.find(x => x.id === roleId) || roles[0];
     const projectReference = profile.project ? '你確認的專題是：「' + profile.project + '」也可換成你實際做過的工作、實習或活動；重點是個人貢獻與可轉移能力。' : '可用你實際做過的工作、課堂或自學任務作例子；沒有相關經驗也可以直接說明。';
     const general = {name: '何穎', role: '招聘同事 · 虛構角色'};
     const business = {name: '陳朗', role: risk ? '風險管理主管 · 虛構角色' : '銀行業務主管 · 虛構角色'};
@@ -389,7 +459,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     const sampleCommunication = risk
       ? '我明白你要趕會議，但兩份紀錄的口徑仍待確認，現在直接選其中一份可能誤導大家。我想先確認會議最需要作甚麼決定。不如先提供已核對的部分，將差異和可能影響列為待確認；我負責整理差異，請你聯絡來源同事補充紀錄。我們約定會前何時更新，若仍未查清，就如實交代，並請主管決定下一步。'
       : '我明白你想先安撫客戶，但文件未齊，收到申請不代表已完成審核，現在不能保證今日辦妥。我想先確認客戶最需要哪一項進度資訊。不如先說清已完成及待補的部分，我負責核對文件清單，請你聯絡客戶補充資料；我們再確認由誰及何時回覆進度，讓客戶知道會有人跟進。';
-    return [
+    const roundList = [
       {id: 'pitch', label: '背景與動機', interviewer: general,
         question: '先用大約一分鐘介紹自己。為甚麼想投身金融行業？你的背景，怎樣連到「' + role.title + '」這份工作？',
         context: '從已確認的背景出發，揀一個例子便夠；說清求職動機及可轉移能力，不需要逐行背履歷。',
@@ -423,6 +493,41 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
         sampleAnswer: sampleCommunication, strongExample: sampleCommunication,
         criteria: [c.plain(), c.propose(), c.clarify()]}
     ];
+    if (!roles.some(base => base.id === role.id)) {
+      const roleContext = role.custom
+        ? '「' + role.title + '」的具體職責尚未確認，這次先用一般金融工作情境練習資料核對、判斷與溝通。'
+        : '「' + role.title + '」的虛構練習方向：' + role.brief;
+      roundList[0].context += ' ' + roleContext;
+      roundList[2].question = '假設你以「' + role.title + '」的身份協助團隊：' + (risk
+        ? '兩份工作紀錄對同一批項目的「已完成」狀態不一致。主管想了解有沒有風險，你會怎樣核對、分析及匯報？'
+        : '客戶想盡快得到一項服務查詢的處理結果，但資料未齊，又把「已收到」理解為「已確認可辦理」。你會先了解甚麼，再怎樣安排下一步？');
+      roundList[2].context = roleContext + ' 客戶、工作及紀錄均為虛構；以查證與跟進為重點，不需要假設特定公司的流程。';
+      roundList[3].question = '在「' + role.title + '」的練習情境中，' + (risk
+        ? '同事想把含客戶資料的表格轉發到私人通訊群組，並先把未核對項目標成「已完成」來趕報告。你會怎樣回應，又如何讓工作繼續？'
+        : '同事說「客戶急用」，請你把客戶文件轉發到私人通訊群組，並先把資料未齊的查詢記成「已核對」。你會怎樣處理？');
+      roundList[3].context = roleContext + ' ' + roundList[3].context;
+      roundList[4].question = risk
+        ? '「個會就開喇，兩份紀錄揀一份放入簡報先啦。」假設你以「' + role.title + '」的身份與同事合作，會怎樣回覆並提出可行的安排？'
+        : '「客人等咗好耐，你先話今日有結果，資料之後再補啦。」假設你以「' + role.title + '」的身份與同事合作，會怎樣回覆並安排跟進？';
+      roundList[4].context = roleContext + ' ' + roundList[4].context;
+      // These examples retain their hypothetical status and do not invent a
+      // candidate's specialist experience from a typed job title.
+      const examples = risk
+        ? [sampleBusiness.replace(/申請/gu, '項目'), sampleResponsible, sampleCommunication]
+        : [
+          '我會先確認客戶查詢的需要、用途及何時需要回覆，再整理未齊資料和未確認條件。按正式服務說明及內部流程核對資料，向負責同事確認哪些步驟可以先做。對資料不足或例外情況，我會記錄並轉交指定同事跟進；清楚交代待辦和下次更新時間，不把收到查詢說成已確認可辦理，也不承諾未確認的處理結果。',
+          sampleResponsible.replace(/申請/gu, '查詢'),
+          '我明白你想先安撫客戶，但資料未齊，收到查詢不代表已完成核對，現在不能保證今日有處理結果。我想先確認客戶最需要哪一項進度資訊。不如先說清已確認及待補的部分，我負責核對資料清單，請你聯絡客戶補充資料；我們再確認由誰及何時回覆進度，讓客戶知道會有人跟進。'
+        ];
+      roundList.slice(1).forEach(round => {
+        round.interviewer = {...round.interviewer, role: round.id === 'communication' ? '協作同事 · 虛構角色' : '團隊主管 · 虛構角色'};
+      });
+      examples.forEach((example, index) => {
+        roundList[index + 2].sampleAnswer = example;
+        roundList[index + 2].strongExample = example;
+      });
+    }
+    return roundList;
   }
 
   function re(pattern) { return new RegExp(pattern, 'iu'); }
@@ -551,7 +656,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       guidance: '先挑一個缺少具體例子的回答重寫，再練習用白話交代業務判斷與跟進安排；把個人經驗連到金融職位，並分清真實經歷與假設方案。',
       limitation: '這是表達練習回饋，沒有錄取機率、適任分數或招聘結論；有限文字規則不能代替專業面試評估。'};
   }
-  global.HKInterviewContent = {profiles, roles, rounds, assess, report};
+  global.HKInterviewContent = {profiles, roles, suggestRoles, resolveRole, rounds, assess, report};
 })(typeof window !== 'undefined' ? window : globalThis);
 </script>
 <!-- Third-party notices
@@ -1075,10 +1180,12 @@ this.workerSrc))).WorkerMessageHandler})())}}class WorkerTransport{downloadInfoC
   const blank=()=>({id:'custom',name:'我的履歷',label:'我的背景',school:'',focus:'',experience:'',project:'',skills:[],summary:'',custom:true});
   const s={view:'setup',source:'demo',profile:copy(C.profiles[0]),profileId:C.profiles[0].id,roleId:C.roles[0].id,index:0,rounds:[],answers:[],draft:'',followDraft:'',followEditing:false,busy:false,fileName:'',rawText:'',paste:'',warnings:[],customReady:false,confirmed:false,error:'',practiceIndex:0,practiceDraft:'',practiceResult:null,usedSample:false,followUsedSample:false};
   let fileToken=0, pendingConfirm=null;
+  const jobs={items:[],loading:false,dirty:true,batch:0,title:C.roles[0].title,touched:false};
+  let jobToken=0,jobTimers=[],jobObserver=null;
   const originLabel=a=>a.sample?'示範回答':a.sampleStarted?'曾用示範起稿':'';
   const followLabel=a=>a.followSample?'示範補充':a.followSampleStarted?'曾用示範起稿':'';
   try{localStorage.removeItem('hkchat-finance-role-interview');}catch{}
-  const role=()=>C.roles.find(r=>r.id===s.roleId)||C.roles[0];
+  const role=()=>C.resolveRole(jobs.title);
   const round=()=>s.rounds[s.index];
   const list=value=>Array.isArray(value)?value:String(value||'').split(/[,，、\n]/).map(x=>x.trim()).filter(Boolean);
   const button=(text,act,secondary=false,extra='')=>'<button type="button" class="'+(secondary?'iv-secondary':'iv-primary')+'" data-act="'+act+'" '+extra+'>'+text+'</button>';
@@ -1114,16 +1221,62 @@ this.workerSrc))).WorkerMessageHandler})())}}class WorkerTransport{downloadInfoC
         (s.rawText?'<details class="iv-details"><summary>對照讀取到的原文</summary><div><div class="iv-raw">'+E(s.rawText)+'</div></div></details>':'')+
         '<label class="iv-note iv-consent"><input id="iv-confirm-profile" type="checkbox" '+(s.confirmed?'checked':'')+'> 我已核對以上內容，用這份背景開始練習。</label></section>':'');
   }
+  function jobCards(){
+    if(jobs.loading)return '<div class="iv-job-generating" aria-hidden="true">'+[0,1,2].map(()=>'<div class="iv-job-skeleton"><span></span><i></i><i></i></div>').join('')+'</div>';
+    return '<div class="iv-job-grid">'+jobs.items.map(r=>'<button class="iv-job" type="button" data-job="'+E(r.id)+'" aria-pressed="'+(jobs.title.trim()===r.title)+'"><span class="iv-job-copy"><strong>'+E(r.title)+'</strong><small>'+E(r.brief)+'</small></span><span class="iv-radio" aria-hidden="true"></span></button>').join('')+'</div>';
+  }
+  function jobPicker(){
+    return '<section class="iv-section iv-job-picker" id="iv-job-picker" aria-labelledby="iv-job-heading"><div class="iv-section-head"><h2 id="iv-job-heading">想練哪個崗位？</h2><span>虛構招聘情境</span></div><div class="iv-job-toolbar"><p class="iv-job-status" id="iv-job-status" role="status" aria-live="polite">'+(jobs.items.length?(jobs.dirty?'背景已更新，可重新生成。':'崗位已準備好，點一下填入下方。'):'按目前背景，準備幾個練習方向。')+'</p><button type="button" class="iv-text-button iv-job-refresh" data-act="generate-jobs" '+(s.busy?'disabled':'')+'><span aria-hidden="true">✦</span> '+(jobs.items.length?'重新生成':'生成崗位')+'</button></div><div id="iv-job-suggestions" aria-busy="false">'+jobCards()+'</div><label class="iv-field iv-job-input" for="iv-job-title"><span>或者，自己輸入崗位</span><input id="iv-job-title" maxlength="60" value="'+E(jobs.title)+'" placeholder="例如：銀行營運專員" aria-describedby="iv-job-help iv-job-error" autocomplete="off"></label><p class="iv-note iv-job-help" id="iv-job-help">可先點上面的崗位直接填入，再改成你想練的名稱。</p><p class="iv-error" id="iv-job-error" role="alert"></p><p class="iv-job-demo">崗位生成為靜態演示 · 面試會沿用你填寫的名稱</p></section>';
+  }
+  function stopJobGeneration(){
+    jobToken++;jobTimers.forEach(clearTimeout);jobTimers=[];jobObserver?.disconnect();jobObserver=null;jobs.loading=false;
+  }
+  function refreshJobChoices(){
+    main.querySelectorAll('[data-job]').forEach(b=>b.setAttribute('aria-pressed',String(jobs.items.find(r=>r.id===b.dataset.job)?.title===jobs.title.trim())));
+  }
+  function invalidateJobs(){
+    stopJobGeneration();jobs.dirty=true;
+    const panel=document.getElementById('iv-job-suggestions');
+    if(panel){panel.innerHTML=jobCards();panel.setAttribute('aria-busy','false');}
+    const status=document.getElementById('iv-job-status');if(status)status.textContent='背景已更新，可按目前內容重新生成。';
+    const button=main.querySelector('[data-act="generate-jobs"]');if(button)button.disabled=s.busy;
+  }
+  function observeJobs(){
+    const picker=document.getElementById('iv-job-picker');
+    if(!picker||jobs.items.length||s.busy)return;
+    if(!('IntersectionObserver' in window)){generateJobs();return;}
+    jobObserver=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){jobObserver?.disconnect();jobObserver=null;generateJobs();}},{threshold:0.15});
+    jobObserver.observe(picker);
+  }
+  function generateJobs(){
+    if(s.view!=='setup'||s.busy||jobs.loading)return;
+    stopJobGeneration();
+    const token=jobToken,profile=copy(s.profile),panel=document.getElementById('iv-job-suggestions'),status=document.getElementById('iv-job-status'),button=main.querySelector('[data-act="generate-jobs"]');
+    if(!panel)return;
+    jobs.loading=true;panel.setAttribute('aria-busy','true');panel.innerHTML=jobCards();button.disabled=true;
+    status.textContent='整理背景，生成練習崗位…';
+    jobTimers.push(setTimeout(()=>{if(token===jobToken&&panel.isConnected)status.textContent='正在組合崗位與練習重點…';},550));
+    jobTimers.push(setTimeout(()=>{
+      if(token!==jobToken||s.view!=='setup'||!panel.isConnected)return;
+      jobs.items=C.suggestRoles(profile,jobs.batch++);jobs.loading=false;jobs.dirty=false;
+      if(!jobs.touched&&jobs.items.length)jobs.title=jobs.items[0].title;
+      panel.innerHTML=jobCards();panel.setAttribute('aria-busy','false');
+      const input=document.getElementById('iv-job-title');if(input&&!jobs.touched)input.value=jobs.title;
+      button.disabled=false;button.innerHTML='<span aria-hidden="true">✦</span> 重新生成';
+      status.textContent='崗位已準備好，點一下填入下方。';jobTimers=[];
+    },1250));
+  }
   function setup(focus=true){
+    stopJobGeneration();
     s.view='setup';
     const html='<a class="iv-back" href="index.html">‹ 返回首頁</a>'+
       '<section class="iv-hero"><img src="'+INTERVIEW_PHOTO+'" alt="AI 生成的香港辦公室模擬面試情境"><div><div class="iv-kicker">FINANCE INTERVIEW LAB</div><h1 tabindex="-1" data-heading>中環見工記</h1><p>由你的背景出發，練到下一次回答。<br>金融行業模擬面試</p></div></section>'+flow(0)+
       '<section><div class="iv-section-head"><h2>先帶入你的背景</h2><span>01 / 準備</span></div><div class="iv-source-tabs" role="group" aria-label="背景來源"><button type="button" data-source="demo" aria-pressed="'+(s.source==='demo')+'">用示範背景</button><button type="button" data-source="custom" aria-pressed="'+(s.source==='custom')+'">用我的履歷</button></div>'+
       (s.source==='demo'?'<div class="iv-profile-choices" role="group" aria-label="選擇示範背景">'+C.profiles.map(p=>'<button type="button" class="iv-chip" data-profile-id="'+E(p.id)+'" aria-pressed="'+(s.profileId===p.id)+'">'+E(p.name)+'</button>').join('')+'</div>'+profileCard()+'<p class="iv-note">不同學習背景，都可以練金融行業面試。科大 AI × 金融只是其中一份虛構履歷；並非院校推薦或真實校友紀錄。</p><details class="iv-details"><summary>查看／調整這份背景</summary><div>'+profileFields()+'</div></details>':uploadPanel())+'</section>'+
-      '<section class="iv-section"><div class="iv-section-head"><h2>想練哪個崗位？</h2><span>虛構招聘情境</span></div><div class="iv-job-grid">'+C.roles.map(r=>'<button class="iv-job" type="button" data-job="'+E(r.id)+'" aria-pressed="'+(s.roleId===r.id)+'"><span class="iv-job-copy"><strong>'+E(r.title)+'</strong><small>'+E(r.brief)+'</small></span><span class="iv-radio" aria-hidden="true"></span></button>').join('')+'</div></section>'+
+      jobPicker()+
       '<section class="iv-section"><div class="iv-section-head"><h2>這次會練甚麼</h2><span>5 題 · 約 8–10 分鐘</span></div><ol class="iv-agenda"><li>求職動機</li><li>經歷深挖</li><li>業務判斷</li><li>專業操守</li><li>溝通協作</li></ol><p class="iv-note">每題最多一次追問，可提前收尾。先看答題方向，再用自己的話回答。</p></section>'+
       '<p class="iv-error" id="iv-error" role="alert">'+E(s.error)+'</p><div class="iv-actions">'+button('準備好，開始面試 <span aria-hidden="true">→</span>','start',false,s.busy?'disabled':'')+'</div>'+disclosure();
-    render(html,focus);
+    render(html,focus);observeJobs();
   }
   function validateProfile(){
     if(s.busy)return '履歷仍在讀取中，請稍候。';
@@ -1223,8 +1376,11 @@ this.workerSrc))).WorkerMessageHandler})())}}class WorkerTransport{downloadInfoC
   }
   function start(){
     const reason=validateProfile();if(reason){error(reason);return;}
+    const title=jobs.title.trim();
+    if(title.length<2||title.length>60){const field=document.getElementById('iv-job-title');document.getElementById('iv-job-error').textContent='選一個上方崗位，或輸入 2–60 字的崗位名稱。';field.setAttribute('aria-invalid','true');field.focus();return;}
+    jobs.title=title;stopJobGeneration();
     s.profile.custom=s.source==='custom';
-    s.rounds=C.rounds(copy(s.profile),s.roleId);s.answers=[];s.index=0;s.draft='';s.followDraft='';s.usedSample=false;s.error='';question();
+    s.rounds=C.rounds(copy(s.profile),role());s.answers=[];s.index=0;s.draft='';s.followDraft='';s.usedSample=false;s.error='';question();
   }
   function submit(){
     const text=s.draft.trim();
@@ -1235,7 +1391,7 @@ this.workerSrc))).WorkerMessageHandler})())}}class WorkerTransport{downloadInfoC
   }
   function finish(){s.error='';report();}
   async function parseFile(file){
-    if(!file)return;const token=++fileToken;s.busy=true;s.error='';s.fileName='';s.rawText='';s.warnings=[];s.profile=blank();s.customReady=false;s.confirmed=false;setup(false);
+    if(!file)return;const token=++fileToken;s.busy=true;invalidateJobs();s.error='';s.fileName='';s.rawText='';s.warnings=[];s.profile=blank();s.customReady=false;s.confirmed=false;setup(false);
     try{
       const result=await window.HKInterviewResume.read(file);
       if(token!==fileToken||s.source!=='custom')return;
@@ -1248,7 +1404,8 @@ this.workerSrc))).WorkerMessageHandler})())}}class WorkerTransport{downloadInfoC
     return text;
   }
   main.addEventListener('input',e=>{
-    if(e.target.dataset.profile){const key=e.target.dataset.profile;s.profile[key]=key==='skills'?list(e.target.value):e.target.value;s.confirmed=false;const c=document.getElementById('iv-confirm-profile');if(c)c.checked=false;}
+    if(e.target.dataset.profile){const key=e.target.dataset.profile;s.profile[key]=key==='skills'?list(e.target.value):e.target.value;s.confirmed=false;const c=document.getElementById('iv-confirm-profile');if(c)c.checked=false;invalidateJobs();}
+    if(e.target.id==='iv-job-title'){jobs.title=e.target.value;jobs.touched=true;refreshJobChoices();e.target.removeAttribute('aria-invalid');document.getElementById('iv-job-error').textContent='';}
     if(e.target.id==='iv-answer')s.draft=e.target.value;
     if(e.target.id==='iv-follow-answer')s.followDraft=e.target.value;
     if(e.target.id==='iv-practice-answer')s.practiceDraft=e.target.value;
@@ -1263,15 +1420,16 @@ this.workerSrc))).WorkerMessageHandler})())}}class WorkerTransport{downloadInfoC
   main.addEventListener('drop',e=>{if(e.target.closest('#iv-upload')){e.preventDefault();parseFile(e.dataTransfer.files[0]);}});
   main.addEventListener('click',async e=>{
     const b=e.target.closest('button');if(!b||b.disabled)return;
-    if(b.dataset.source){if(b.dataset.source===s.source)return;++fileToken;s.busy=false;s.source=b.dataset.source;s.error='';s.confirmed=false;s.profile=s.source==='demo'?copy(C.profiles.find(p=>p.id===s.profileId)||C.profiles[0]):blank();s.customReady=false;s.fileName='';s.rawText='';s.warnings=[];setup(false);return;}
-    if(b.dataset.profileId){if(b.dataset.profileId===s.profileId)return;s.profileId=b.dataset.profileId;s.profile=copy(C.profiles.find(p=>p.id===s.profileId));setup(false);return;}
-    if(b.dataset.job){s.roleId=b.dataset.job;setup(false);return;}
+    if(b.dataset.source){if(b.dataset.source===s.source)return;++fileToken;s.busy=false;s.source=b.dataset.source;s.error='';s.confirmed=false;s.profile=s.source==='demo'?copy(C.profiles.find(p=>p.id===s.profileId)||C.profiles[0]):blank();s.customReady=false;s.fileName='';s.rawText='';s.warnings=[];invalidateJobs();setup(false);return;}
+    if(b.dataset.profileId){if(b.dataset.profileId===s.profileId)return;s.profileId=b.dataset.profileId;s.profile=copy(C.profiles.find(p=>p.id===s.profileId));invalidateJobs();setup(false);return;}
+    if(b.dataset.job){const selected=jobs.items.find(r=>r.id===b.dataset.job);if(!selected)return;jobs.title=selected.title;jobs.touched=true;const input=document.getElementById('iv-job-title');input.value=jobs.title;input.removeAttribute('aria-invalid');document.getElementById('iv-job-error').textContent='';refreshJobChoices();say('已填入'+jobs.title+'，可以直接修改。');return;}
     if(b.dataset.practice!==undefined){practice(Number(b.dataset.practice));return;}
     const act=b.dataset.act;
+    if(act==='generate-jobs'){generateJobs();return;}
     if(act==='file')document.getElementById('iv-file').click();
-    if(act==='clear-resume'){++fileToken;s.busy=false;s.profile=blank();s.customReady=false;s.confirmed=false;s.fileName='';s.rawText='';s.paste='';s.warnings=[];s.error='';setup(false);}
+    if(act==='clear-resume'){++fileToken;s.busy=false;s.profile=blank();s.customReady=false;s.confirmed=false;s.fileName='';s.rawText='';s.paste='';s.warnings=[];s.error='';invalidateJobs();setup(false);}
     if(act==='manual'){++fileToken;s.busy=false;s.customReady=true;s.confirmed=false;setup(false);document.querySelector('[data-profile="school"]')?.focus();}
-    if(act==='parse-text'){if(s.paste.trim().length<30){error('請貼上至少一段教育、技能或項目經歷。');return;}++fileToken;s.busy=false;s.rawText=s.paste.slice(0,16000);s.profile={...blank(),...window.HKInterviewResume.suggest(s.rawText),custom:true,id:'custom'};s.customReady=true;s.confirmed=false;s.fileName='貼上的履歷文字';s.warnings=[];setup(false);}
+    if(act==='parse-text'){if(s.paste.trim().length<30){error('請貼上至少一段教育、技能或項目經歷。');return;}++fileToken;s.busy=false;s.rawText=s.paste.slice(0,16000);s.profile={...blank(),...window.HKInterviewResume.suggest(s.rawText),custom:true,id:'custom'};s.customReady=true;s.confirmed=false;s.fileName='貼上的履歷文字';s.warnings=[];invalidateJobs();setup(false);}
     if(act==='start')start();
     if(act==='sample'){s.draft=sampleText(round());s.usedSample=s.source==='demo'&&round().sampleKind!=='structure';const el=document.getElementById('iv-answer');el.value=s.draft;el.dispatchEvent(new Event('input',{bubbles:true}));el.focus();}
     if(act==='answer'&&s.view==='question')submit();

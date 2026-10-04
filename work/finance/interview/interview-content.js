@@ -42,6 +42,58 @@
       skills: ['風險辨識', '資料查證', '分析判斷', '紀錄追溯', '清楚匯報']}
   ];
 
+  // Finite local examples, not live vacancies or a suitability ranking.
+  // Keep the original roles array and ids unchanged for saved demo flows.
+  const roleLibrary = [
+    {...roles[0], track: 'product', cues: /銀行|金融|服務|bank|finance|service/iu},
+    {...roles[1], track: 'risk', cues: /風險|核對|查證|risk|review/iu},
+    {id: 'finance-data', title: '金融資料分析助理', track: 'risk',
+      team: '虛構金融資料團隊 · Graduate / Junior',
+      brief: '整理資料與核對來源，解釋分析結果及限制，協助同事跟進資訊缺口。',
+      skills: ['資料整理', '來源核對', '分析判斷', '清楚匯報'],
+      cues: /Python|SQL|Excel|資料|數據|分析|data|analy/iu},
+    {id: 'fintech-project', title: '金融科技項目助理', track: 'product',
+      team: '虛構金融科技團隊 · Graduate / Junior',
+      brief: '整理服務需要與測試回饋，核對項目資料，協助業務及技術同事溝通。',
+      skills: ['需要整理', '測試紀錄', '資料核對', '團隊溝通'],
+      cues: /AI|RAG|科技|工具|測試|專題|tech|project|test/iu},
+    {id: 'finance-service', title: '金融服務專員', track: 'product',
+      team: '虛構金融服務團隊 · Graduate / Junior',
+      brief: '了解客戶查詢、用白話說明已確認的服務資訊，記錄需要並協調跟進。',
+      skills: ['客戶需要', '清楚解說', '服務資訊', '協調跟進'],
+      cues: /客戶|客服|查詢|服務|溝通|customer|service|communicat/iu},
+    {id: 'finance-operations', title: '金融營運助理', track: 'risk',
+      team: '虛構金融營運團隊 · Graduate / Junior',
+      brief: '核對流程與工作紀錄，整理待辦及資料差異，向負責同事清楚交接。',
+      skills: ['流程理解', '紀錄核對', '待辦跟進', '工作交接'],
+      cues: /流程|紀錄|記錄|交接|營運|process|record|handover|operat/iu}
+  ];
+
+  function publicRole(role) {
+    const {cues, ...result} = role;
+    return {...result, skills: [...role.skills]};
+  }
+  function suggestRoles(input, batch = 0) {
+    const profile = confirmedProfile(input);
+    const fields = [profile.focus, profile.experience, profile.project, profile.summary, ...profile.skills];
+    const ordered = roleLibrary.map((role, index) => ({role, index,
+      score: fields.reduce((total, field) => total + (role.cues.test(field) ? 1 : 0), 0)
+    })).sort((a, b) => b.score - a.score || a.index - b.index);
+    const page = Number.isFinite(Number(batch)) ? Math.max(0, Math.floor(Number(batch))) : 0;
+    const start = (page % 2) * 3;
+    return ordered.slice(start, start + 3).map(entry => publicRole(entry.role));
+  }
+  function resolveRole(rawTitle) {
+    const title = typeof rawTitle === 'string' ? rawTitle.trim().slice(0, 60) : '';
+    const known = roleLibrary.find(role => role.title.toLowerCase() === title.toLowerCase());
+    if (known) return {...publicRole(known), title};
+    return {id: 'custom', title, custom: true,
+      track: /風險|風控|合規|審計|risk|compliance|audit/iu.test(title) ? 'risk' : 'product',
+      team: '虛構金融工作情境',
+      brief: '按你輸入的職位名稱練習；具體職責待補充，先練習資料核對、判斷與團隊溝通。',
+      skills: ['資料核對', '分析判斷', '專業操守', '團隊溝通']};
+  }
+
   // A criterion is observed only when multiple relevant cues occur together.
   // Wording such as "not checked" must not become evidence of completed work.
   // Stable criterion and round ids are retained for existing saved practice flows.
@@ -166,10 +218,13 @@
       : '我的 FAQ 專題用虛構服務文件作知識庫。我主要負責整理文件、檢索測試及答案來源標示。我先核對資料來源，是因為說法有依據，其他人才能查證。我以測試表對照原文，記錄引用不對及漏掉條件的錯例；資料不足時轉人工。這是課堂示範，沒有正式部署，也未能證明真實服務成效。對金融工作而言，我能帶來的是資料核對、清楚說明限制及留下跟進紀錄的習慣。';
   }
 
-  function rounds(input, roleId) {
+  function rounds(input, roleIdOrObject) {
     const profile = confirmedProfile(input);
+    const role = roleIdOrObject && typeof roleIdOrObject === 'object'
+      ? resolveRole(roleIdOrObject.title)
+      : {...(roles.find(x => x.id === roleIdOrObject) || roles[0]), track: roleIdOrObject === 'risk' ? 'risk' : 'product'};
+    const roleId = role.track;
     const risk = roleId === 'risk';
-    const role = roles.find(x => x.id === roleId) || roles[0];
     const projectReference = profile.project ? '你確認的專題是：「' + profile.project + '」也可換成你實際做過的工作、實習或活動；重點是個人貢獻與可轉移能力。' : '可用你實際做過的工作、課堂或自學任務作例子；沒有相關經驗也可以直接說明。';
     const general = {name: '何穎', role: '招聘同事 · 虛構角色'};
     const business = {name: '陳朗', role: risk ? '風險管理主管 · 虛構角色' : '銀行業務主管 · 虛構角色'};
@@ -183,7 +238,7 @@
     const sampleCommunication = risk
       ? '我明白你要趕會議，但兩份紀錄的口徑仍待確認，現在直接選其中一份可能誤導大家。我想先確認會議最需要作甚麼決定。不如先提供已核對的部分，將差異和可能影響列為待確認；我負責整理差異，請你聯絡來源同事補充紀錄。我們約定會前何時更新，若仍未查清，就如實交代，並請主管決定下一步。'
       : '我明白你想先安撫客戶，但文件未齊，收到申請不代表已完成審核，現在不能保證今日辦妥。我想先確認客戶最需要哪一項進度資訊。不如先說清已完成及待補的部分，我負責核對文件清單，請你聯絡客戶補充資料；我們再確認由誰及何時回覆進度，讓客戶知道會有人跟進。';
-    return [
+    const roundList = [
       {id: 'pitch', label: '背景與動機', interviewer: general,
         question: '先用大約一分鐘介紹自己。為甚麼想投身金融行業？你的背景，怎樣連到「' + role.title + '」這份工作？',
         context: '從已確認的背景出發，揀一個例子便夠；說清求職動機及可轉移能力，不需要逐行背履歷。',
@@ -217,6 +272,41 @@
         sampleAnswer: sampleCommunication, strongExample: sampleCommunication,
         criteria: [c.plain(), c.propose(), c.clarify()]}
     ];
+    if (!roles.some(base => base.id === role.id)) {
+      const roleContext = role.custom
+        ? '「' + role.title + '」的具體職責尚未確認，這次先用一般金融工作情境練習資料核對、判斷與溝通。'
+        : '「' + role.title + '」的虛構練習方向：' + role.brief;
+      roundList[0].context += ' ' + roleContext;
+      roundList[2].question = '假設你以「' + role.title + '」的身份協助團隊：' + (risk
+        ? '兩份工作紀錄對同一批項目的「已完成」狀態不一致。主管想了解有沒有風險，你會怎樣核對、分析及匯報？'
+        : '客戶想盡快得到一項服務查詢的處理結果，但資料未齊，又把「已收到」理解為「已確認可辦理」。你會先了解甚麼，再怎樣安排下一步？');
+      roundList[2].context = roleContext + ' 客戶、工作及紀錄均為虛構；以查證與跟進為重點，不需要假設特定公司的流程。';
+      roundList[3].question = '在「' + role.title + '」的練習情境中，' + (risk
+        ? '同事想把含客戶資料的表格轉發到私人通訊群組，並先把未核對項目標成「已完成」來趕報告。你會怎樣回應，又如何讓工作繼續？'
+        : '同事說「客戶急用」，請你把客戶文件轉發到私人通訊群組，並先把資料未齊的查詢記成「已核對」。你會怎樣處理？');
+      roundList[3].context = roleContext + ' ' + roundList[3].context;
+      roundList[4].question = risk
+        ? '「個會就開喇，兩份紀錄揀一份放入簡報先啦。」假設你以「' + role.title + '」的身份與同事合作，會怎樣回覆並提出可行的安排？'
+        : '「客人等咗好耐，你先話今日有結果，資料之後再補啦。」假設你以「' + role.title + '」的身份與同事合作，會怎樣回覆並安排跟進？';
+      roundList[4].context = roleContext + ' ' + roundList[4].context;
+      // These examples retain their hypothetical status and do not invent a
+      // candidate's specialist experience from a typed job title.
+      const examples = risk
+        ? [sampleBusiness.replace(/申請/gu, '項目'), sampleResponsible, sampleCommunication]
+        : [
+          '我會先確認客戶查詢的需要、用途及何時需要回覆，再整理未齊資料和未確認條件。按正式服務說明及內部流程核對資料，向負責同事確認哪些步驟可以先做。對資料不足或例外情況，我會記錄並轉交指定同事跟進；清楚交代待辦和下次更新時間，不把收到查詢說成已確認可辦理，也不承諾未確認的處理結果。',
+          sampleResponsible.replace(/申請/gu, '查詢'),
+          '我明白你想先安撫客戶，但資料未齊，收到查詢不代表已完成核對，現在不能保證今日有處理結果。我想先確認客戶最需要哪一項進度資訊。不如先說清已確認及待補的部分，我負責核對資料清單，請你聯絡客戶補充資料；我們再確認由誰及何時回覆進度，讓客戶知道會有人跟進。'
+        ];
+      roundList.slice(1).forEach(round => {
+        round.interviewer = {...round.interviewer, role: round.id === 'communication' ? '協作同事 · 虛構角色' : '團隊主管 · 虛構角色'};
+      });
+      examples.forEach((example, index) => {
+        roundList[index + 2].sampleAnswer = example;
+        roundList[index + 2].strongExample = example;
+      });
+    }
+    return roundList;
   }
 
   function re(pattern) { return new RegExp(pattern, 'iu'); }
@@ -345,5 +435,5 @@
       guidance: '先挑一個缺少具體例子的回答重寫，再練習用白話交代業務判斷與跟進安排；把個人經驗連到金融職位，並分清真實經歷與假設方案。',
       limitation: '這是表達練習回饋，沒有錄取機率、適任分數或招聘結論；有限文字規則不能代替專業面試評估。'};
   }
-  global.HKInterviewContent = {profiles, roles, rounds, assess, report};
+  global.HKInterviewContent = {profiles, roles, suggestRoles, resolveRole, rounds, assess, report};
 })(typeof window !== 'undefined' ? window : globalThis);
