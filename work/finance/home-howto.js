@@ -18,7 +18,7 @@ function open(key, details, button) {
   trigger?.setAttribute('aria-expanded', 'false');
   trigger = button || card.querySelector('.home-card-link');
   title.textContent = card.querySelector('h2').textContent;
-  label.textContent = details ? '玩法說明' : '今次想試邊個角色？';
+  label.textContent = details ? '玩法說明' : key === 'workplace' ? '想先練邊個新人難題？' : '今次想試邊個角色？';
   intro.textContent = copy.intro;
   steps.hidden = !details;
   steps.replaceChildren(...copy.steps.map(([headingText, text], index) => {

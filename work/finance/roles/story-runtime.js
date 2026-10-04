@@ -25,11 +25,11 @@ const composer=(id,label,value,placeholder='可用上面的預設句，或者自
 function home(){return `<section class="role-hero"><img src="${D.photo}" alt="${esc(D.photoAlt)}"><small>AI 情境圖</small><div><p class="role-eyebrow">${esc(D.eyebrow)}</p><h1 tabindex="-1">${esc(D.title)}</h1><p>${esc(D.tagline)}</p></div></section><p class="role-home-intro">${esc(D.intro)}</p><h2 class="role-home-label">揀一個情境</h2><div class="role-scenes">${D.scenes.map((c,i)=>btn('scene',`<span class="role-scene-num">0${i+1}</span><span class="role-scene-copy"><strong>${esc(c.title)}</strong><small>${esc(c.subtitle)}</small></span><span class="role-tick" aria-hidden="true">${S.scene===i?'✓':'›'}</span>`,'role-scene',`data-index="${i}" aria-pressed="${S.scene===i}"`)).join('')}</div>${btn('start',esc(D.start))}<div class="role-steps">${D.steps.map(t=>`<span>${esc(t)}</span>`).join('')}</div><p class="role-note role-home-foot">虛構人物與服務 · ${D.key==='rookie'?'三件待辦':D.key==='verify'?'最多三次調查':'三幕短故事'}<br>預設互動演示，唔係專業能力測試。</p>`;}
 
 function rookieInbox(){const c=scene(),done=Object.keys(S.answers).length;return top(`${done} / 3 件待辦已記錄`)+playHead('我的第一日 · '+c.title,'我的工作收件匣',c.intro)+talk(S.notice?'最新回應':c.colleague,S.notice||c.message)+`<div class="role-inbox">${[
- ['summary','先看摘要','核對文件，把目前狀態寫入紀錄。'],['reply','回覆客人','選一段回覆，或寫自己的草稿。'],['report','向主管匯報','交代處理狀態與下一步。']
+ ['summary','核對文件，寫摘要','核對文件，把目前狀態寫入紀錄。'],['reply','回覆客人','選一段回覆，或寫自己的草稿。'],['report','向主管匯報','交代處理狀態與下一步。']
 ].map(([id,title,desc])=>btn('job',`<span><strong>${esc(title)}</strong><small>${esc(desc)}</small></span><span class="role-job-status">${S.answers[id]?'查看／改寫':'未處理 ›'}</span>`,'role-job',`data-id="${id}"`)).join('')}</div><div class="role-actions">${btn('end',done===3?'整理我的交更紀錄':'提早交更，保留待辦',done===3?'role-primary':'role-secondary')}</div><p class="role-note role-bottom-note">完成一件，就會更新一份成果；改寫會取代該件紀錄。可以自行揀次序。</p>`;}
-function rookieJob(){const c=scene(),names={summary:'先看摘要',reply:'回覆客人',report:'向主管匯報'};let html=top('三件待辦 · '+names[S.job],'inbox')+playHead(c.title,names[S.job]);
+function rookieJob(){const c=scene(),names={summary:'核對文件，寫摘要',reply:'回覆客人',report:'向主管匯報'};let html=top('三件待辦 · '+names[S.job],'inbox')+playHead(c.title,names[S.job]);
  if(S.job==='summary')html+=doc(c.documentTitle,c.document)+section('我要點樣記低？',options(c.summaryOptions,'summary',S.answers.summary?.id));
- if(S.job==='reply'){html+=talk('客人的查詢 · 虛構對話',c.customer);html+=S.answers.summary?doc('我已寫的摘要',S.answers.summary.text):`<p class="role-notice">我仲未完成「先看摘要」。可以返回待辦先查文件，亦可以先寫回覆草稿。</p>`;html+=section('先揀一句，再按需要改寫',options(c.replyOptions,'reply-preset',exact(c.replyOptions,S.draft)));html+=composer('role-draft','我的回覆草稿',S.draft);html+=`<div class="role-actions">${btn('send-reply','保存回覆，睇客人反應')}</div>`;}
+ if(S.job==='reply'){html+=talk('客人的查詢 · 虛構對話',c.customer);html+=S.answers.summary?doc('我已寫的摘要',S.answers.summary.text):`<p class="role-notice">我仲未完成「核對文件，寫摘要」。可以返回待辦先查文件，亦可以先寫回覆草稿。</p>`;html+=section('先揀一句，再按需要改寫',options(c.replyOptions,'reply-preset',exact(c.replyOptions,S.draft)));html+=composer('role-draft','我的回覆草稿',S.draft);html+=`<div class="role-actions">${btn('send-reply','保存回覆，睇客人反應')}</div>`;}
  if(S.job==='report'){html+=doc('目前的處理紀錄',[`摘要：${S.answers.summary?.text||'未處理'}`,`客人回覆：${S.answers.reply?.text||'未處理'}`]);html+=talk('主管嘉敏 · 虛構對話','交更時，請講清楚你做咗咩，同埋邊一步仲要跟。');html+=options(c.reportOptions,'report',S.answers.report?.id);}
  return html+end();
 }
@@ -42,7 +42,7 @@ function rookieResult(){const c=scene(),a=S.answers,done=Object.keys(a).length;
  let body=resultHead(title,desc)+artifact('我的交更紀錄',output('情境',c.title)+output('摘要',a.summary?.text||'未處理 · 待接手同事查看文件。')+output('給客人的回覆',a.reply?.text||'未處理 · 尚未保存回覆。')+output('向主管的交代',a.report?.text||'未處理 · 尚未交代下一步。'));
  body+=talk('主管嘉敏 · 收到交更後',done<3?'我會保留未處理標記，先補齊資料再安排接手。':good?'我收到你嘅紀錄，下一位同事知道目前狀態同跟進方向。':custom?'你嘅自訂回覆仍需人工覆核，我唔會將佢當作已核實內容。':'我會先對照演示文件，修正未確認承諾，再交畀同事跟進。');
  body+=section('對照原文件',doc(c.documentTitle,c.document));
- body+=`<details class="role-log"><summary>回看本局三件事</summary><ol>${['summary','reply','report'].map((k,i)=>`<li>${['查看摘要','回覆客人','向主管匯報'][i]}：${esc(a[k]?.reaction||'未處理，保留待辦。')}</li>`).join('')}</ol></details>`;
+ body+=`<details class="role-log"><summary>回看本局三件事</summary><ol>${['summary','reply','report'].map((k,i)=>`<li>${['核對文件，寫摘要','回覆客人','向主管匯報'][i]}：${esc(a[k]?.reaction||'未處理，保留待辦。')}</li>`).join('')}</ol></details>`;
  return body+resultActions();
 }
 
@@ -71,7 +71,7 @@ function verifyResult(){const c=scene(),checked=c.sources.filter(x=>S.checked.in
 }
 
 function rescueMeeting(){const c=scene();return top('第 1 / 3 幕 · 會議中')+playHead(c.title,'呢一刻，我點樣開口？',c.intro)+talk(c.colleague,c.opening)+doc('螢幕上的原句',c.slide)+`<p class="role-notice">我的線索：${esc(c.hint)}</p>`+options(c.interventions,'intervene')+end();}
-function rescueRoute(){const c=scene(),choice=find(c.interventions,S.intervention);return top('第 2 / 3 幕 · 核實')+playHead(c.title,'我揀邊條路搵依據？','今幕只揀一條核實途徑。資料有幾完整，會影響修訂稿係正式稿定待覆核草稿。')+talk(c.colleague,choice?.reaction||c.opening)+options(c.routes,'route')+end();}
+function rescueRoute(){const c=scene(),choice=find(c.interventions,S.intervention);return top('第 2 / 3 幕 · 核實')+playHead(c.title,'我揀邊條路搵依據？','今幕只揀一條核實途徑。資料有幾完整，會影響修訂稿有原文件支持，定係仍待核實。')+talk(c.colleague,choice?.reaction||c.opening)+options(c.routes,'route')+end();}
 function rescueCompose(){const c=scene(),route=find(c.routes,S.route);return top('第 3 / 3 幕 · 修訂')+playHead(c.title,'我交一頁點樣的修訂？','用剛才搵到嘅資料，決定要補條件、先撤下承諾，或者保留原句。')+doc('我查到的資料 · '+route.source,[route.fact,route.limit])+section('選一個修訂方向',options(c.fixOptions,'fix-preset',exact(c.fixOptions,S.fix)))+composer('role-fix','我的修訂投影片',S.fix)+`<div class="role-actions">${btn('finish-rescue','交出修訂，睇隊友反應')}${btn('end','先收尾，保留待修訂項目','role-secondary')}</div>`;}
 function rescueResult(){const c=scene(),intervention=find(c.interventions,S.intervention),route=find(c.routes,S.route),kind=exact(c.fixOptions,S.fix),complete=!!S.fix.trim()&&!S.early;let title,desc,status,reaction;
  if(!complete){title='先停一停，交低未完事項';desc='你提早結束會議故事；未完成嘅修訂標記已保留，唔會當作已改好。';status='待修訂';reaction='我收到你嘅記錄，原頁先標記待核實。未完成嘅資料同措辭要再補。';}

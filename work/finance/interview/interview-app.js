@@ -47,7 +47,7 @@
   }
   function setup(focus=true){
     s.view='setup';
-    const html='<a class="iv-back" href="index.html#role-workplace">‹ 中環職場體驗</a>'+
+    const html='<a class="iv-back" href="index.html">‹ 返回首頁</a>'+
       '<section class="iv-hero"><img src="'+INTERVIEW_PHOTO+'" alt="AI 生成的香港辦公室模擬面試情境"><div><div class="iv-kicker">FINANCE INTERVIEW LAB</div><h1 tabindex="-1" data-heading>中環見工記</h1><p>由你的背景出發，練到下一次回答。<br>AI × 金融職場模擬面試</p></div></section>'+flow(0)+
       '<section><div class="iv-section-head"><h2>先帶入你的背景</h2><span>01 / 準備</span></div><div class="iv-source-tabs" role="group" aria-label="背景來源"><button type="button" data-source="demo" aria-pressed="'+(s.source==='demo')+'">用示範背景</button><button type="button" data-source="custom" aria-pressed="'+(s.source==='custom')+'">用我的履歷</button></div>'+
       (s.source==='demo'?'<div class="iv-profile-choices" role="group" aria-label="選擇示範背景">'+C.profiles.map(p=>'<button type="button" class="iv-chip" data-profile-id="'+E(p.id)+'" aria-pressed="'+(s.profileId===p.id)+'">'+E(p.name)+'</button>').join('')+'</div>'+profileCard()+'<p class="iv-note">虛構畢業生履歷，用作主流程示範；並非院校推薦或真實校友紀錄。</p><details class="iv-details"><summary>查看／調整這份背景</summary><div>'+profileFields()+'</div></details>':uploadPanel())+'</section>'+
@@ -107,7 +107,7 @@
   }
   function report(){
     s.view='report';const done=s.answers.filter(Boolean).length,follow=s.answers.filter(a=>a?.followText).length,needs=priorities(),found=strengths(),examples=s.answers.filter(a=>a?.sampleStarted||a?.followSampleStarted).length;
-    render('<a class="iv-back" href="index.html#role-workplace">‹ 中環職場體驗</a>'+flow(2)+
+    render('<a class="iv-back" href="index.html">‹ 返回首頁</a>'+flow(2)+
       '<section class="iv-report-hero"><div class="iv-kicker">'+(done===5?'本次面試完成':'本次練習紀錄')+'</div><h1 tabindex="-1" data-heading>下次，講得更具體。</h1><p>'+E(role().title)+'<br>'+E(s.profile.school||'自訂背景')+' · '+E(s.profile.focus)+'</p><div class="iv-report-counts"><div><strong>'+done+' / 5</strong><span>已回答題目</span></div><div><strong>'+follow+'</strong><span>追問補充</span></div><div><strong>'+examples+'</strong><span>示範起稿題目</span></div></div></section>'+
       '<p class="iv-note">以下只對照本次文字中的表達線索；未被辨認不等於你不具備該能力。'+(examples?'本次曾使用示範起稿，結果只展示復盤方式。':'')+'</p>'+
       (found.length?'<section class="iv-section"><div class="iv-section-head"><h2>這些表達，值得保留</h2><span>引用你的原句</span></div>'+found.map(({index,item})=>'<article class="iv-guidance"><div class="iv-kicker">第 '+(index+1)+' 題 · '+E(item.label)+'</div><blockquote class="iv-quote">「'+E(item.quote)+'」</blockquote></article>').join('')+'</section>':'')+
