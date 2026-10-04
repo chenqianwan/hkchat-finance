@@ -26,10 +26,10 @@
   function profileFields(){
     const p=s.profile;
     return field('school','學校／教育背景',p.school,false,'例如：香港科技大學',160)+
-      field('focus','學習／專業方向',p.focus,false,'例如：AI、金融或數據分析',180)+
+      field('focus','學習／專業方向',p.focus,false,'例如：金融、會計、商科或其他專業',180)+
       field('project','一段項目經歷',p.project,true,'項目做甚麼？你自己負責哪一部分？',700)+
       field('experience','工作／實習／活動經歷',p.experience,true,'只填你確實做過的事；沒有亦可留空。',700)+
-      field('skills','想在面試提到的技能',list(p.skills).join('、'),false,'例如：Python、SQL、資料核對',220)+
+      field('skills','想在面試提到的技能',list(p.skills).join('、'),false,'例如：Excel、資料核對、客戶溝通',220)+
       field('summary','補充背景／今次想練甚麼',p.summary,true,'可以寫求職動機或想加強的表達。',900);
   }
   function profileCard(){
@@ -48,11 +48,11 @@
   function setup(focus=true){
     s.view='setup';
     const html='<a class="iv-back" href="index.html">‹ 返回首頁</a>'+
-      '<section class="iv-hero"><img src="'+INTERVIEW_PHOTO+'" alt="AI 生成的香港辦公室模擬面試情境"><div><div class="iv-kicker">FINANCE INTERVIEW LAB</div><h1 tabindex="-1" data-heading>中環見工記</h1><p>由你的背景出發，練到下一次回答。<br>AI × 金融職場模擬面試</p></div></section>'+flow(0)+
+      '<section class="iv-hero"><img src="'+INTERVIEW_PHOTO+'" alt="AI 生成的香港辦公室模擬面試情境"><div><div class="iv-kicker">FINANCE INTERVIEW LAB</div><h1 tabindex="-1" data-heading>中環見工記</h1><p>由你的背景出發，練到下一次回答。<br>金融行業模擬面試</p></div></section>'+flow(0)+
       '<section><div class="iv-section-head"><h2>先帶入你的背景</h2><span>01 / 準備</span></div><div class="iv-source-tabs" role="group" aria-label="背景來源"><button type="button" data-source="demo" aria-pressed="'+(s.source==='demo')+'">用示範背景</button><button type="button" data-source="custom" aria-pressed="'+(s.source==='custom')+'">用我的履歷</button></div>'+
-      (s.source==='demo'?'<div class="iv-profile-choices" role="group" aria-label="選擇示範背景">'+C.profiles.map(p=>'<button type="button" class="iv-chip" data-profile-id="'+E(p.id)+'" aria-pressed="'+(s.profileId===p.id)+'">'+E(p.name)+'</button>').join('')+'</div>'+profileCard()+'<p class="iv-note">虛構畢業生履歷，用作主流程示範；並非院校推薦或真實校友紀錄。</p><details class="iv-details"><summary>查看／調整這份背景</summary><div>'+profileFields()+'</div></details>':uploadPanel())+'</section>'+
+      (s.source==='demo'?'<div class="iv-profile-choices" role="group" aria-label="選擇示範背景">'+C.profiles.map(p=>'<button type="button" class="iv-chip" data-profile-id="'+E(p.id)+'" aria-pressed="'+(s.profileId===p.id)+'">'+E(p.name)+'</button>').join('')+'</div>'+profileCard()+'<p class="iv-note">不同學習背景，都可以練金融行業面試。科大 AI × 金融只是其中一份虛構履歷；並非院校推薦或真實校友紀錄。</p><details class="iv-details"><summary>查看／調整這份背景</summary><div>'+profileFields()+'</div></details>':uploadPanel())+'</section>'+
       '<section class="iv-section"><div class="iv-section-head"><h2>想練哪個崗位？</h2><span>虛構招聘情境</span></div><div class="iv-job-grid">'+C.roles.map(r=>'<button class="iv-job" type="button" data-job="'+E(r.id)+'" aria-pressed="'+(s.roleId===r.id)+'"><span class="iv-job-copy"><strong>'+E(r.title)+'</strong><small>'+E(r.brief)+'</small></span><span class="iv-radio" aria-hidden="true"></span></button>').join('')+'</div></section>'+
-      '<section class="iv-section"><div class="iv-section-head"><h2>這次會練甚麼</h2><span>5 題 · 約 8–10 分鐘</span></div><ol class="iv-agenda"><li>自我介紹</li><li>項目深挖</li><li>模型驗證</li><li>負責任 AI</li><li>業務溝通</li></ol><p class="iv-note">每題最多一次追問，可提前收尾。先看答題方向，再用自己的話回答。</p></section>'+
+      '<section class="iv-section"><div class="iv-section-head"><h2>這次會練甚麼</h2><span>5 題 · 約 8–10 分鐘</span></div><ol class="iv-agenda"><li>求職動機</li><li>經歷深挖</li><li>業務判斷</li><li>專業操守</li><li>溝通協作</li></ol><p class="iv-note">每題最多一次追問，可提前收尾。先看答題方向，再用自己的話回答。</p></section>'+
       '<p class="iv-error" id="iv-error" role="alert">'+E(s.error)+'</p><div class="iv-actions">'+button('準備好，開始面試 <span aria-hidden="true">→</span>','start',false,s.busy?'disabled':'')+'</div>'+disclosure();
     render(html,focus);
   }
@@ -113,7 +113,7 @@
       (found.length?'<section class="iv-section"><div class="iv-section-head"><h2>這些表達，值得保留</h2><span>引用你的原句</span></div>'+found.map(({index,item})=>'<article class="iv-guidance"><div class="iv-kicker">第 '+(index+1)+' 題 · '+E(item.label)+'</div><blockquote class="iv-quote">「'+E(item.quote)+'」</blockquote></article>').join('')+'</section>':'')+
       (done===0?'<article class="iv-guidance"><h2>先答一題，先有內容可復盤。</h2><p>今次未有提交回答，唔會產生能力判斷或改進結論。</p><div class="iv-actions">'+button('返回第一題','resume')+'</div></article>':
       '<section class="iv-section"><div class="iv-section-head"><h2>'+(needs.length?'先改善這幾點':'下一次，再驗證表達')+'</h2><span>由你的回答整理</span></div>'+
-        (needs.length?needs.map(({index,item})=>'<article class="iv-guidance"><div class="iv-kicker">第 '+(index+1)+' 題 · '+E(s.rounds[index].label)+'</div><h3>'+E(item.label)+'</h3><p>'+E(item.guidance)+'</p><button class="iv-text-button" type="button" data-practice="'+index+'">重練這一題 →</button></article>').join(''):'<article class="iv-guidance"><h3>換一個例子，唔靠原稿再講一次</h3><p>這次文字包含預設觀察線索，仍需由面試官核實經歷與技術內容。試用另一個真實例子，講清楚你自己的取捨。</p></article>')+'</section>')+
+        (needs.length?needs.map(({index,item})=>'<article class="iv-guidance"><div class="iv-kicker">第 '+(index+1)+' 題 · '+E(s.rounds[index].label)+'</div><h3>'+E(item.label)+'</h3><p>'+E(item.guidance)+'</p><button class="iv-text-button" type="button" data-practice="'+index+'">重練這一題 →</button></article>').join(''):'<article class="iv-guidance"><h3>換一個例子，唔靠原稿再講一次</h3><p>這次文字包含預設觀察線索，仍需由面試官核實經歷與回答內容。試用另一個真實例子，講清楚你自己的取捨。</p></article>')+'</section>')+
       '<section class="iv-section"><div class="iv-section-head"><h2>逐題回看</h2><span>回答 · 線索 · 指導</span></div>'+
       s.rounds.map((r,i)=>{const a=s.answers[i];if(!a)return '<article class="iv-guidance"><div class="iv-kicker">0'+(i+1)+' · '+E(r.label)+'</div><p>本次未回答，未作分析。</p></article>';const review=resultFor(r,a);
         return '<details class="iv-review" data-review="'+i+'"><summary><span>0'+(i+1)+'</span><strong>'+E(r.label)+'</strong><span>'+(originLabel(a)|| (followLabel(a)?'含示範補充':'查看復盤'))+' ＋</span></summary><div class="iv-review-body"><h3>'+E(r.question)+'</h3><div class="iv-bubble"><span>你的原回答'+(originLabel(a)?' · '+originLabel(a):'')+'</span><p>'+E(a.text)+'</p></div>'+
@@ -123,7 +123,7 @@
           (a.practice?'<details class="iv-details"><summary>查看今次重練紀錄</summary><div><div class="iv-example">'+E(a.practice.text)+'</div>'+evidence(a.practice.assessment.items)+'</div></details>':'')+
           '<div class="iv-actions">'+button('針對這一題再練一次','practice',true,'data-index="'+i+'"')+'</div></div></details>';
       }).join('')+'</section>'+
-      (done?'<section class="iv-section"><div class="iv-section-head"><h2>下次面試前，練三件事</h2></div><ol class="iv-plan"><li><div><strong>把一個項目講成自己的經歷</strong><p>寫低背景、你負責的動作、觀察到甚麼，以及仍未做到的部分。</p></div></li><li><div><strong>預備一個失敗或限制的例子</strong><p>講清楚點樣驗證、何時停下來，以及何時交畀同事覆核。</p></div></li><li><div><strong>試一次唔睇稿的短講</strong><p>用本次最想改善的一題，先講結論，再補一個具體證據。</p></div></li></ol></section>':'')+
+      (done?'<section class="iv-section"><div class="iv-section-head"><h2>下次面試前，練三件事</h2></div><ol class="iv-plan"><li><div><strong>講清一段經歷與職位的關聯</strong><p>寫低背景、你負責的動作、觀察到甚麼，以及仍未做到的部分。</p></div></li><li><div><strong>預備一個失敗或限制的例子</strong><p>講清楚如何發現問題、核對資料，以及何時請同事或主管協助。</p></div></li><li><div><strong>試一次唔睇稿的短講</strong><p>用本次最想改善的一題，先講結論，再補一個具體證據。</p></div></li></ol></section>':'')+
       '<div class="iv-actions">'+(done?button('下載面試復盤 .txt','download')+button('複製面試筆記','copy',true):'')+(done<5&&done>0?button('繼續未答的題目','resume',true):'')+button('同一背景，再練一次','restart',true)+button('換背景／職位','back-setup',true)+'</div>'+disclosure());
   }
   function practice(index){
@@ -138,7 +138,15 @@
   }
   function sampleText(r,follow=false){
     if(s.source==='demo')return follow?(s.answers[s.index]?.assessment.followUp.sampleAnswer||r.sampleAnswer):r.sampleAnswer;
-    return follow?'我會先核對【資料／限制】，再由【誰】確認【甚麼】。如果仍未能確認，我會【下一步】。':'我想用【自己的項目／經歷】作例子。當時要解決【問題】，我親自負責【動作】。我用【方法】檢查結果，發現【觀察／限制】。這段經驗與本職位的關聯是【關聯】。';
+    if(follow)return '我會先核對【資料／限制】，再由【誰】確認【甚麼】。如果仍未能確認，我會【下一步】。';
+    const structures={
+      pitch:'我的背景是【已確認的學習或工作背景】。在【真實經歷】中，我親自負責【工作】，這與本職位的【工作內容】有關。我選擇金融行業是因為【動機】，還需要補足【能力或經驗】。',
+      project:'我想用【自己的項目／經歷】作例子。當時要解決【問題】，我親自負責【動作】。我用【方法】檢查結果，發現【觀察／限制】。這段經驗與本職位的關聯是【關聯】。',
+      technical_validation:'我會先確認【需要與已知資料】，把【已確認事實】與【仍待核實事項】分開。我會對照【依據或文件】，檢查【適用條件或差異】，再安排【下一步】；未確認前不會承諾【不能保證的結果】。',
+      responsible_AI:'我會先暫停【有疑慮的做法】，確認【用途、權限或程序】，只使用【必要資料】。如有疑問，交由【合適同事或主管】覆核，同時用【合適的替代安排】繼續工作，記錄【待跟進事項】。',
+      communication:'我明白你最關心【需要】。目前已確認【事實】，但仍有【限制】；我們可以先【可行安排】。我負責【工作】，請你協助【所需資料】，並在【約定時間】再確認進度。'
+    };
+    return structures[r.id]||structures.project;
   }
   function confirmAction(action,title,text){
     pendingConfirm=action;const d=document.getElementById('iv-confirm');

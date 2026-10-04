@@ -216,116 +216,117 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       experience: '曾在虛構金融科技團隊實習，使用合成客服查詢整理問題分類，協助資料清理與測試紀錄。',
       project: '畢業專題：RAG 金融服務 FAQ 助手。以虛構服務文件為知識庫，回答附文件來源；資料不足時轉交人工。',
       skills: ['Python', 'SQL', 'RAG', '資料分析', '中英雙語溝通'],
-      summary: '想把 AI 技術變成清楚、可查證的金融服務。專題負責資料整理、檢索測試與來源標示；尚未在真實銀行環境部署。',
+      summary: '希望投身金融行業，把資料整理、查證與清楚解說的能力用於服務及風險管理。專題負責資料整理、檢索測試與來源標示；尚未有銀行業務或風險管理的正式工作經驗。',
       fictional: true, custom: false
     },
     {
-      id: 'finance-graduate', name: '金融系應屆畢業生', label: '入門轉向金融科技 · 虛構履歷',
+      id: 'finance-graduate', name: '金融系應屆畢業生', label: '金融行業起步 · 虛構履歷',
       school: '香港本地大專畢業生', focus: '金融學習背景，正在建立資料分析能力',
       experience: '曾參與虛構校園金融教育活動，整理參加者對服務條款的疑問，製作解說材料。',
       project: '課堂專題：金融服務申請流程研究。以虛構訪談記錄整理常見誤解，設計白話說明與人工支援入口。',
       skills: ['Excel', '基礎 SQL', '資料整理', '訪談', '中英雙語溝通'],
-      summary: '熟悉金融服務的使用者角度；能整理資訊與清楚解說。AI 實作經驗仍在累積，希望從產品分析工作開始。',
+      summary: '熟悉金融服務的使用者角度，能整理資訊與清楚解說。希望從銀行業務或風險管理的初階工作開始，仍需學習實際流程及專業要求。',
       fictional: true, custom: false
     },
     {
       id: 'career-switcher', name: '自學轉職資料分析員', label: '跨界起步 · 虛構履歷',
-      school: '自學與短期課程背景', focus: '由一般客戶服務轉向資料與金融科技',
+      school: '自學與短期課程背景', focus: '由一般客戶服務轉向金融行業，正在建立資料分析能力',
       experience: '曾在虛構一般服務團隊處理查詢，整理交接筆記；沒有銀行從業經驗。',
       project: '自學專題：以自行編寫的虛構查詢資料，建立問題分類小工具及簡單測試表。',
       skills: ['Python 基礎', 'Excel', '問題分類', '客戶溝通', '測試紀錄'],
-      summary: '希望把前線溝通經驗帶到金融科技團隊。能拆解常見疑問，也會清楚交代自己尚未做過的技術工作。',
+      summary: '希望把前線溝通與問題整理經驗帶到金融行業。能拆解常見疑問，也會清楚交代自己尚未熟悉的銀行流程與風險工作。',
       fictional: true, custom: false
     }
   ];
 
   const roles = [
-    {id: 'product', title: 'AI × 金融產品分析員', team: '虛構金融科技團隊 · Graduate / Junior',
-      brief: '把使用者需要變成可測試的 AI 服務方案，協調產品、技術及前線同事。',
-      skills: ['需求拆解', 'RAG 與資料理解', '成效驗證', '風險意識', '跨團隊溝通']},
-    {id: 'risk', title: '模型風險與數據分析員', team: '虛構模型驗證團隊 · Graduate / Junior',
-      brief: '檢查資料與模型測試是否可信，記錄限制，協助團隊決定下一步驗證。',
-      skills: ['資料品質', '驗證設計', '錯誤分析', '追溯紀錄', '清楚匯報']}
+    {id: 'product', title: '銀行業務培訓生', team: '虛構銀行業務團隊 · Graduate / Junior',
+      brief: '了解客戶需要、核對服務條件，與前線及營運同事協作，把每一步交代清楚。',
+      skills: ['客戶需要', '金融服務理解', '資料核對', '專業操守', '團隊溝通']},
+    {id: 'risk', title: '風險管理分析員', team: '虛構風險管理團隊 · Graduate / Junior',
+      brief: '整理業務資料、辨認異常與資訊缺口，向負責同事交代風險及跟進安排。',
+      skills: ['風險辨識', '資料查證', '分析判斷', '紀錄追溯', '清楚匯報']}
   ];
 
   // A criterion is observed only when multiple relevant cues occur together.
-  // Wording such as "not tested" must not become evidence of completed testing.
+  // Wording such as "not checked" must not become evidence of completed work.
+  // Stable criterion and round ids are retained for existing saved practice flows.
   function criterion(id, label, groups, guidance, blockers) {
     return {id, label, groups, guidance, blockers: blockers || []};
   }
   const negativeCompletion = [
-    '(?:沒有|未曾|未有|冇|未做|沒有做|冇做|未有做)[^，。；!?\\n]{0,14}(?:測試|驗證|檢查|記錄|負責|比較)',
-    "(?:did not|didn't|have not|haven't|never)\\s+(?:\\w+\\s+){0,3}(?:test|validat|check|record|compar)"
+    '(?:沒有|未曾|未有|冇|未做|沒有做|冇做|未有做)[^，。；!?\\n]{0,14}(?:測試|驗證|檢查|記錄|負責|比較|核對|整理)',
+    "(?:did not|didn't|have not|haven't|never)\\s+(?:\\w+\\s+){0,3}(?:test|validat|check|record|compar|organis|organiz)"
   ];
   const c = {
-    pitchLink: () => criterion('pitch-link', '把背景連到職位工作', [
-      '(?:AI|人工智能|金融|finance|data|資料|服務|service|溝通|communication|客戶)',
-      '(?:需求|分析|測試|驗證|產品|整理|解說|轉化|追溯|analy[sz]|test|validat|product|explain|organis|organiz|trace)'
-    ], '挑一項已確認的背景，接上這個職位會做的工作；例如「整理查詢 → 找出使用者誤解」。'),
+    pitchLink: () => criterion('pitch-link', '把背景連到金融職位工作', [
+      '(?:金融|銀行|finance|bank|data|資料|服務|service|溝通|communication|客戶|風險|risk)',
+      '(?:需要|需求|分析|核對|查證|整理|解說|追溯|流程|協作|analy[sz]|check|explain|organis|organiz|trace|process|collaborat)'
+    ], '挑一項已確認的背景，接上職位工作，例如「整理查詢 → 理解客戶需要」或「核對資料 → 找出業務異常」。'),
     pitchEvidence: () => criterion('pitch-evidence', '說明自己做過的一件事', [
       '(?:我(?:曾|有|在|用|負責|做|整理|設計|建立|協助|檢查)|my role|I (?:worked|built|created|organis|organiz|checked|designed|was responsible|helped))',
       '(?:專題|項目|實習|查詢|記錄|資料|文件|工具|報告|project|intern|quer|record|data|document|tool|report)'
-    ], '用「我負責……」說清個人工作，與團隊成果分開。沒有相關工作經驗，也可用真實課堂或自學例子。', negativeCompletion),
-    pitchLimit: () => criterion('pitch-limit', '誠實交代學習或經驗邊界', [
+    ], '用「我負責……」說清個人工作，與團隊成果分開。沒有金融工作經驗，也可用真實課堂、自學或服務例子。', negativeCompletion),
+    pitchLimit: () => criterion('pitch-limit', '誠實交代經驗與學習方向', [
       '(?:未曾|尚未|未有|未做|沒有|仍在(?:學習|累積|補足)|需要學|有待學|not yet|have not|haven.t|still learning|need to learn)',
-      '(?:部署|銀行|金融|驗證|實作|資料分析|數據分析|檢索|模型|production|bank|financ|validat|deploy|data analysis|retriev|model|\\b(?:AI|RAG|SQL|Python)\\b)'
-    ], '補一句目前還未做過的部分，以及入職後會怎樣請教或補足；不要把課堂專題說成正式部署。'),
+      '(?:銀行|金融|業務|風險|流程|客戶|資料分析|數據分析|實習|從業|bank|financ|risk|process|customer|data analysis|intern|professional)'
+    ], '補一句目前還未熟悉的金融工作，以及入職後會怎樣請教或補足；不用假裝已有銀行或風險管理經驗。'),
     ownership: () => criterion('project-ownership', '分清自己的工作與團隊範圍', [
       '(?:我(?:主要|具體|親自)?(?:負責|做|整理|建立|設計|檢查|協助)|my role|I (?:was responsible|owned|built|designed|checked|helped|organis|organiz))',
-      '(?:文件|資料|檢索|測試|分類|訪談|說明|問題|紀錄|記錄|data|document|retriev|test|classif|interview|record|explain)'
-    ], '把「我們做了」拆成你親自處理的輸入、工作及交付物；不需要把所有成果都歸到自己。', negativeCompletion),
+      '(?:文件|資料|檢索|測試|分類|訪談|說明|問題|紀錄|記錄|活動|交接|data|document|retriev|test|classif|interview|record|explain|event|handover)'
+    ], '把「我們做了」拆成你親自處理的資料、工作及交付物；課堂、實習和服務經驗都可以。', negativeCompletion),
     projectMethod: () => criterion('project-method', '解釋做法及選擇理由', [
       '(?:因為|目的是|為了|避免|所以|先[^。]{0,30}再|because|so that|in order|to avoid|first[^.]{0,40}then)',
-      '(?:來源|資料|文件|分類|檢索|訪談|對照|測試|人工|source|data|document|classif|retriev|interview|test|human)'
-    ], '說出一個取捨與原因，例如先整理來源再調整提示，因為答案需要能夠查回文件。'),
+      '(?:來源|資料|文件|分類|檢索|訪談|對照|測試|溝通|需要|流程|source|data|document|classif|retriev|interview|test|communicat|need|process)'
+    ], '說出一個取捨與原因，例如先分類查詢再改寫說明，因為不同客戶遇到的問題未必相同。'),
     projectEvidence: () => criterion('project-evidence', '用紀錄支持成果與限制', [
-      '(?:紀錄|記錄|錯例|例子|對照|測試表|測試集|人工核對|record|log|example|comparison|test set|test case|manual review)',
+      '(?:紀錄|記錄|錯例|例子|對照|測試表|回饋|核對表|人工核對|record|log|example|comparison|test case|feedback|checklist|manual review)',
       '(?:顯示|發現|觀察|改善|仍|限制|不足|未|核對|比較|show|found|observ|improv|limit|still|check|compar)'
-    ], '補一個實際觀察或可展示的紀錄；只說「效果不錯」不夠。未有驗證結果時，直接說明尚未驗證。', negativeCompletion),
-    testCoverage: () => criterion('test-coverage', '安排不同類型的測試問題', [
-      '(?:正常|常見|可回答|known|normal|answerable|typical)',
-      '(?:缺資料|資料不足|無來源|過期|矛盾|越界|模糊|無法回答|missing|out.of.scope|outdated|contradict|ambig|unanswerable)'
-    ], '同時說出正常問題與邊界案例，例如文件沒有答案、來源互相矛盾、問題含糊或資料過期。'),
-    testGrounding: () => criterion('test-grounding', '把回答、來源與判準一起核對', [
-      '(?:來源|原文|文件|標準答案|reference|source|document|ground.truth)',
-      '(?:核對|對照|一致|支持|正確|人工檢查|人工覆核|比較|check|compar|support|correct|review|consistent)'
-    ], '說清誰核對甚麼：用原始文件檢查答案是否獲支持，並記錄引用錯誤、遺漏條件及應轉人工的情況。'),
-    testAction: () => criterion('test-action', '發現問題後有明確下一步', [
-      '(?:錯誤|失敗|不足|缺|風險|問題|error|fail|missing|risk|issue)',
-      '(?:暫停|限制|轉人工|修正|重測|重做|重新測試|記錄|紀錄|再測|補|hold|pause|limit|human|fix|retest|record|log|escalat)'
-    ], '補上測試不通過時的處理：記錄錯例、限制試用範圍、修正後重測，並交給合適同事覆核。'),
-    riskData: () => criterion('risk-data', '檢查資料來源與測試切分', [
-      '(?:來源|版本|時間|重複|訓練|source|version|time|duplicat|train)',
-      '(?:洩漏|泄漏|分開|切分|獨立|重疊|leak|split|separat|independent|overlap)'
-    ], '說清資料來自哪裏、是否重複，以及訓練與測試資料怎樣分開，避免把看過的例子當成新測試。'),
-    riskSlice: () => criterion('risk-slice', '拆開檢查不同情況的表現', [
-      '(?:分組|分開|分別|各類|不同|slice|segment|separat|different)',
-      '(?:語言|粵語|中文|英文|來源|問題類型|例外|缺|language|Cantonese|English|Chinese|source|question type|edge|missing)'
-    ], '不要只看整體結果。補上按語言、問題類型、來源完整度分組查看，並列出容易漏掉的情況。'),
-    privacy: () => criterion('responsible-privacy', '先減少不必要的個人資料', [
-      '(?:不(?:應|會|可以)?(?:直接)?(?:上傳|使用|輸入|貼上|收集)|移除|遮蓋|遮擋|刪除|最少|最小|合成|虛構|去識別|anonym|synthetic|redact|minimi[sz]|remove|do not upload|don.t upload|avoid uploading)',
+    ], '補一個實際觀察或可展示的紀錄；只說「效果不錯」不夠。未有成效證據時，直接說明限制。', negativeCompletion),
+    testCoverage: () => criterion('test-coverage', '分清客戶需要與未確認條件', [
+      '(?:客戶|需要|用途|情況|customer|need|purpose|situation)',
+      '(?:缺|未齊|不足|未確認|條件|限制|例外|missing|incomplete|unconfirmed|condition|limit|exception)'
+    ], '先了解客戶想辦甚麼、何時需要，再列出未齊資料或未確認的條件；不要一開始就承諾辦妥。'),
+    testGrounding: () => criterion('test-grounding', '根據正式資料核對條件', [
+      '(?:來源|原始|文件|條件|流程|紀錄|記錄|reference|source|document|condition|procedure|record)',
+      '(?:核對|對照|一致|確認|批准|覆核|比較|check|compar|confirm|approv|review|consistent)'
+    ], '說清會查哪份正式說明、流程或原始紀錄，以及向哪位負責同事確認；不要用印象代替核對。'),
+    testAction: () => criterion('test-action', '把問題交給合適同事跟進', [
+      '(?:異常|錯誤|不足|缺|風險|問題|例外|abnormal|error|missing|risk|issue|exception)',
+      '(?:暫停|標示|轉交|主管|修正|記錄|紀錄|補|跟進|覆核|pause|flag|refer|supervisor|fix|record|log|follow.up|review|escalat)'
+    ], '補上誰跟進資訊缺口或例外、何時更新進度；未確認前，清楚說明限制，不代替有權限的同事批准。'),
+    riskData: () => criterion('risk-data', '核對異常資料的來源與口徑', [
+      '(?:來源|版本|時間|日期|source|version|time|date)',
+      '(?:口徑|定義|範圍|重複|一致|差異|核對|比較|definition|scope|duplicat|consistent|discrepan|check|compar)'
+    ], '先查來源、日期、版本及統計口徑，弄清差異是資料問題還是真實異常；不要直接挑一個看起來合理的數字。'),
+    riskSlice: () => criterion('risk-slice', '把異常拆成可跟進的情況', [
+      '(?:分組|分開|分別|各類|不同|按|slice|segment|separat|different|group)',
+      '(?:流程|階段|來源|日期|完成|未完成|缺|待|例外|process|stage|source|date|complete|missing|pending|exception)'
+    ], '按流程階段、來源或資料是否齊備分開查看，列出哪些已核對、哪些仍待確認，再說明潛在影響。'),
+    privacy: () => criterion('responsible-privacy', '保護客戶資料並使用合適渠道', [
+      '(?:不(?:應|會|可以)?(?:直接)?(?:上傳|使用|輸入|貼上|收集|轉發|傳送)|移除|遮蓋|遮擋|刪除|最少|最小|合成|虛構|去識別|anonym|synthetic|redact|minimi[sz]|remove|do not (?:upload|forward|send)|don.t (?:upload|forward|send)|avoid (?:uploading|sharing))',
       '(?:資料|身份|姓名|電話|客戶|個人|data|identity|name|phone|customer|personal)'
-    ], '說清先移除哪些不必要資料、改用合成或去識別資料，以及在合適環境內處理。'),
-    human: () => criterion('responsible-human', '不確定時保留人工接手', [
-      '(?:不足|不確定|無法|缺|敏感|例外|高風險|越界|uncertain|missing|insufficient|sensitive|exception|high.risk|out.of.scope)',
-      '(?:人工|同事|主管|覆核|轉交|接手|human|review|supervisor|colleague|escalat|handover)'
-    ], '講一個清楚的接手條件，例如來源不足便停止自動回答，交前線或指定同事覆核。'),
-    audit: () => criterion('responsible-trace', '留下可追溯紀錄並限制使用範圍', [
+    ], '指出不應把客戶資料轉發到未確認的私人渠道；只用經團隊確認的渠道，並減少不必要資料。'),
+    human: () => criterion('responsible-human', '超出權限時請合適同事處理', [
+      '(?:不足|不確定|無法|缺|敏感|例外|風險|權限|uncertain|missing|insufficient|sensitive|exception|risk|authority)',
+      '(?:同事|主管|覆核|轉交|接手|review|supervisor|colleague|escalat|handover)'
+    ], '說清甚麼情況要轉交主管或指定同事，例如資料未齊、要求越過程序，或決定超出自己的權限。'),
+    audit: () => criterion('responsible-trace', '如實記錄狀態並交代責任', [
       '(?:記錄|紀錄|版本|來源|權限|範圍|log|record|version|source|access|scope)',
-      '(?:覆核|追溯|查回|查證|檢查|批准|限制|負責|review|trace|check|approv|limit|responsib)'
-    ], '補上記錄甚麼、由誰覆核，以及試用的範圍；不要用一句「符合要求」代替具體安排。'),
-    plain: () => criterion('communication-plain', '用白話解釋模型限制', [
-      '(?:來源|文件|資料|答案|source|document|data|answer)',
-      '(?:不代表|不等於|未必|不能保證|不保證|不一定|可能|會出錯|不完整|may|might|does not mean|doesn.t mean|not guarantee|not always|can be wrong|incomplete)'
-    ], '用一句不用技術縮寫的說法，例如「找到文件，不代表答案一定正確，仍要核對有沒有漏條件」。'),
-    propose: () => criterion('communication-propose', '提出可執行的替代安排', [
+      '(?:覆核|追溯|待確認|查證|檢查|批准|限制|負責|review|trace|pending|check|approv|limit|responsib)'
+    ], '保留查詢及跟進紀錄，將未完成的核對標為待確認，寫清負責人；不能為趕進度而寫成已批准。'),
+    plain: () => criterion('communication-plain', '用白話說清未確認的限制', [
+      '(?:條件|文件|資料|流程|進度|狀態|口徑|缺|condition|document|data|process|progress|status|definition|missing)',
+      '(?:未確認|待確認|未齊|不代表|不等於|未必|不能保證|不保證|不一定|可能|仍需|unconfirmed|pending|incomplete|may|might|does not mean|doesn.t mean|not guarantee|not always|still need)'
+    ], '直接說清現在已知道甚麼、還欠甚麼；例如「收到申請不代表已完成審核，仍要核對文件」。'),
+    propose: () => criterion('communication-propose', '提出可執行的跟進安排', [
       '(?:先|建議|可以|安排|改為|不如|propose|suggest|first|instead|could|arrange)',
-      '(?:小範圍|內部|試用|人工|覆核|測試|文件|補充|再確認|limited|internal|pilot|human|review|test|document|confirm)'
-    ], '給對方一個可以前進的安排，例如先做內部小範圍試用，待指定測試與人工覆核完成再討論擴展。'),
-    clarify: () => criterion('communication-clarify', '確認對方需要及下一步責任', [
+      '(?:核對|補充|更新|回覆|覆核|聯絡|文件|待確認|負責|check|supplement|update|reply|review|contact|document|pending|owner)'
+    ], '給對方一個能夠前進的安排，例如先更新已確認部分、列明待辦，再找負責同事補資料。'),
+    clarify: () => criterion('communication-clarify', '確認需要、負責人與回覆時間', [
       '(?:確認|想了解|請問|需要|關心|對齊|confirm|clarif|understand|need|concern|align)',
-      '(?:誰|哪|甚麼|什麼|目的|使用者|同事|負責|下一步|回覆|who|which|what|purpose|user|colleague|owner|next step|reply)'
-    ], '先確認同事最關心的需要，再約定誰負責補資料或覆核，以及何時回來對齊下一步。')
+      '(?:誰|哪|甚麼|什麼|目的|同事|負責|下一步|何時|回覆|who|which|what|purpose|colleague|owner|next step|when|reply)'
+    ], '先確認對方的需要或期限，再約定誰負責核對、誰回覆，以及何時更新進度；不把更新時間說成辦妥承諾。')
   };
 
   function confirmedProfile(input) {
@@ -346,76 +347,79 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     clean.custom = custom;
     return clean;
   }
-  function personalExample(profile, kind) {
+  function personalExample(profile, kind, roleId) {
+    const risk = roleId === 'risk';
+    const roleWork = risk ? '核對資料、辨認異常及交代風險' : '理解客戶需要、核對服務條件及協調跟進';
     if (profile.custom) {
       const background = [profile.school, profile.focus].filter(Boolean).join('，');
       const project = profile.project ? '我想以這項已確認的專題作例子：「' + profile.project + '」。' : '我想用【一件實際做過的工作、課堂或自學任務】作例子。';
-      if (kind === 'pitch') return (background ? '我的背景是「' + background + '」。' : '我的背景是【已確認的學習或工作背景】。') + '我曾在【真實任務】親自負責【個人工作】，這段經驗可以連到本職位的【工作內容】。目前尚未掌握的是【能力或經驗邊界】，我希望透過【具體學習安排】補足。';
-      return project + '我實際負責【個人工作】，選擇這個做法是因為【當時的理由】，可以用【已有紀錄】說明。目前尚未驗證的是【限制】；我建議的下一步是【尚未完成的驗證安排】。';
+      if (kind === 'pitch') return (background ? '我的背景是「' + background + '」。' : '我的背景是【已確認的學習或工作背景】。') + '我曾在【真實任務】親自負責【個人工作】，可以把當中的【可轉移能力】用於' + roleWork + '。我希望投身金融行業，是因為【自己的求職動機】。目前尚未掌握的是【能力或經驗邊界】，我會透過【具體學習安排】補足。';
+      return project + '我實際負責【個人工作】，選擇這個做法是因為【當時的理由】，可以用【已有紀錄】說明。目前還不能證明的是【限制】；我會把【可轉移能力】用於本職位的【工作內容】。';
     }
+    const bridge = '這段經驗令我想在金融行業從事' + roleWork + '的工作。';
     if (profile.id === 'finance-graduate') {
       return kind === 'pitch'
-        ? '我有金融學習背景，想由使用者需要切入金融科技。課堂專題中，我負責整理虛構訪談記錄，把申請流程的常見誤解改寫成白話說明。這令我想進一步做需求分析與測試。我的 AI 實作仍在累積，尚未參與銀行部署，希望先把資料整理與驗證基本功做好。'
-        : '在課堂流程研究中，我負責把虛構訪談記錄分成「文件看不懂」和「下一步不清楚」等問題。先做分類，是因為不能只憑自己的感覺改文案。我用原訪談對照改寫說明，記錄仍有歧義的句子；這只是一個課堂研究，沒有真實客戶成效或上線結果。';
+        ? '我有金融學習背景。課堂專題中，我負責整理虛構訪談記錄，把申請流程的常見誤解改寫成白話說明。' + bridge + '我希望讓服務資訊更清楚，也留意每個說法是否有根據。目前尚未有銀行業務或風險管理的正式工作經驗，會先學習團隊流程，並向負責同事請教。'
+        : '在課堂流程研究中，我負責把虛構訪談記錄分成「文件看不懂」和「下一步不清楚」等問題。先做分類，是因為不能只憑自己的感覺改文案。我用原訪談對照改寫說明，記錄仍有歧義的句子；這只是一個課堂研究，沒有真實客戶成效或上線結果。這個經驗讓我練習按證據整理問題，再向不同背景的人說清楚。';
     }
     if (profile.id === 'career-switcher') {
       return kind === 'pitch'
-        ? '我由一般客戶服務轉向資料分析。自學專題中，我用自己編寫的虛構查詢做分類小工具，負責整理問題與建立測試表。前線經驗讓我留意到，同一句說明也可能被不同人理解錯。我的 Python 能力仍在累積，未有銀行工作或正式部署經驗，希望由整理資料和核對錯例做起。'
-        : '自學分類工具中，我負責編寫虛構查詢、整理類別與建立測試表。我先把相近問題分開，因為同一個關鍵字未必代表同一個需要。我以手動分類對照工具結果，記錄容易混淆的例子；這只是小型練習，不能代表真實服務環境的表現。';
+        ? '我有一般客戶服務經驗，正在自學資料分析。自學專題中，我用自己編寫的虛構查詢做分類小工具，負責整理問題與建立測試表。前線經驗讓我留意到，同一句說明也可能被不同人理解錯。' + bridge + '我尚未有銀行工作經驗，想先把金融服務流程和資料核對的基本功做好。'
+        : '自學分類工具中，我負責編寫虛構查詢、整理類別與建立測試表。我先把相近問題分開，因為同一個關鍵字未必代表同一個需要。我以手動分類對照工具結果，記錄容易混淆的例子；這只是小型練習，不能代表真實服務環境的表現。可轉移的能力是把模糊問題分清楚、核對依據，再交代限制。';
     }
     return kind === 'pitch'
-      ? '我在香港科技大學完成學習，背景結合 AI 與金融。畢業專題做的是 RAG 金融服務 FAQ 助手，我負責整理虛構服務文件、檢索測試與來源標示。實習時也用合成查詢資料協助分類及清理。我希望把這些工作連到產品需求與驗證，讓使用者知道答案從哪裏來。尚未在真實銀行環境部署，是我需要繼續學習的部分。'
-      : '我的 FAQ 專題用虛構服務文件作知識庫。我主要負責整理文件、檢索測試及答案來源標示；團隊共同處理整體介面。我們先處理來源，是因為只調提示詞不能確保答案有根據。我以測試表對照原文，記錄引用不對及漏掉條件的錯例；資料不足時轉人工。這是課堂示範，沒有正式部署，也未能證明真實使用成效。';
+      ? '我在香港科技大學完成學習，背景結合 AI 與金融。畢業專題做的是 RAG 金融服務 FAQ 助手，我負責整理虛構服務文件、檢索測試與來源標示。實習時也用合成查詢資料協助分類及清理。' + bridge + '吸引我的是把複雜資訊整理清楚，幫助同事作有根據的判斷。我尚未有銀行業務或風險管理的正式工作經驗，入職後會先學習流程、請教主管並做好紀錄。'
+      : '我的 FAQ 專題用虛構服務文件作知識庫。我主要負責整理文件、檢索測試及答案來源標示。我先核對資料來源，是因為說法有依據，其他人才能查證。我以測試表對照原文，記錄引用不對及漏掉條件的錯例；資料不足時轉人工。這是課堂示範，沒有正式部署，也未能證明真實服務成效。對金融工作而言，我能帶來的是資料核對、清楚說明限制及留下跟進紀錄的習慣。';
   }
 
   function rounds(input, roleId) {
     const profile = confirmedProfile(input);
     const risk = roleId === 'risk';
     const role = roles.find(x => x.id === roleId) || roles[0];
-    const projectReference = profile.project ? '你確認的專題是：「' + profile.project + '」' : '可用你實際做過的工作、課堂或自學任務作例子；沒有相關經驗也可以直接說明。';
+    const projectReference = profile.project ? '你確認的專題是：「' + profile.project + '」也可換成你實際做過的工作、實習或活動；重點是個人貢獻與可轉移能力。' : '可用你實際做過的工作、課堂或自學任務作例子；沒有相關經驗也可以直接說明。';
     const general = {name: '何穎', role: '招聘同事 · 虛構角色'};
-    const technical = {name: '陳朗', role: risk ? '模型驗證主管 · 虛構角色' : 'AI 產品主管 · 虛構角色'};
-    const partner = {name: '梁欣', role: '前線服務同事 · 虛構角色'};
-    const sampleTech = risk
-      ? '我會先核對資料來源、文件版本與時間，檢查重複例子，讓訓練和測試資料分開，避免洩漏。測試要按中文、英文及問題類型分組，包含正常問題、文件過期、缺資料和互相矛盾的案例。由同事用原始文件核對答案和引用是否一致，記錄錯例與限制。若出現嚴重錯誤，先限制試用，再修正重測，交模型驗證同事覆核。'
-      : '我會先整理正常可回答、資料不足、文件過期和問題含糊的測試問題，再由同事以原始文件核對答案與引用是否一致。除了看有沒有答對，也記錄漏條件、引用錯誤，以及本來應轉人工的情況。若仍有關鍵錯誤，先限制內部試用、修正錯例後重測，讓產品與前線同事一起確認下一步。';
+    const business = {name: '陳朗', role: risk ? '風險管理主管 · 虛構角色' : '銀行業務主管 · 虛構角色'};
+    const partner = {name: '梁欣', role: risk ? '營運同事 · 虛構角色' : '前線服務同事 · 虛構角色'};
+    const sampleBusiness = risk
+      ? '我會先核對兩份紀錄的來源、版本和日期，確認「已完成」的定義與統計範圍是否一致，檢查重複或漏列的申請。再按流程階段、來源及資料是否齊備分組，把已核對和仍待確認的項目分開。差異可能令團隊誤判工作進度，我會先標示問題及可能影響，請營運同事補充原始紀錄，交主管覆核。未確認前不選一份當作定論，也不把資料異常直接說成違規。'
+      : '我會先確認客戶想申請哪項服務、用途及何時需要，再整理未齊文件和未確認條件。按正式服務說明及內部流程核對所需資料，向負責同事確認哪些步驟可以先做。對資料不足或例外情況，我會記錄並轉交指定同事跟進；向客戶清楚交代待辦和下次更新時間，不把收到申請說成已批准，也不承諾未確認的完成日期。';
     const sampleResponsible = risk
-      ? '先不要把真實客戶資料放進未確認的工具，改用合成資料或移除不必要的姓名、電話。核對環境、存取權限和使用範圍，由負責同事確認。來源不足或涉及敏感情況，轉交人工覆核；保留模型版本、資料來源與錯例紀錄以便追溯。趕時間也不應省略這些檢查。'
-      : '先不用真實客戶對話做示範，移除姓名、電話等不必要資料，改用合成查詢，並確認團隊允許的處理環境。答案來源不足或問題涉及敏感資料時，停止自動回答，轉交人工同事。試用範圍和覆核負責人要先確認，保留版本、來源及錯誤紀錄，方便追溯。';
+      ? '我不會把客戶資料轉發到未確認的私人渠道；先移除工作不需要的姓名、電話，向負責同事確認合適的傳送方式。資料不足就如實標示待確認，記錄缺甚麼及誰跟進。要求跳過程序或超出我權限時，轉交主管覆核，保留來源和跟進紀錄。可以先提交已確認部分及待辦清單，但不把未核對項目寫成已完成。'
+      : '我不會把客戶文件轉發到未確認的私人渠道，也會移除當次工作不需要的個人資料。我會向同事說明資料未齊，現在不能記成已核對，改用團隊確認的渠道補文件。若要求超出我的權限或出現例外，轉交主管覆核；如實記錄待確認事項、負責人及跟進時間，先讓客戶知道下一步，不為趕進度而代為批准。';
     const sampleCommunication = risk
-      ? '找到文件，不代表答案一定正確，也可能漏掉條件。我想先確認同事需要的是內部示範，還是讓使用者依賴的回覆。建議先做小範圍內部試用，由我補上來源核對和錯例測試，請前線同事覆核看不懂的說法。我會整理仍未解決的限制，再一起確認下一步由誰負責。'
-      : '有來源的答案仍可能漏掉條件，所以我們不能把它說成一定正確。我想先確認，你最需要它幫同事查文件，還是直接回答客戶？建議先做內部小範圍試用，讓同事核對答案；資料不足就轉人工。我負責整理錯例，請你幫忙確認前線最常遇到的問題，再對齊下一步。';
+      ? '我明白你要趕會議，但兩份紀錄的口徑仍待確認，現在直接選其中一份可能誤導大家。我想先確認會議最需要作甚麼決定。不如先提供已核對的部分，將差異和可能影響列為待確認；我負責整理差異，請你聯絡來源同事補充紀錄。我們約定會前何時更新，若仍未查清，就如實交代，並請主管決定下一步。'
+      : '我明白你想先安撫客戶，但文件未齊，收到申請不代表已完成審核，現在不能保證今日辦妥。我想先確認客戶最需要哪一項進度資訊。不如先說清已完成及待補的部分，我負責核對文件清單，請你聯絡客戶補充資料；我們再確認由誰及何時回覆進度，讓客戶知道會有人跟進。';
     return [
       {id: 'pitch', label: '背景與動機', interviewer: general,
-        question: '先用大約一分鐘介紹自己。你的背景，怎樣連到「' + role.title + '」這份工作？',
-        context: '從已確認的背景出發，揀一個例子便夠；不需要逐行背履歷。',
-        promptHints: ['一項相關背景', '自己做過的一件事', '想補足的能力'],
+        question: '先用大約一分鐘介紹自己。為甚麼想投身金融行業？你的背景，怎樣連到「' + role.title + '」這份工作？',
+        context: '從已確認的背景出發，揀一個例子便夠；說清求職動機及可轉移能力，不需要逐行背履歷。',
+        promptHints: ['為何選金融行業', '自己做過的一件事', '職位連結與學習方向'],
         sampleKind: profile.custom ? 'structure' : 'fictional-example',
-        sampleAnswer: personalExample(profile, 'pitch'), strongExample: personalExample(profile, 'pitch'),
+        sampleAnswer: personalExample(profile, 'pitch', roleId), strongExample: personalExample(profile, 'pitch', roleId),
         criteria: [c.pitchLink(), c.pitchEvidence(), c.pitchLimit()]},
-      {id: 'project', label: '專題深挖', interviewer: technical,
-        question: risk ? '挑一個你實際做過的專題。哪些資料或測試工作是你親自負責？你用甚麼紀錄知道結果可信到哪一步？' : '挑一個你實際做過的專題。它解決甚麼問題、你負責哪部分，為甚麼選這個做法？',
+      {id: 'project', label: '經驗深挖', interviewer: business,
+        question: risk ? '挑一段實際經驗。你曾怎樣從資料或紀錄找出問題？哪些工作由你負責，你如何交代結果及限制？' : '挑一段實際經驗。你怎樣了解別人的需要、整理資訊或解決問題？你負責哪部分，為甚麼這樣做？',
         context: projectReference,
-        promptHints: ['我負責的部分', '一個做法及理由', '證據與未驗證之處'],
+        promptHints: ['我負責的部分', '一個做法及理由', '紀錄、結果與限制'],
         sampleKind: profile.custom ? 'structure' : 'fictional-example',
-        sampleAnswer: personalExample(profile, 'project'), strongExample: personalExample(profile, 'project'),
+        sampleAnswer: personalExample(profile, 'project', roleId), strongExample: personalExample(profile, 'project', roleId),
         criteria: [c.ownership(), c.projectMethod(), c.projectEvidence()]},
-      {id: 'technical_validation', label: risk ? '模型驗證設計' : '產品驗證設計', interviewer: technical,
-        question: risk ? '一個虛構 FAQ 助手在展示時答得流暢。你接到驗證任務，會怎樣檢查資料切分、不同情況及錯誤，才向團隊匯報？' : '團隊想試用一個 RAG 金融服務 FAQ 助手。你會怎樣測試，才知道它不只答得流暢，也沒有漏掉重要條件？',
-        context: '假設題：文件與查詢均為虛構，尚未對外使用。可以解釋你會怎樣做，不需要聲稱已做過。',
-        promptHints: risk ? ['資料來源與切分', '按情況拆開測試', '錯例與覆核安排'] : ['正常及邊界問題', '答案與原文對照', '不通過時怎樣處理'],
-        sampleAnswer: sampleTech, strongExample: sampleTech,
+      {id: 'technical_validation', label: risk ? '業務風險判斷' : '金融服務判斷', interviewer: business,
+        question: risk ? '兩份內部紀錄對同一批服務申請的「已完成」狀態不一致。主管想在會議前了解有沒有風險，你會怎樣核對、分析及匯報？' : '客戶想盡快完成一項銀行服務申請，但文件未齊，又把「已提交」理解為「已批准」。你會先了解甚麼，再怎樣安排下一步？',
+        context: '假設題：申請、客戶及紀錄均為虛構。重點是業務判斷、查證及跟進；不需要背特定銀行流程，也不代替有權限的同事作決定。',
+        promptHints: risk ? ['來源與統計口徑', '異常及可能影響', '待確認事項與跟進'] : ['需要與缺少的資料', '正式條件及流程', '下一步與承諾邊界'],
+        sampleAnswer: sampleBusiness, strongExample: sampleBusiness,
         criteria: risk ? [c.riskData(), c.riskSlice(), c.testGrounding(), c.testAction()] : [c.testCoverage(), c.testGrounding(), c.testAction()]},
-      {id: 'responsible_AI', label: '負責任 AI', interviewer: technical,
-        question: risk ? '同事想直接用真實客戶查詢測試新工具，並省略部分紀錄來趕示範。你會先確認甚麼，怎樣提出替代安排？' : '同事想把真實客戶對話貼入一個未確認的 AI 工具，說只是做內部示範。你會怎樣處理，同時讓工作繼續？',
-        context: '假設題：重點是具體處理步驟；不需要背誦法例，也不要自行宣布已符合法規。',
-        promptHints: ['哪些資料不需要', '何時交人工接手', '範圍、權限與紀錄'],
+      {id: 'responsible_AI', label: '專業操守與界線', interviewer: business,
+        question: risk ? '同事想把含客戶資料的表格轉發到私人通訊群組，並先把未核對項目標成「已完成」來趕報告。你會怎樣回應，又如何讓工作繼續？' : '同事說「客戶急用」，請你把客戶文件轉發到私人通訊群組，並先把資料未齊的申請記成「已核對」。你會怎樣處理？',
+        context: '假設題：用具體步驟說明資料保護、如實紀錄及權限界線；不需要背法例，亦不要自行宣布已符合法規。',
+        promptHints: ['資料與傳送渠道', '超出權限時怎樣做', '如實記錄及替代安排'],
         sampleAnswer: sampleResponsible, strongExample: sampleResponsible,
         criteria: [c.privacy(), c.human(), c.audit()]},
-      {id: 'communication', label: '跨團隊溝通', interviewer: partner,
-        question: risk ? '我不是技術同事。既然助手每個答案都有來源，為甚麼你還說要覆核？請直接向我解釋，並講一個可以前進的安排。' : '「有來源就應該冇問題啦，點解仲唔可以直接畀客用？」假設我是一位前線同事，你會怎樣回覆我？',
-        context: '直接把這裏當成對話，用同事聽得明的說法回答。可以先問清楚需要。',
-        promptHints: ['一句白話解釋', '一個可行替代安排', '確認需要與負責人'],
+      {id: 'communication', label: '溝通與協作', interviewer: partner,
+        question: risk ? '「個會就開喇，兩份紀錄揀一份放入簡報先啦。」假設我是一位營運同事，你會怎樣回覆我，並提出可行的安排？' : '「客人等咗好耐，你先話今日搞得掂，文件之後再補啦。」假設我是一位前線同事，你會怎樣回覆我，並一起處理這個情況？',
+        context: '直接當成同事間的對話，用清楚、有禮的說法回答；理解對方的壓力，同時交代已知、未知及下一步。',
+        promptHints: ['理解需要與說清限制', '一個可行跟進安排', '負責人及回覆時間'],
         sampleAnswer: sampleCommunication, strongExample: sampleCommunication,
         criteria: [c.plain(), c.propose(), c.clarify()]}
     ];
@@ -471,29 +475,29 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     return chars >= 12 || words >= 9;
   }
   const followSamples = {
-    'pitch-link': '我曾在【真實任務】負責【個人工作】，這項工作可以連到職位的【相關工作內容】。我想進一步學習【需要補足的能力】。',
-    'pitch-evidence': '這項任務中，我親自負責【實際工作】；團隊其他成員負責【其他分工】。我可以拿【已有交付物或紀錄】作為工作紀錄。',
-    'pitch-limit': '我目前還未做過【經驗邊界】，所以不會把現有練習等同正式環境。入職後我想先請教【合適同事】，透過【具體學習安排】逐步補足。',
-    'project-ownership': '我親自負責的輸入是【輸入資料或材料】，做了【實際工作】，交付了【交付物】。其他部分由【實際負責人或團隊】處理。',
+    'pitch-link': '我曾在【真實任務】負責【個人工作】，這項能力可以用於本職位的【金融工作內容】。我想投身金融行業，是因為【自己的動機】，也希望補足【需要學習的部分】。',
+    'pitch-evidence': '這項任務中，我親自負責【實際工作】；團隊其他成員負責【其他分工】。我可以拿【已有交付物或紀錄】說明自己的貢獻。',
+    'pitch-limit': '我目前還未做過【金融工作或經驗邊界】，所以不會把現有練習等同正式工作。入職後我想先請教【合適同事】，透過【具體學習安排】逐步補足。',
+    'project-ownership': '我親自負責的輸入是【資料或材料】，做了【實際工作】，交付了【交付物】。其他部分由【實際負責人或團隊】處理。',
     'project-method': '我選【實際做法】，因為當時需要解決【問題】。另一個考慮過的做法是【替代方案】，但它的限制是【當時的取捨理由】。',
-    'project-evidence': '目前只有【實際已有的紀錄】，未能證明【尚未驗證的成效】。下一步我建議建立獨立測試案例，對照原始資料，記錄錯例後再判斷。',
-    'test-coverage': '我會同時準備正常可回答、文件找不到答案、來源過期、內容互相矛盾及問題含糊的案例，分開觀察回答或轉人工是否合適。',
-    'test-grounding': '我會請同事用原始文件核對答案與引用是否一致，特別檢查有沒有漏掉適用條件；把不一致的地方記錄成錯例。',
-    'test-action': '若仍有關鍵錯誤，我會先限制試用範圍，記錄錯例與原因；修正後以相同判準重測，再交負責同事覆核。',
-    'risk-data': '我會核對資料來源、文件版本及時間，檢查重複例子，讓訓練與測試資料保持分開，避免測試答案已經出現在訓練內容。',
-    'risk-slice': '我會把中文、英文、正常問題及缺資料問題分開檢查，列出各類錯例，不用一個整體結果掩蓋某類問題的不足。',
-    'responsible-privacy': '先不要把真實客戶資料放進未確認的工具。移除不必要的姓名、電話，改用合成查詢，並向負責同事確認處理環境及存取權限。',
-    'responsible-human': '來源不足、答案互相矛盾或涉及敏感情況時，我會停止自動回答，清楚說明限制，轉交指定人工同事覆核。',
-    'responsible-trace': '我會記錄使用的文件來源、模型版本、錯例及修改理由，確認誰負責覆核，並限制試用範圍，方便日後追溯。',
-    'communication-plain': '找到文件，不代表答案一定正確；它也可能漏掉條件。就像找到一頁說明，仍需要核對這頁是否真的回答了現在的問題。',
-    'communication-propose': '不如先安排內部小範圍試用，由同事核對答案；有關鍵錯誤便先修正重測，整理結果後再一起確認下一步。',
-    'communication-clarify': '我想先確認，你最需要的是幫同事查文件，還是直接回覆客戶？我可以負責整理測試錯例，請你確認前線最常見的問題，再約定下一次對齊。'
+    'project-evidence': '目前可以用【實際已有的紀錄】支持【有限的觀察】，未能證明【尚未確認的成效】。下一步我會向【相關人士】補充查證，不能把預期當作已有成果。',
+    'test-coverage': '我會先確認客戶的用途、需要及期限，再列出未齊資料和未確認的條件。收到申請不代表已批准，要先把這個分別講清楚。',
+    'test-grounding': '我會用正式文件及原始紀錄核對目前的條件與狀態，再向流程負責同事確認；遇到版本或說法不一致時，會把差異記錄下來。',
+    'test-action': '若有資料不足或其他異常，我會先標示待確認，記錄問題及可能影響，轉交合適同事跟進，並約定更新時間；不自行代為批准或下定論。',
+    'risk-data': '我會先核對資料來源、版本、日期及「已完成」的定義，確認兩份紀錄的統計範圍是否一致，再檢查重複或漏列的項目。',
+    'risk-slice': '我會按流程階段、來源及資料是否齊備分組，把已核對和仍待確認的項目分開，列明每類異常及需要找誰查證。',
+    'responsible-privacy': '我不會把客戶資料轉發到未確認的私人渠道。先移除當次工作不需要的姓名、電話，再向負責同事確認合適的傳送渠道及存取權限。',
+    'responsible-human': '資料不足、出現例外或要求超出我權限時，我會如實說明，轉交主管或指定同事覆核；不為趕時間代為批准。',
+    'responsible-trace': '我會保留來源與跟進紀錄，將未核對部分標示為待確認，寫清誰負責補資料及覆核；不能把尚未完成的步驟記成已完成。',
+    'communication-plain': '現在的資料仍有待確認之處，所以暫時不能保證結果。我會先說清已核對的部分，再解釋還欠甚麼，讓同事知道限制在哪裏。',
+    'communication-propose': '不如先更新已確認的部分，把待辦及資訊缺口列清楚。我可以負責核對文件，請相關同事補充資料，再約定何時回覆進度。',
+    'communication-clarify': '我想先確認，你現在最需要哪項資訊，以及何時需要回覆？我們分清誰負責查證、誰聯絡客戶或其他同事，並約定下一次更新時間。'
   };
   function assess(round, rawAnswer) {
     const answer = typeof rawAnswer === 'string' ? rawAnswer.trim().slice(0, 12000) : '';
     const incompleteTemplate = /【[^】]*】/u.test(answer);
     const evidence = round.criteria.map(item => ({item, quote: incompleteTemplate ? '' : evaluateEvidence(item, answer)}));
-    const recognizedWords = /(?:資料|文件|來源|產品|服務|客戶|專題|工作|測試|驗證|人工|背景|溝通|風險|經驗|Python|SQL|RAG|AI|data|document|source|product|service|customer|project|test|validat|human|background|communicat|risk|experience)/iu.test(answer);
+    const recognizedWords = /(?:金融|銀行|資料|文件|來源|產品|服務|客戶|專題|工作|核對|流程|操守|權限|背景|溝通|風險|經驗|Python|SQL|RAG|AI|financ|bank|data|document|source|product|service|customer|project|check|process|ethic|authority|background|communicat|risk|experience)/iu.test(answer);
     const recognised = !incompleteTemplate && meaningful(answer) && (recognizedWords || evidence.some(x => x.quote));
     const items = evidence.map(({item, quote}) => ({id: item.id, label: item.label,
       status: quote && meaningful(answer) ? 'observed' : recognised ? 'develop' : 'unknown',
@@ -510,7 +514,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
       followQuestion = contextQuote + '我想再了解「' + missing.label + '」：' + missing.guidance;
     } else {
       followQuestion = round.id === 'project'
-        ? '如果再做一次這個專題，你會先改善哪一處？請分清你已有的觀察，以及仍需要驗證的想法。'
+        ? '如果再處理一次這項任務，你會先改善哪一處？請分清已有的觀察，以及仍需要查證的想法。'
         : round.id === 'communication'
           ? '如果對方仍然說「但我哋趕時間」，你會用哪兩句說話，確認需要又守住你提出的安排？'
           : '如果時間有限，你會先保留哪一步，哪一步稍後再做？請說明理由與仍需交代的限制。';
@@ -518,7 +522,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     return {items, recognised,
       summary: !recognised ? '暫未辨認到足夠具體內容；這不代表你的回答錯誤。' : '以下只標示這段回答中可辨認的表達線索，不代表已驗證你的經驗或能力。',
       followUp: {question: followQuestion,
-        sampleAnswer: missing ? followSamples[missing.id] || missing.guidance : '我會先保留核對來源與重要條件，因為這決定回覆是否有根據。其餘安排會清楚列成待辦，確認負責人及下一次覆核；不把未完成的工作說成已完成。',
+        sampleAnswer: missing ? followSamples[missing.id] || missing.guidance : '我會先核對會影響判斷的重要資料，並清楚交代尚未確認的部分。其他安排列成待辦，確認負責人及回覆時間；不把未完成的工作說成已完成。',
         sampleKind: missing && /【[^】]*】/u.test(followSamples[missing.id] || '') ? 'structure' : 'hypothetical-example',
         why: missing ? '這次追問聚焦目前未清楚表達的「' + missing.label + '」。' : '已辨認到本題的主要表達線索，追問改為練習取捨與限制。'},
       limitation: '本 demo 以有限文字規則標示線索，可能漏掉同義表達或理解不到語境；請對照原文自行檢查。'};
@@ -544,7 +548,7 @@ lucide.createIcons({icons});\``);if(typeof c>"u")throw new Error("`createIcons()
     });
     return {details, strengths, nextSteps,
       title: '你的面試練習回顧',
-      guidance: '先挑一個缺少具體例子的回答重寫，再挑一個技術解釋練習用白話講；保留真實經驗與假設方案的分別。',
+      guidance: '先挑一個缺少具體例子的回答重寫，再練習用白話交代業務判斷與跟進安排；把個人經驗連到金融職位，並分清真實經歷與假設方案。',
       limitation: '這是表達練習回饋，沒有錄取機率、適任分數或招聘結論；有限文字規則不能代替專業面試評估。'};
   }
   global.HKInterviewContent = {profiles, roles, rounds, assess, report};
@@ -1091,10 +1095,10 @@ this.workerSrc))).WorkerMessageHandler})())}}class WorkerTransport{downloadInfoC
   function profileFields(){
     const p=s.profile;
     return field('school','學校／教育背景',p.school,false,'例如：香港科技大學',160)+
-      field('focus','學習／專業方向',p.focus,false,'例如：AI、金融或數據分析',180)+
+      field('focus','學習／專業方向',p.focus,false,'例如：金融、會計、商科或其他專業',180)+
       field('project','一段項目經歷',p.project,true,'項目做甚麼？你自己負責哪一部分？',700)+
       field('experience','工作／實習／活動經歷',p.experience,true,'只填你確實做過的事；沒有亦可留空。',700)+
-      field('skills','想在面試提到的技能',list(p.skills).join('、'),false,'例如：Python、SQL、資料核對',220)+
+      field('skills','想在面試提到的技能',list(p.skills).join('、'),false,'例如：Excel、資料核對、客戶溝通',220)+
       field('summary','補充背景／今次想練甚麼',p.summary,true,'可以寫求職動機或想加強的表達。',900);
   }
   function profileCard(){
@@ -1113,11 +1117,11 @@ this.workerSrc))).WorkerMessageHandler})())}}class WorkerTransport{downloadInfoC
   function setup(focus=true){
     s.view='setup';
     const html='<a class="iv-back" href="index.html">‹ 返回首頁</a>'+
-      '<section class="iv-hero"><img src="'+INTERVIEW_PHOTO+'" alt="AI 生成的香港辦公室模擬面試情境"><div><div class="iv-kicker">FINANCE INTERVIEW LAB</div><h1 tabindex="-1" data-heading>中環見工記</h1><p>由你的背景出發，練到下一次回答。<br>AI × 金融職場模擬面試</p></div></section>'+flow(0)+
+      '<section class="iv-hero"><img src="'+INTERVIEW_PHOTO+'" alt="AI 生成的香港辦公室模擬面試情境"><div><div class="iv-kicker">FINANCE INTERVIEW LAB</div><h1 tabindex="-1" data-heading>中環見工記</h1><p>由你的背景出發，練到下一次回答。<br>金融行業模擬面試</p></div></section>'+flow(0)+
       '<section><div class="iv-section-head"><h2>先帶入你的背景</h2><span>01 / 準備</span></div><div class="iv-source-tabs" role="group" aria-label="背景來源"><button type="button" data-source="demo" aria-pressed="'+(s.source==='demo')+'">用示範背景</button><button type="button" data-source="custom" aria-pressed="'+(s.source==='custom')+'">用我的履歷</button></div>'+
-      (s.source==='demo'?'<div class="iv-profile-choices" role="group" aria-label="選擇示範背景">'+C.profiles.map(p=>'<button type="button" class="iv-chip" data-profile-id="'+E(p.id)+'" aria-pressed="'+(s.profileId===p.id)+'">'+E(p.name)+'</button>').join('')+'</div>'+profileCard()+'<p class="iv-note">虛構畢業生履歷，用作主流程示範；並非院校推薦或真實校友紀錄。</p><details class="iv-details"><summary>查看／調整這份背景</summary><div>'+profileFields()+'</div></details>':uploadPanel())+'</section>'+
+      (s.source==='demo'?'<div class="iv-profile-choices" role="group" aria-label="選擇示範背景">'+C.profiles.map(p=>'<button type="button" class="iv-chip" data-profile-id="'+E(p.id)+'" aria-pressed="'+(s.profileId===p.id)+'">'+E(p.name)+'</button>').join('')+'</div>'+profileCard()+'<p class="iv-note">不同學習背景，都可以練金融行業面試。科大 AI × 金融只是其中一份虛構履歷；並非院校推薦或真實校友紀錄。</p><details class="iv-details"><summary>查看／調整這份背景</summary><div>'+profileFields()+'</div></details>':uploadPanel())+'</section>'+
       '<section class="iv-section"><div class="iv-section-head"><h2>想練哪個崗位？</h2><span>虛構招聘情境</span></div><div class="iv-job-grid">'+C.roles.map(r=>'<button class="iv-job" type="button" data-job="'+E(r.id)+'" aria-pressed="'+(s.roleId===r.id)+'"><span class="iv-job-copy"><strong>'+E(r.title)+'</strong><small>'+E(r.brief)+'</small></span><span class="iv-radio" aria-hidden="true"></span></button>').join('')+'</div></section>'+
-      '<section class="iv-section"><div class="iv-section-head"><h2>這次會練甚麼</h2><span>5 題 · 約 8–10 分鐘</span></div><ol class="iv-agenda"><li>自我介紹</li><li>項目深挖</li><li>模型驗證</li><li>負責任 AI</li><li>業務溝通</li></ol><p class="iv-note">每題最多一次追問，可提前收尾。先看答題方向，再用自己的話回答。</p></section>'+
+      '<section class="iv-section"><div class="iv-section-head"><h2>這次會練甚麼</h2><span>5 題 · 約 8–10 分鐘</span></div><ol class="iv-agenda"><li>求職動機</li><li>經歷深挖</li><li>業務判斷</li><li>專業操守</li><li>溝通協作</li></ol><p class="iv-note">每題最多一次追問，可提前收尾。先看答題方向，再用自己的話回答。</p></section>'+
       '<p class="iv-error" id="iv-error" role="alert">'+E(s.error)+'</p><div class="iv-actions">'+button('準備好，開始面試 <span aria-hidden="true">→</span>','start',false,s.busy?'disabled':'')+'</div>'+disclosure();
     render(html,focus);
   }
@@ -1178,7 +1182,7 @@ this.workerSrc))).WorkerMessageHandler})())}}class WorkerTransport{downloadInfoC
       (found.length?'<section class="iv-section"><div class="iv-section-head"><h2>這些表達，值得保留</h2><span>引用你的原句</span></div>'+found.map(({index,item})=>'<article class="iv-guidance"><div class="iv-kicker">第 '+(index+1)+' 題 · '+E(item.label)+'</div><blockquote class="iv-quote">「'+E(item.quote)+'」</blockquote></article>').join('')+'</section>':'')+
       (done===0?'<article class="iv-guidance"><h2>先答一題，先有內容可復盤。</h2><p>今次未有提交回答，唔會產生能力判斷或改進結論。</p><div class="iv-actions">'+button('返回第一題','resume')+'</div></article>':
       '<section class="iv-section"><div class="iv-section-head"><h2>'+(needs.length?'先改善這幾點':'下一次，再驗證表達')+'</h2><span>由你的回答整理</span></div>'+
-        (needs.length?needs.map(({index,item})=>'<article class="iv-guidance"><div class="iv-kicker">第 '+(index+1)+' 題 · '+E(s.rounds[index].label)+'</div><h3>'+E(item.label)+'</h3><p>'+E(item.guidance)+'</p><button class="iv-text-button" type="button" data-practice="'+index+'">重練這一題 →</button></article>').join(''):'<article class="iv-guidance"><h3>換一個例子，唔靠原稿再講一次</h3><p>這次文字包含預設觀察線索，仍需由面試官核實經歷與技術內容。試用另一個真實例子，講清楚你自己的取捨。</p></article>')+'</section>')+
+        (needs.length?needs.map(({index,item})=>'<article class="iv-guidance"><div class="iv-kicker">第 '+(index+1)+' 題 · '+E(s.rounds[index].label)+'</div><h3>'+E(item.label)+'</h3><p>'+E(item.guidance)+'</p><button class="iv-text-button" type="button" data-practice="'+index+'">重練這一題 →</button></article>').join(''):'<article class="iv-guidance"><h3>換一個例子，唔靠原稿再講一次</h3><p>這次文字包含預設觀察線索，仍需由面試官核實經歷與回答內容。試用另一個真實例子，講清楚你自己的取捨。</p></article>')+'</section>')+
       '<section class="iv-section"><div class="iv-section-head"><h2>逐題回看</h2><span>回答 · 線索 · 指導</span></div>'+
       s.rounds.map((r,i)=>{const a=s.answers[i];if(!a)return '<article class="iv-guidance"><div class="iv-kicker">0'+(i+1)+' · '+E(r.label)+'</div><p>本次未回答，未作分析。</p></article>';const review=resultFor(r,a);
         return '<details class="iv-review" data-review="'+i+'"><summary><span>0'+(i+1)+'</span><strong>'+E(r.label)+'</strong><span>'+(originLabel(a)|| (followLabel(a)?'含示範補充':'查看復盤'))+' ＋</span></summary><div class="iv-review-body"><h3>'+E(r.question)+'</h3><div class="iv-bubble"><span>你的原回答'+(originLabel(a)?' · '+originLabel(a):'')+'</span><p>'+E(a.text)+'</p></div>'+
@@ -1188,7 +1192,7 @@ this.workerSrc))).WorkerMessageHandler})())}}class WorkerTransport{downloadInfoC
           (a.practice?'<details class="iv-details"><summary>查看今次重練紀錄</summary><div><div class="iv-example">'+E(a.practice.text)+'</div>'+evidence(a.practice.assessment.items)+'</div></details>':'')+
           '<div class="iv-actions">'+button('針對這一題再練一次','practice',true,'data-index="'+i+'"')+'</div></div></details>';
       }).join('')+'</section>'+
-      (done?'<section class="iv-section"><div class="iv-section-head"><h2>下次面試前，練三件事</h2></div><ol class="iv-plan"><li><div><strong>把一個項目講成自己的經歷</strong><p>寫低背景、你負責的動作、觀察到甚麼，以及仍未做到的部分。</p></div></li><li><div><strong>預備一個失敗或限制的例子</strong><p>講清楚點樣驗證、何時停下來，以及何時交畀同事覆核。</p></div></li><li><div><strong>試一次唔睇稿的短講</strong><p>用本次最想改善的一題，先講結論，再補一個具體證據。</p></div></li></ol></section>':'')+
+      (done?'<section class="iv-section"><div class="iv-section-head"><h2>下次面試前，練三件事</h2></div><ol class="iv-plan"><li><div><strong>講清一段經歷與職位的關聯</strong><p>寫低背景、你負責的動作、觀察到甚麼，以及仍未做到的部分。</p></div></li><li><div><strong>預備一個失敗或限制的例子</strong><p>講清楚如何發現問題、核對資料，以及何時請同事或主管協助。</p></div></li><li><div><strong>試一次唔睇稿的短講</strong><p>用本次最想改善的一題，先講結論，再補一個具體證據。</p></div></li></ol></section>':'')+
       '<div class="iv-actions">'+(done?button('下載面試復盤 .txt','download')+button('複製面試筆記','copy',true):'')+(done<5&&done>0?button('繼續未答的題目','resume',true):'')+button('同一背景，再練一次','restart',true)+button('換背景／職位','back-setup',true)+'</div>'+disclosure());
   }
   function practice(index){
@@ -1203,7 +1207,15 @@ this.workerSrc))).WorkerMessageHandler})())}}class WorkerTransport{downloadInfoC
   }
   function sampleText(r,follow=false){
     if(s.source==='demo')return follow?(s.answers[s.index]?.assessment.followUp.sampleAnswer||r.sampleAnswer):r.sampleAnswer;
-    return follow?'我會先核對【資料／限制】，再由【誰】確認【甚麼】。如果仍未能確認，我會【下一步】。':'我想用【自己的項目／經歷】作例子。當時要解決【問題】，我親自負責【動作】。我用【方法】檢查結果，發現【觀察／限制】。這段經驗與本職位的關聯是【關聯】。';
+    if(follow)return '我會先核對【資料／限制】，再由【誰】確認【甚麼】。如果仍未能確認，我會【下一步】。';
+    const structures={
+      pitch:'我的背景是【已確認的學習或工作背景】。在【真實經歷】中，我親自負責【工作】，這與本職位的【工作內容】有關。我選擇金融行業是因為【動機】，還需要補足【能力或經驗】。',
+      project:'我想用【自己的項目／經歷】作例子。當時要解決【問題】，我親自負責【動作】。我用【方法】檢查結果，發現【觀察／限制】。這段經驗與本職位的關聯是【關聯】。',
+      technical_validation:'我會先確認【需要與已知資料】，把【已確認事實】與【仍待核實事項】分開。我會對照【依據或文件】，檢查【適用條件或差異】，再安排【下一步】；未確認前不會承諾【不能保證的結果】。',
+      responsible_AI:'我會先暫停【有疑慮的做法】，確認【用途、權限或程序】，只使用【必要資料】。如有疑問，交由【合適同事或主管】覆核，同時用【合適的替代安排】繼續工作，記錄【待跟進事項】。',
+      communication:'我明白你最關心【需要】。目前已確認【事實】，但仍有【限制】；我們可以先【可行安排】。我負責【工作】，請你協助【所需資料】，並在【約定時間】再確認進度。'
+    };
+    return structures[r.id]||structures.project;
   }
   function confirmAction(action,title,text){
     pendingConfirm=action;const d=document.getElementById('iv-confirm');
