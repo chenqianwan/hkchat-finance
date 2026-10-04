@@ -35,7 +35,12 @@ def inline(path):
 css = '\n'.join((BASE / f).read_text() for f in ('finance-quiz.css', 'finance-quiz-duel.css'))
 data = json.dumps(stories, ensure_ascii=False).replace('</', '<\\/')
 quiz_js = (BASE/'finance-quiz.js').read_text().replace('__QUIZ_STORIES__', data).replace('__QUIZ_BRIEF_PHOTOS__', json.dumps({k:inline(v) for k,v in photo_files.items()})).replace('__QUIZ_HOME_PHOTO__', json.dumps(inline(bank_photo)))
-js = (BASE/'finance-quiz-duel.js').read_text() + '\n' + quiz_js
+avatar_dir = BASE.parent.parent / 'outputs/hkchat-finance/assets'
+avatars = {person: 'data:image/jpeg;base64,' + base64.b64encode(
+    (avatar_dir / ('quiz-avatar-' + person + '.jpg')).read_bytes()).decode('ascii')
+    for person in ('you', 'opponent')}
+duel_js = (BASE/'finance-quiz-duel.js').read_text().replace('__QUIZ_DUEL_AVATARS__', json.dumps(avatars))
+js = duel_js + '\n' + quiz_js
 assert 'hkchat-finance-quiz-generated-v1' in js
 assert 'hkchat-law' not in js and '法律' not in js
 html = '<style>'+css+'</style>\n<div id="hkquiz"><header class="p-top">HKChat Finance</header><main class="q-main" id="q-main"></main></div>\n<script>'+js+'</script>\n'
